@@ -31,9 +31,7 @@ class Track extends GUIElement{
   }
   
   public void display(){
-    super.display();
-    
-    
+    super.display();    
     
     for (GridBlock b : gridBlocks){
       b.display(); 

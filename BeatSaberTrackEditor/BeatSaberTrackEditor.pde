@@ -3,9 +3,7 @@ TrackSequencer sequencer;
 int previousMouseButton;
 
 String[] helpText = {
-  "  Left Click: Select box",
-  "  Right Click: Place box",
-  "  Backspace / Delete: Delete selected box",
+  "  Help text WIP",
   "  Esc: Exit",
   "",
   "Hide / Show",
