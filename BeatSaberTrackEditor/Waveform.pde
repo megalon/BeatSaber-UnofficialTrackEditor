@@ -1,4 +1,3 @@
-import ddf.minim.*;
 
 class Waveform extends GUIElement {
     
@@ -17,18 +16,22 @@ class Waveform extends GUIElement {
   
   String soundfilePath = "data\\test-audio-file.wav";
   
-  Waveform(GUIElement parent, int x, int y, int gridSize){
+  Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim){
     super(parent, x, y, gridSize, gridSize);
     
-    //loadSoundFile(soundfilePath);
+    this.minim = minim;
+    border = 10;
+    
+    loadSoundFile(soundfilePath);
   }
   
   public void loadSoundFile(String path){
     soundfilePath = path;
-    minim = new Minim(this);
     sound = minim.loadSample(soundfilePath, 2048);
     soundbis = minim.loadFile(soundfilePath);
     println(soundbis.bufferSize());
+    
+    setSampleRate((int)sound.sampleRate());
     
     resizeDisplay();
   }
@@ -62,25 +65,31 @@ class Waveform extends GUIElement {
   }
   
   public void display(){
-    
-    if(sampleRate != 0 && sound != null){
-      fill(190);
-      strokeWeight(1);
-      
-      // Draw the waveform display and the time. Time is currently showing each second
-      float prevTime = -1;
-      for ( int i=0; i < sampleAverage.size(); i++) {
-        // Draw the sound file
-        line(width - border*2, -i + height - border, (width - border*2) - sampleAverage.get(i), -i + height - border);
+    if(sampleRate != 0){
+      if(sound != null){
+        fill(190);
+        stroke(#ffffff);
+        strokeWeight(1);
         
-        // Draw the text (time in seconds)
-        float time = floor((i * sizeOfAvg) / sampleRate);
-        if(prevTime != time){
-          prevTime = time;
-          //text(round(time), i + border, height-border/2);
-          text(round(time), width - border, height - i - border);
+        // Draw the waveform display and the time. Time is currently showing each second
+        float prevTime = -1;
+        for ( int i=0; i < sampleAverage.size(); i++) {
+          // Draw the sound file
+          line(border*4, -i + height - border, border*4 + sampleAverage.get(i), -i + height - border);
+          
+          // Draw the text (time in seconds)
+          float time = floor((i * sizeOfAvg) / sampleRate);
+          if(prevTime != time){
+            prevTime = time;
+            //text(round(time), i + border, height-border/2);
+            text(round(time), border, height - i - border);
+          }
         }
+      }else{
+        println("Error: Could not display waveform, sound is null!");
       }
+    }else{
+      println("Error: Could not display waveform, sampleRate is null!");
     }
   }
 }

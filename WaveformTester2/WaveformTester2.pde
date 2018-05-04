@@ -15,10 +15,16 @@ int widthScale = 300;
 
 String soundfilePath = "data\\test-audio-file.wav";
  
-void setup() {
+public void loadSound(){
   minim = new Minim(this);
   sound = minim.loadSample(soundfilePath, 2048);
   soundbis = minim.loadFile(soundfilePath);
+}
+ 
+void setup() {
+  
+  loadSound();
+  
   // time is 3min 30s & nb of samples is 9 115 000
   println(soundbis.bufferSize());
  

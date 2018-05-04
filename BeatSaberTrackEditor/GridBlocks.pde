@@ -21,7 +21,6 @@ class Note extends GridBlock {
   
   Note(GUIElement parent, int gridX, int gridY, int gridSize, int type, int cutDirection){
     super(parent, gridX, gridY, gridSize);
-    println("type: " + type);
     this.type = type;
     this.cutDirection = cutDirection;
     

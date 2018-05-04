@@ -1,4 +1,7 @@
+import ddf.minim.*;
+
 boolean shiftPressed, showHelpText;
+Minim minim;
 TrackSequencer sequencer;
 int previousMouseButton;
 
@@ -18,8 +21,11 @@ void setup(){
   shiftPressed = false;
   showHelpText = true;
   
+  // This needs to be in the main class
+  minim = new Minim(this);
+  
   int seqOffsetY = 200;
-  sequencer = new TrackSequencer(0, height, width, -height);
+  sequencer = new TrackSequencer(0, height, width, -height, minim);
   
 }
 

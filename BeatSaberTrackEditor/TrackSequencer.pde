@@ -10,11 +10,11 @@ class TrackSequencer extends GUIElement{
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
   
   
-  TrackSequencer(int x, int y, int w, int h){
+  TrackSequencer(int x, int y, int w, int h, Minim minim){
     super(x, y, w, h);
     this.setFillColor(color(#000000));
     
-    waveform = new Waveform(this, this.getX(), this.getY(), gridSize);
+    waveform = new Waveform(this, this.getX(), this.getY(), gridSize, minim);
     
     eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, "Events");
     bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, "Bottom Notes");
@@ -38,6 +38,8 @@ class TrackSequencer extends GUIElement{
     middleTracks.display();
     topTracks.display();
     obstaclesTracks.display();
+    
+    waveform.display();
     /*
     
     stroke(#999999);
