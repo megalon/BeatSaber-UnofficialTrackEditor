@@ -2,16 +2,19 @@
 // Each 
 class TrackSequencer extends GUIElement{
   
-  int gridSize = 30;
-  int numtracksPerMulti = 4;
-  int numEventTracks = 8;
-  int trackGroupSpacing = gridSize / 2;
-  public MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
-  public Track testTrack;
+  private int gridSize = 30;
+  private int numtracksPerMulti = 4;
+  private int numEventTracks = 8;
+  private int trackGroupSpacing = gridSize / 2;
+  private Waveform waveform;
+  private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
+  
   
   TrackSequencer(int x, int y, int w, int h){
     super(x, y, w, h);
     this.setFillColor(color(#000000));
+    
+    waveform = new Waveform(this, this.getX(), this.getY(), gridSize);
     
     eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, "Events");
     bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, "Bottom Notes");

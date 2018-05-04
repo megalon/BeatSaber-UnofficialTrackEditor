@@ -20,6 +20,7 @@ void setup(){
   
   int seqOffsetY = 200;
   sequencer = new TrackSequencer(0, height, width, -height);
+  
 }
 
 void draw(){

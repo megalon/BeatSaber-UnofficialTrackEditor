@@ -41,39 +41,88 @@ class Note extends GridBlock {
     noStroke();
     switch(cutDirection){
       case(0):
-        ellipse(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, this.getWidth() * 0.5, this.getHeight() * 0.5);
-        break;
-      case(1):
-        triangle(this.getX(), 
+        // Top
+        triangle(
+        this.getX(), 
         this.getY(), 
         this.getX() + this.getWidth(),
         this.getY(),
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
+      case(1):
+        // Bottom
+        triangle(
+        this.getX() + this.getWidth(), 
+        this.getY() + this.getHeight(),
+        this.getX(),
+        this.getY() + this.getHeight(),
+        this.getX() + this.getWidth() * 0.5,
+        this.getY() + this.getHeight() * 0.5);
+        break;
       case(2):
-        triangle(this.getX() + this.getWidth(), 
-        this.getY(), 
-        this.getX() + this.getWidth(),
+        // Left
+        triangle(
+        this.getX(), 
+        this.getY(),
+        this.getX(),
         this.getY() + this.getHeight(),
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
       case(3):
-        triangle(this.getX() + this.getWidth(), 
-        this.getY() + this.getHeight(),
-        this.getX(),
+        // Right
+        triangle(
+        this.getX() + this.getWidth(), 
+        this.getY(), 
+        this.getX() + this.getWidth(),
         this.getY() + this.getHeight(),
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
       case(4):
-        triangle(this.getX(), 
+        // Top Left
+        triangle(
+        this.getX(), 
+        this.getY() + this.getHeight() * 0.5, 
+        this.getX() + this.getWidth() * 0.5,
         this.getY(),
-        this.getX(),
-        this.getY() + this.getHeight(),
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
+        break;
+      case(5):
+        // Top Right
+        triangle( 
+        this.getX() + this.getWidth() * 0.5,
+        this.getY(),
+        this.getX() + this.getWidth(), 
+        this.getY() + this.getHeight() * 0.5,
+        this.getX() + this.getWidth() * 0.5,
+        this.getY() + this.getHeight() * 0.5);
+        break;
+      case(6):
+        // Bottom Left
+        triangle(
+        this.getX(), 
+        this.getY() + this.getHeight() * 0.5, 
+        this.getX() + this.getWidth() * 0.5,
+        this.getY() + this.getHeight() * 0.5,
+        this.getX() + this.getWidth() * 0.5,
+        this.getY() + this.getHeight());
+        break;
+      case(7):
+        // Bottom Right
+        triangle( 
+        this.getX() + this.getWidth() * 0.5,
+        this.getY() + this.getHeight() * 0.5,
+        this.getX() + this.getWidth(), 
+        this.getY() + this.getHeight() * 0.5,
+        this.getX() + this.getWidth() * 0.5,
+        this.getY() + this.getHeight());
+        break;
+      case(8):
+        // Circle
+        ellipse(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, this.getWidth() * 0.5, this.getHeight() * 0.5);
         break;
     }
   }

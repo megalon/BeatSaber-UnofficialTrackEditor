@@ -17,7 +17,7 @@ class Track extends GUIElement{
     
     for(int i = 1; i < 100; ++i){
       if((int)random(10) == 0){
-        addNote(0, -i, (int)random(2), (int)random(5));
+        addNote(0, -i, (int)random(2), (int)random(9));
       }
     }
   }
