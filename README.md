@@ -10,6 +10,8 @@ https://processing.org/download/
 Install the Minim library
 Tools -> Add Tool... -> Libraries tab -> Search for "Minim" -> Select it then click "Install"
 
+Open BeatSaberTrackEditor.pde
+
 Run the poject by clicking the play button. Press the Stop button to end.
 
 ## Currently working on:
