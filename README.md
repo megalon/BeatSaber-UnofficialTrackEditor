@@ -1,4 +1,4 @@
-# BeatSaber-UnofficialTrackEditor
+# Beat Saber Unofficial Track Editor
 
 ## This project is EXPERIMENTAL and currently non functional.
 
