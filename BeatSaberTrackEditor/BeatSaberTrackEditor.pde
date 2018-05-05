@@ -37,8 +37,10 @@ int type = 0;
 int helpboxX, helpboxY, helpboxSize;
 
 String[] helpText = {
-  "  SPACE:        Play / Stop", 
-  "  LEFT CLICK:   Place notes",
+  "  SPACE:                 Play / Pause",
+  "  SHIFT+SPACE:  Jump to start", 
+  "  LEFT CLICK:      Place notes", 
+  "                                Move playhead",
   "  RIGHT CLICK:  Delete notes",
   "  Number key 1: RED",
   "  Number key 2: BLUE",
@@ -151,10 +153,14 @@ void keyPressed(){
   }
   
   if(key == ' '){
-    if(sequencer.getPlaying())
-      sequencer.setPlaying(false);
-    else
-      sequencer.setPlaying(true);
+    if(shiftPressed){
+      sequencer.stop();
+    }else{
+      if(sequencer.getPlaying())
+        sequencer.setPlaying(false);
+      else
+        sequencer.setPlaying(true);
+    }
   }
   
   if(key == 'w'){

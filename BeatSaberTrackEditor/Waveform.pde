@@ -118,6 +118,10 @@ class Waveform extends GUIElement {
   
   public void pause(){
     soundbis.pause();
+  }
+  
+  public void stopPlaying(){
+    soundbis.pause();
     soundbis.rewind();
   }
   

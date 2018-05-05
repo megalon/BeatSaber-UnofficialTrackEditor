@@ -74,6 +74,12 @@ class TrackSequencer extends GUIElement{
       waveform.pause();
   }
   
+  public void stop(){
+    this.playing = false;
+    
+    waveform.stopPlaying();
+  }
+  
   public boolean getPlaying(){
     return playing;
   }
