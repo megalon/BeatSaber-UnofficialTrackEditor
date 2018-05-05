@@ -157,28 +157,13 @@ class TrackSequencer extends GUIElement{
     for(int i = 0; i < 1000; ++i){
       gridYPos = (int)(this.getY() -i * this.gridSize);
       
-      if(i % 4 == 0)
+      if(i % 8 == 0)
         strokeWeight(4);
+      else if(i % 4 == 0)
+        strokeWeight(2);
       else
         strokeWeight(1);
       line(0, gridYPos, width, gridYPos);
     }
-    
-    /*
-    
-    stroke(#999999);
-    int y1 = this.getY();
-    int w1 = this.getWidth();
-    int h1 = y1 + tracksPerMulti * gridSize * 3 + trackGroupSpacing * 3;
-    
-    for(int x1 = 0; x1 < w1; x1 += gridSize){
-      line(x1, y1, x1, h1);
-    }
-    
-    fill(#000000);
-    rect(this.getX(), y1 + tracksPerMulti * gridSize, this.getWidth(), trackGroupSpacing);
-    rect(this.getX(), y1 + tracksPerMulti * gridSize * 2 + trackGroupSpacing,     this.getWidth(), trackGroupSpacing);
-    rect(this.getX(), y1 + tracksPerMulti * gridSize * 3 + trackGroupSpacing * 2, this.getWidth(), trackGroupSpacing);
-    */
   }
 }

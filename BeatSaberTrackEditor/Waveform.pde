@@ -10,7 +10,7 @@ class Waveform extends GUIElement {
   private float bpm = 90;
   
   // Resolution of the display
-  private float sizeOfAvg = 0;
+  private float sizeOfAvg = 0.0;
   private int heightScale = 1;
   
   private float maxSize = 0;
@@ -75,16 +75,26 @@ class Waveform extends GUIElement {
     //2. reduce quantity : get an average from those values
     sampleAverage = new FloatList();
     int average=0;
+    
+    int avgCounter = 0;
     for (int i = 0; i < samplesVal.length; ++i) {
       average += abs(samplesVal[i] * widthScale) ; // sample are low value so we increase the size to see them
       
-      if ( i % sizeOfAvg == 0) {
-        float newVal = average / sizeOfAvg;;
+      if ( (i % (sizeOfAvg)) == 0) {
+        avgCounter++;
+        float newVal = average / sizeOfAvg;
         sampleAverage.append(newVal);
         if(newVal > maxSize)
           maxSize = newVal;
         average = 0;
       }
+    } 
+    
+    println("avgCounter  : "   + avgCounter);
+    println("sizeOfAvg   : "   + sizeOfAvg);
+    println();
+    for (int i = 0; i < sampleAverage.size(); ++i) {
+      sampleAverage.set(i, map(sampleAverage.get(i), 0, maxSize, 0, 200));
     } 
   }
   
@@ -122,21 +132,21 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -(i) + this.getY(), border*2 + sampleAverage.get(i), -(i) + this.getY());
+          line(border*2, -(i * beatsPerBar) + this.getY(), border*2 + sampleAverage.get(i), -(i * beatsPerBar) + this.getY());
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
           if(prevTime != time){
             prevTime = time;
             //text(round(time), i + border, height-border/2);
-            text(round(time), border/2, this.getY() - i - border);
+            text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
           }
         }
         
         // Draw the play head (red line moving across)
         strokeWeight(2);
         stroke(#ff0000);
-        float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg;
+        float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg * beatsPerBar;
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
       }else{
         println("Error: Could not display waveform, sound is null!");
