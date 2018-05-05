@@ -34,11 +34,36 @@ class JSONManager{
     json.setJSONArray("_notes", notes);
     json.setJSONArray("_obstacles", obstacles);
     
-    saveJSONObject(json, "data/output.json");
+    saveJSONObject(json, filename + ".json");
   }
   
   public void loadTrack(String filename){
+    json = loadJSONObject(filename);
     
+    float bpmIn = json.getFloat("_beatsPerMinute");
+    notes = json.getJSONArray("_notes");
+    
+    this.seq.setBPM(bpmIn);
+    
+    int trackCount = 0;
+    int multiCount = 0;
+    int noteCount = 0;
+    int trackSize = seq.getTrackSize();
+    for(int i = 0; i < trackSize; ++i){
+      multiCount = 0;
+      for(MultiTrack m : seq.multiTracks){
+        trackCount = 0;
+        for(Track t : m.tracks){
+          Note block = (Note)t.gridBlocks[i];
+          if(block != null){
+            JSONObject note = notes.getJSONObject(noteCount);
+            ++noteCount;
+          }
+          ++trackCount;
+        }
+        ++multiCount;
+      }
+    }
   }
   
   private void setNotes(){

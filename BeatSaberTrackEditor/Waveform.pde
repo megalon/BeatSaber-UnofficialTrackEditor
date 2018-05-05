@@ -13,7 +13,10 @@ class Waveform extends GUIElement {
   private float sizeOfAvg = 0;
   private int heightScale = 1;
   
+  private float maxSize = 0;
+  
   private int gridSize = 0;
+  private int beatsPerBar = 1;
   
   // width adjustment for audio display  
   private int widthScale = 200;
@@ -46,8 +49,14 @@ class Waveform extends GUIElement {
     resizeDisplay();
   }
   
+  public void setBeatsPerBar(int beats){
+    this.beatsPerBar = beats;
+    resizeDisplay();
+  }
+  
   private void calculateSizeOfAVG(){
-    sizeOfAvg = (this.sampleRate / (this.bpm / 60)) / this.gridSize;
+    sizeOfAvg = (this.sampleRate / (this.bpm / 60) ) / this.gridSize;
+    // Implement beats per bar here somewhere?
     println("sizeOfAvg: " + sizeOfAvg);
   }
   
@@ -69,11 +78,14 @@ class Waveform extends GUIElement {
     for (int i = 0; i < samplesVal.length; ++i) {
       average += abs(samplesVal[i] * widthScale) ; // sample are low value so we increase the size to see them
       
-      if ( i % sizeOfAvg == 0) { 
-        sampleAverage.append( average / sizeOfAvg);
+      if ( i % sizeOfAvg == 0) {
+        float newVal = average / sizeOfAvg;;
+        sampleAverage.append(newVal);
+        if(newVal > maxSize)
+          maxSize = newVal;
         average = 0;
       }
-    }
+    } 
   }
   
   public void setSampleRate(int sampleRate){
@@ -110,7 +122,7 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -i + this.getY(), border*2 + sampleAverage.get(i), -i + this.getY());
+          line(border*2, -(i) + this.getY(), border*2 + sampleAverage.get(i), -(i) + this.getY());
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);

@@ -19,6 +19,8 @@ class TrackSequencer extends GUIElement{
   private int currentType = 0;
   private int currentCutDirection = 8;
   
+  int beatsPerBar = 8;
+  
   public ArrayList<MultiTrack> multiTracks;
   
   TrackSequencer(int x, int y, int w, int h, Minim minim){
@@ -109,17 +111,15 @@ class TrackSequencer extends GUIElement{
     this.bpm = bpm;
     waveform.setBPM(bpm);
     
-    int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0));
+    int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0)) * beatsPerBar;
     
     //println("minutes: " + waveform.getLength() / 60000.0);
     //println("Numbeats:" + numBeats);
     
     println("Samples per beat: " + (44100 * 60 / this.getBPM()));
     
-    int scale = (int)map(29400, 0, 44100, 0, 1);
-    println("Scale: " + (29400.0 / (29400.0 / 30.0)));
-    
     updateTrackSize(numBeats);
+    waveform.setBeatsPerBar(beatsPerBar);
   }
   
   public void loadSoundFile(String path){
@@ -133,6 +133,11 @@ class TrackSequencer extends GUIElement{
         t.resizeTrack(size);
       }
     }
+    this.trackSize = size;
+  }
+  
+  public int getTrackSize(){
+    return trackSize;
   }
   
   public void display(){
