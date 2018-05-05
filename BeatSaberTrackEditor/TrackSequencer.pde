@@ -1,5 +1,5 @@
 // The collection of all tracks.
-// Each 
+
 class TrackSequencer extends GUIElement{
   
   private int gridSize = 30;
@@ -120,7 +120,7 @@ class TrackSequencer extends GUIElement{
     for(int i = 0; i < 1000; ++i){
       gridYPos = this.getY() -i * gridDisplaySize;
       
-      if(i % 10 == 0)
+      if(i % 4 == 0)
         strokeWeight(4);
       else
         strokeWeight(1);

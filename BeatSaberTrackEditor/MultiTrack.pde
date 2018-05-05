@@ -45,6 +45,7 @@ class MultiTrack extends GUIElement{
        t.display();
     }
     
+    fill(#ffffff);
     textFont(f, 18);
     text(this.getElementName(), this.getX(), this.getY() - 25);
   }

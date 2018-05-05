@@ -9,7 +9,8 @@ class Waveform extends GUIElement {
   private int sampleRate = 0;
   
   // Resolution of the display
-  private int sizeOfAvg = 200;
+  private int sizeOfAvg   = 300;//29400 ;
+  private int heightScale = 1;
   
   // width adjustment for audio display
   private int widthScale = 300;
@@ -84,7 +85,7 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -i + this.getY(), border*2 + sampleAverage.get(i), -i + this.getY());
+          line(border*2, -i*heightScale + this.getY(), border*2 + sampleAverage.get(i), -i*heightScale + this.getY());
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);

@@ -50,7 +50,7 @@ class Track extends GUIElement{
   }
   
   public void removeNoteMouseClick(int mx, int my){
-    this.removeNote(cordToGrid(my));
+    this.removeNote(cordToGrid(my + yStartingPosition - this.getY()));
   }
   
   public void removeNote(int gridY){
