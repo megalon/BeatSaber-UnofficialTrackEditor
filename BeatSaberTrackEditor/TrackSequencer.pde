@@ -10,6 +10,7 @@ class TrackSequencer extends GUIElement{
   private int tracksXOffset = 200;
   private Waveform waveform;
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
+  private int startYPosition = 0;
   
   private int currentType = 0;
   private int currentCutDirection = 8;
@@ -18,6 +19,8 @@ class TrackSequencer extends GUIElement{
   
   TrackSequencer(int x, int y, int w, int h, Minim minim){
     super(x, y, w, h);
+    startYPosition = y;
+    
     this.setFillColor(color(#111111));
     
     waveform = new Waveform(this, this.getX(), this.getY(), gridSize, minim);
@@ -48,6 +51,7 @@ class TrackSequencer extends GUIElement{
     println("Checking track click at:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
         m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
+        //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
     }
   }
   
@@ -67,8 +71,16 @@ class TrackSequencer extends GUIElement{
     return currentCutDirection;
   }
   
+  public void scrollY(float scroll){
+    if(scroll > 0){
+      this.setY((int)(this.getY() + scroll * gridSize));
+    }else{
+      if(this.getY() > startYPosition)
+        this.setY((int)(this.getY() + scroll * gridSize));
+    } 
+  }
+  
   public void display(){
-    super.display();
     
     //eventsTracks.display();
     bottomTracks.display();
@@ -77,6 +89,22 @@ class TrackSequencer extends GUIElement{
     //obstaclesTracks.display();
     
     waveform.display();
+    
+    fill(0);
+    stroke(0x55000000);
+    
+    int gridDisplaySize = 30;
+    int gridYPos = 0;
+    for(int i = 0; i < 1000; ++i){
+      gridYPos = this.getY() -i * gridDisplaySize;
+      
+      if(i % 10 == 0)
+        strokeWeight(4);
+      else
+        strokeWeight(1);
+      line(0, gridYPos, width, gridYPos);
+    }
+    
     /*
     
     stroke(#999999);

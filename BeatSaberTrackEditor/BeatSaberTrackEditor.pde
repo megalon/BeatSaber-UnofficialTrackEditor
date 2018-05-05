@@ -5,6 +5,13 @@ Minim minim;
 TrackSequencer sequencer;
 int previousMouseButton;
 GUIElement testElement;
+GUIElement testElement2;
+GUIElement testElement3;
+GUIElement testElement4;
+
+final int TYPE_RED  = 0;
+final int TYPE_BLUE = 1;
+final int TYPE_MINE = 3;
 
 final int DIR_TOP         = 0;
 final int DIR_BOTTOM      = 1;
@@ -19,6 +26,8 @@ boolean up = false;
 boolean down = false;
 boolean left = false;
 boolean right = false;
+
+int type = 0;
 
 String[] helpText = {
   "  Help text WIP",
@@ -41,8 +50,6 @@ void setup(){
   
   int seqOffsetY = 200;
   sequencer = new TrackSequencer(0, height, width, -height, minim);
-  
-  testElement = new GUIElement(0, 100, 100, -100);
 }
 
 void draw(){
@@ -65,24 +72,9 @@ void draw(){
   }
   
   sequencer.setCutDirection(getNewCutDirection());
-  sequencer.setType(getNewType());
+  sequencer.setType(type);
   
   sequencer.display();
-  
-  fill(0);
-  stroke(0x55000000);
-  
-  int gridDisplaySize = 30;
-  int gridYPos = 0;
-  for(int i = 0; i < 1000; ++i){
-    gridYPos = -i * gridDisplaySize + height;
-    
-    if(i % 4 == 0)
-      strokeWeight(2);
-    else
-      strokeWeight(1);
-    line(0, gridYPos, width, gridYPos);
-  }
   
   fill(0);
   stroke(0);
@@ -90,13 +82,19 @@ void draw(){
 }
 
 void mousePressed(){
+  sequencer.checkClickedTrack(mouseX, mouseY, mouseButton);
+  
   // Processing doesn't store what button was released,
   // so I have to do this
   previousMouseButton = mouseButton;  
 }
 
 void mouseReleased(){
-  sequencer.checkClickedTrack(mouseX, mouseY, previousMouseButton);
+}
+
+void mouseWheel(MouseEvent event) {
+  float e = event.getCount();
+  sequencer.scrollY(-e);
 }
 
 void keyPressed(){
@@ -115,6 +113,13 @@ void keyPressed(){
   }if(key == 'd'){
     right = true;
   }
+  
+  if(key == '1')
+    type = TYPE_RED;
+  if(key == '2')
+    type = TYPE_BLUE;
+  if(key == '3')
+    type = TYPE_MINE;
 }
 
 void keyReleased(){
@@ -168,10 +173,4 @@ public int getNewCutDirection(){
     dir = DIR_BOTTOMRIGHT;
 
   return dir; 
-}
-
-public int getNewType(){
-  
-  
-  return type;
 }
