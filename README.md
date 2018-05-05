@@ -21,12 +21,12 @@ Run the project by clicking the triangular play button. Press the square stop bu
 
 ## Currently working on:
 
-Adding audio file display and playback.
+Loading saved tracks.
 
 ## Next steps:
 
-Clicking on the tracks to add the boxes onto the grid.
+Make the GUI look nicer.
 
-Adding interface controls for selecting the object to place, loading sound files, and loading / saving tracks.
+Support triplets / arbitrary positions
 
-Formatting the data to Beat Saber's JSON style
+Support obstacles

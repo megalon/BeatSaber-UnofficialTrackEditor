@@ -81,7 +81,7 @@ class JSONManager{
           if(block != null){
             JSONObject note = new JSONObject();
             
-            note.setFloat("_time", (float)(trackSize - block.getGridY()));
+            note.setFloat("_time", (float)(trackSize - block.getGridY()) / seq.beatsPerBar);
             note.setInt("_lineIndex", trackCount);
             note.setInt("_lineLayer", multiCount);
             note.setInt("_type", block.getType());
