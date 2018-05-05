@@ -140,6 +140,10 @@ class TrackSequencer extends GUIElement{
     return trackSize;
   }
   
+  public void setTrackerPosition(int pos){
+    waveform.setTrackerPosition((this.getY()) - pos); 
+  }
+  
   public void display(){
     
     //eventsTracks.display();

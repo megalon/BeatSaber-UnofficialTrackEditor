@@ -121,7 +121,41 @@ class Waveform extends GUIElement {
     soundbis.rewind();
   }
   
+  public void setPosition(int gridPos){
+    //float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg * beatsPerBar;
+    //soundbis.skip();
+  }
+  
+  public int soundPosition2Pixels(int p){
+    return (int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar);
+  }
+  
+  public float pixels2SoundPosition(int p){
+    return ((p * (sizeOfAvg / beatsPerBar)) / sampleRate) * 1000;
+  }
+  
+  public void setTrackerPosition(int pos){
+    soundbis.rewind();
+    soundbis.skip((int)pixels2SoundPosition(pos));
+  }
+  
   public void display(){
+    /*
+    if(soundbis.isPlaying()){
+      println("Position ms      : " + soundbis.position());
+      println("Position sec     : " + (soundbis.position() / 1000.0));
+      println("Position samples : " + (int)(soundbis.position() / 1000.0 * sampleRate));
+      println("Position pixels  : " + (int)((soundbis.position() / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar));
+      
+      float samplePos = (int)((soundbis.position() / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar);
+      
+      println("Position samples : " + (samplePos * (sizeOfAvg / beatsPerBar)));
+      println("Position sec     : " + ((samplePos * (sizeOfAvg / beatsPerBar)) / sampleRate));
+      println("Position ms      : " + ((samplePos * (sizeOfAvg / beatsPerBar)) / sampleRate) * 1000);
+      println("");
+    }
+    */
+    
     if(sampleRate != 0){
       if(sound != null){
         fill(190);
@@ -146,7 +180,7 @@ class Waveform extends GUIElement {
         // Draw the play head (red line moving across)
         strokeWeight(2);
         stroke(#ff0000);
-        float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg * beatsPerBar;
+        float ypos = soundPosition2Pixels(soundbis.position());
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
       }else{
         println("Error: Could not display waveform, sound is null!");

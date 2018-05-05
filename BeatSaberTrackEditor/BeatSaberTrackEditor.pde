@@ -128,7 +128,9 @@ void mousePressed(){
   
   // Processing doesn't store what button was released,
   // so I have to do this
-  previousMouseButton = mouseButton;  
+  previousMouseButton = mouseButton;
+  
+  sequencer.setTrackerPosition(mouseY);
 }
 
 void mouseReleased(){
