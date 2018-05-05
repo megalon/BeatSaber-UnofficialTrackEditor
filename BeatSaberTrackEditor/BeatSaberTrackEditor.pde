@@ -30,7 +30,7 @@ boolean right = false;
 boolean playing = false;
 
 String soundfilePath = "data\\60BPM_Stereo_ClickTrack.wav";
-float bpm = 120;
+float bpm = 60;
 
 int type = 0;
     
