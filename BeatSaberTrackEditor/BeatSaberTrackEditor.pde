@@ -41,6 +41,8 @@ String[] helpText = {
   "  Number key 2: BLUE",
   "  Number key 3: MINE",
   "",
+  "  SCROLL WHEEL: Scroll Up / Down",
+  "",
   "  Directional arrows:",
   "  W: Up",
   "  S: Down",
