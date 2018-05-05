@@ -13,7 +13,7 @@ Tools -> Add Tool... -> Libraries tab -> Search for "Minim" -> Select it then cl
 
 Open BeatSaberTrackEditor.pde
 
-Run the poject by clicking the play button. Press the Stop button to end.
+Run the project by clicking the triangular play button. Press the square stop button to end.
 
 ## Currently working on:
 

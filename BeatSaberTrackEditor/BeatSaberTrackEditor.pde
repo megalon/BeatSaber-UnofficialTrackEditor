@@ -65,6 +65,7 @@ void draw(){
   }
   
   sequencer.setCutDirection(getNewCutDirection());
+  sequencer.setType(getNewType());
   
   sequencer.display();
   
@@ -167,4 +168,10 @@ public int getNewCutDirection(){
     dir = DIR_BOTTOMRIGHT;
 
   return dir; 
+}
+
+public int getNewType(){
+  
+  
+  return type;
 }
