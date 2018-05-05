@@ -6,14 +6,14 @@ TrackSequencer sequencer;
 int previousMouseButton;
 GUIElement testElement;
 
-final int TYPE_TOP         = 0;
-final int TYPE_BOTTOM      = 1;
-final int TYPE_LEFT        = 2;
-final int TYPE_RIGHT       = 3;
-final int TYPE_TOPLEFT     = 4;
-final int TYPE_TOPRIGHT    = 5;
-final int TYPE_BOTTOMLEFT  = 6;
-final int TYPE_BOTTOMRIGHT = 8;
+final int DIR_TOP         = 0;
+final int DIR_BOTTOM      = 1;
+final int DIR_LEFT        = 2;
+final int DIR_RIGHT       = 3;
+final int DIR_TOPLEFT     = 4;
+final int DIR_TOPRIGHT    = 5;
+final int DIR_BOTTOMLEFT  = 6;
+final int DIR_BOTTOMRIGHT = 7;
 
 boolean up = false;
 boolean down = false;
@@ -64,7 +64,7 @@ void draw(){
     }
   }
   
-  getCurrentType();
+  sequencer.setCutDirection(getNewCutDirection());
   
   sequencer.display();
   
@@ -105,19 +105,14 @@ void keyPressed(){
     }
   }
   
-  int dir = 8;
   if(key == 'w'){
     up = true;
-    dir = TYPE_TOP;
   }if(key == 's'){
     down = true;
-    dir = TYPE_BOTTOM;
   }if(key == 'a'){
     left = true;
-    dir = TYPE_LEFT;
   }if(key == 'd'){
     right = true;
-    dir = TYPE_RIGHT;
   }
 }
 
@@ -151,15 +146,25 @@ void keyReleased(){
   }
 }
 
-void getCurrentType(){
+public int getNewCutDirection(){
+  int dir = 8;
+  if(up)
+    dir = DIR_TOP;
+  if(down)
+    dir = DIR_BOTTOM;
+  if(left)
+    dir = DIR_LEFT;
+  if(right)
+    dir = DIR_RIGHT;
+    
   if(up && left)
-    dir = TYPE_TOPLEFT;
+    dir = DIR_TOPLEFT;
   else if(up && right)
-    dir = TYPE_TOPRIGHT;
+    dir = DIR_TOPRIGHT;
   else if(down && left)
-    dir = TYPE_BOTTOMLEFT;
+    dir = DIR_BOTTOMLEFT;
   else if(down && right)
-    dir = TYPE_BOTTOMRIGHT;
+    dir = DIR_BOTTOMRIGHT;
 
-  sequencer.setCutDirection(dir); 
+  return dir; 
 }
