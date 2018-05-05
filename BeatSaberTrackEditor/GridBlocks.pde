@@ -14,6 +14,10 @@ class GridBlock extends ClickableBox{
 
 // Note gridblock
 class Note extends GridBlock {
+  public static final int TYPE_RED  = 0;
+  public static final int TYPE_BLUE = 1;
+  public static final int TYPE_MINE = 3;
+  
   private int type, cutDirection;
   private color redColor = color(#ff0000);
   private color blueColor = color(#0000ff);

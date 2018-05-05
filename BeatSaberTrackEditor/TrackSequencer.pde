@@ -16,7 +16,6 @@ class TrackSequencer extends GUIElement{
   
   private boolean playing = false;
   
-  private int currentType = 0;
   private int currentCutDirection = 8;
   
   int beatsPerBar = 8;
@@ -53,10 +52,26 @@ class TrackSequencer extends GUIElement{
     //multiTracks.add(obstaclesTracks);
   }
   
-  public void checkClickedTrack(int mx, int my, int mb){
+  
+  public int getTypeFromMouseButton(int mb){
+    int type = 0;
+    switch(mb){
+      case(RIGHT):
+        type = Note.TYPE_BLUE;
+        break;
+      case(CENTER):
+        type = Note.TYPE_MINE;
+        break;
+      default:
+        type = Note.TYPE_RED;
+    }
+    return type;
+  }
+  
+  public void checkClickedTrack(int mx, int my, int type){
     //println("Checking track click at:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
-        m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
+        m.checkTrackClicked(mx, my, type, currentCutDirection);
         //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
     }
   }
@@ -82,14 +97,6 @@ class TrackSequencer extends GUIElement{
   
   public boolean getPlaying(){
     return playing;
-  }
-  
-  public void setType(int type){
-    this.currentType = type;
-  }
-  
-  public int getType(){
-    return currentType;
   }
   
   public void setCutDirection(int cutDirection){

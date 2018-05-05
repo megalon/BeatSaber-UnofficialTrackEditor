@@ -23,17 +23,17 @@ class MultiTrack extends GUIElement{
     
   }
   
-  public void checkTrackClicked(int mx, int my, int type, int cutDirection, int mb){
+  public void checkTrackClicked(int mx, int my, int type, int cutDirection){
     //println("Checking click at:" + mx + " " + my);
     //println("Multitrack xy: " + this.getX() + " " + this.getY());
     for (Track t : tracks){
       //println("TrackPosition: " + t.getX() + " " + t.getY());
       if(t.checkClicked(mx, my)){
         //println("Track clicked!");
-        if(mb == LEFT)
-          t.addNoteMouseClick(mx, my, type, cutDirection);
-        else
+        if(type == -1)
           t.removeNoteMouseClick(mx, my);
+        else
+          t.addNoteMouseClick(mx, my, type, cutDirection);
       }
     }
   }

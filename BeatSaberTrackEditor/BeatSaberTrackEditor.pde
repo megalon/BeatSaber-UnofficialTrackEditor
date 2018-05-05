@@ -2,16 +2,12 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-boolean shiftPressed, showHelpText;
+boolean shiftPressed, controlPressed, showHelpText;
 Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
 int previousMouseButton;
-
-final int TYPE_RED  = 0;
-final int TYPE_BLUE = 1;
-final int TYPE_MINE = 3;
 
 final int DIR_TOP         = 0;
 final int DIR_BOTTOM      = 1;
@@ -38,13 +34,13 @@ int helpboxX, helpboxY, helpboxSize;
 
 String[] helpText = {
   "  SPACE:                 Play / Pause",
-  "  SHIFT+SPACE:  Jump to start", 
-  "  LEFT CLICK:      Place notes", 
-  "                                Move playhead",
-  "  RIGHT CLICK:  Delete notes",
-  "  Number key 1: RED",
-  "  Number key 2: BLUE",
-  "  Number key 3: MINE",
+  "  SHIFT+SPACE:  Jump to start",
+  "",
+  "  Place RED note : Left click", 
+  "  Place BLUE note: Right click",
+  "                              or: Shift + Left Click",
+  "  Place MINE : Middle click",
+  "                              or: Control + Left Click",
   "",
   "  SCROLL WHEEL: Scroll Up / Down",
   "",
@@ -74,6 +70,7 @@ void setup(){
   background(0);
   
   shiftPressed = false;
+  controlPressed = false;
   showHelpText = true;
   
   // This needs to be in the main class
@@ -99,7 +96,6 @@ void draw(){
   background(#111111);
   
   sequencer.setCutDirection(getNewCutDirection());
-  sequencer.setType(type);
   
   sequencer.display();
   
@@ -127,8 +123,21 @@ void draw(){
   
 }
 
-void mousePressed(){
-  sequencer.checkClickedTrack(mouseX, mouseY, mouseButton);
+void mouseDragged(){
+  
+  int type = 0;
+  
+  if(mouseButton == LEFT){
+    if(shiftPressed)
+      type = Note.TYPE_BLUE;
+    else if(controlPressed)
+      type = Note.TYPE_MINE;
+    else
+      type = Note.TYPE_RED;
+  }else{
+    type = sequencer.getTypeFromMouseButton(mouseButton);
+  }
+  sequencer.checkClickedTrack(mouseX, mouseY, type);
   
   // Processing doesn't store what button was released,
   // so I have to do this
@@ -140,6 +149,7 @@ void mousePressed(){
 }
 
 void mouseReleased(){
+  
 }
 
 void mouseWheel(MouseEvent event) {
@@ -151,6 +161,9 @@ void keyPressed(){
   if (key == CODED) {
     if (keyCode == SHIFT) {
       shiftPressed = true;
+    }
+    if (keyCode == CONTROL) {
+      controlPressed = true;
     }
   }
   
@@ -174,13 +187,6 @@ void keyPressed(){
   }if(key == 'd'){
     right = true;
   }
-  
-  if(key == '1')
-    type = TYPE_RED;
-  if(key == '2')
-    type = TYPE_BLUE;
-  if(key == '3')
-    type = TYPE_MINE;
 }
 
 void keyReleased(){
@@ -198,6 +204,9 @@ void keyReleased(){
   if (key == CODED) {
     if (keyCode == SHIFT) {
       shiftPressed = false;
+    }
+    if (keyCode == CONTROL) {
+      controlPressed = false;
     }
   }
   
