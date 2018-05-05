@@ -51,6 +51,8 @@ String[] helpText = {
   "  S: Down",
   "  A: Left",
   "  D: Right",
+  "  For diagonals, combine buttons.",
+  "  W+A = UP LEFT, W+D = UP RIGHT, etc",
   "",
   "  Tab: Hide / show guide",
   "",
@@ -299,13 +301,13 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   title.setTextBold();
   // Create buttons
   int bgap = 8;
-  int bw = round((w - 2 * bgap) / 4.0f);
+  int bw = round((w - 3 * bgap) / 4.0f);
   int bs = bgap + bw;
   btnOpenSong = new GButton(this, x, y+30, bw, 20, "Load Audio");
-  btnInput = new GButton(this, x+bs, y+30, bw, 20, "Load Track");
-  btnOutput = new GButton(this, x+2*bs, y+30, bw, 20, "Save Track");
+  btnInput = new GButton(this, x+2*bs, y+30, bw, 20, "Load Track");
+  btnOutput = new GButton(this, x+3*bs, y+30, bw, 20, "Save Track");
   
-  bpmTextField = new GTextField(this, x+3*bs, y+30, bw - 10, 20);
+  bpmTextField = new GTextField(this, x+bs, y+30, bw, 20);
   bpmTextField.tag = "bpmText";
   bpmTextField.setPromptText("BPM");
   
