@@ -17,12 +17,15 @@ class Note extends GridBlock {
   private int type, cutDirection;
   private color redColor = color(#ff0000);
   private color blueColor = color(#0000ff);
+  private int gridX, gridY;
   
   
   Note(GUIElement parent, int gridX, int gridY, int gridSize, int type, int cutDirection){
     super(parent, gridX, gridY, gridSize);
     this.type = type;
     this.cutDirection = cutDirection;
+    this.gridX = gridX;
+    this.gridY = gridY;
     
     switch(type){
       case(0): this.unSelectedColor = redColor;
@@ -32,6 +35,19 @@ class Note extends GridBlock {
       default: println("Error! Invalid type" + type + " for gridblock " + this + " !!");
     }
   }
+  
+  public int getGridY(){
+    return gridY;
+  }
+  
+  public int getType(){
+    return type;
+  }
+  
+  public int getCutDirection(){
+    return cutDirection;
+  }
+  
   
   public void display(){
     super.display();

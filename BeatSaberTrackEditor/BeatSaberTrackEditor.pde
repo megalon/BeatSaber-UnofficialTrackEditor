@@ -5,11 +5,9 @@ import ddf.minim.*;
 boolean shiftPressed, showHelpText;
 Minim minim;
 TrackSequencer sequencer;
+JSONManager jsonManager;
+
 int previousMouseButton;
-GUIElement testElement;
-GUIElement testElement2;
-GUIElement testElement3;
-GUIElement testElement4;
 
 final int TYPE_RED  = 0;
 final int TYPE_BLUE = 1;
@@ -83,10 +81,11 @@ void setup(){
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
   
+  jsonManager = new JSONManager(sequencer);
+  
   helpboxSize = 350;
   helpboxX = width - 350;
   helpboxY = 150;
-  
   
   createFileSystemGUI(width - 350, 0, 350, 130, 6);
 }
@@ -274,13 +273,14 @@ public void handleFileDialog(GButton button) {
   if (button == btnOpenSong) {
     // Use file filter if possible
     fname = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
-    sequencer.loadSoundFile(fname);
     lblFile.setText(fname);
+    sequencer.loadSoundFile(fname);
   }
   // File output selection
   else if (button == btnOutput) {
     fname = G4P.selectOutput("Output Dialog");
     lblFile.setText(fname);
+    jsonManager.saveTrack(fname);
   }
 }
 
