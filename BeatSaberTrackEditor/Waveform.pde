@@ -9,12 +9,12 @@ class Waveform extends GUIElement {
   private int sampleRate = 0;
   
   // Resolution of the display
-  private int sizeOfAvg = 600;
+  private int sizeOfAvg = 200;
   
   // width adjustment for audio display
   private int widthScale = 300;
   
-  String soundfilePath = "data\\test-audio-file.wav";
+  String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
   
   Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim){
     super(parent, x, y, gridSize, gridSize);
@@ -75,14 +75,14 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*4, -i + height - border, border*4 + sampleAverage.get(i), -i + height - border);
+          line(border*2, -i + height, border*2 + sampleAverage.get(i), -i + height);
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
           if(prevTime != time){
             prevTime = time;
             //text(round(time), i + border, height-border/2);
-            text(round(time), border, height - i - border);
+            text(round(time), border/2, height - i - border);
           }
         }
       }else{

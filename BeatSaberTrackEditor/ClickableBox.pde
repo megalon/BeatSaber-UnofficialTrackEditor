@@ -8,13 +8,6 @@ class ClickableBox extends GUIElement{
     super(parent, x, y, size, size);
   }
   
-  boolean checkClicked(int mx, int my){
-    if((this.getX() - this.getWidth() <= mx && this.getX() + this.getWidth() >= mx) &&
-    (this.getY() - this.getHeight() <= my && this.getY() + this.getHeight() >= my))
-      return true; 
-    return false;
-  }
-  
   public void display(){
     if(selected){
       this.setFillColor(selectedColor);

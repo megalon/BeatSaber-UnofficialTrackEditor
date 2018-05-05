@@ -27,6 +27,13 @@ class GUIElement{
     this.h = h;
   }
   
+  public boolean checkClicked(int mx, int my){
+    if((this.getX() <= mx && this.getX() + this.getWidth() >= mx) &&
+    (this.getY() <= my && this.getY() + this.getHeight() >= my))
+      return true; 
+    return false;
+  }
+  
   // Getters
   public int getX(){
     if(parent == null)
