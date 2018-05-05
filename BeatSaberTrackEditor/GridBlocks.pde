@@ -18,6 +18,15 @@ class Note extends GridBlock {
   public static final int TYPE_BLUE = 1;
   public static final int TYPE_MINE = 3;
   
+  public static final int DIR_TOP         = 0;
+  public static final int DIR_BOTTOM      = 1;
+  public static final int DIR_LEFT        = 2;
+  public static final int DIR_RIGHT       = 3;
+  public static final int DIR_TOPLEFT     = 4;
+  public static final int DIR_TOPRIGHT    = 5;
+  public static final int DIR_BOTTOMLEFT  = 6;
+  public static final int DIR_BOTTOMRIGHT = 7;
+  
   private int type, cutDirection;
   private color redColor = color(#ff0000);
   private color blueColor = color(#0000ff);
@@ -59,8 +68,8 @@ class Note extends GridBlock {
     fill(#FFFFFF);
     noStroke();
     switch(cutDirection){
-      case(0):
-        // Top
+      case(DIR_BOTTOM):
+        // Arrow points DOWN
         triangle(
         this.getX(), 
         this.getY(), 
@@ -69,8 +78,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
-      case(1):
-        // Bottom
+      case(DIR_TOP):
+        // Arrow points UP
         triangle(
         this.getX() + this.getWidth(), 
         this.getY() + this.getHeight(),
@@ -79,8 +88,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
-      case(2):
-        // Left
+      case(DIR_RIGHT):
+        // Arrow points RIGHT
         triangle(
         this.getX(), 
         this.getY(),
@@ -89,8 +98,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
-      case(3):
-        // Right
+      case(DIR_LEFT):
+        // Arrow points LEFT
         triangle(
         this.getX() + this.getWidth(), 
         this.getY(), 
@@ -99,8 +108,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
-      case(4):
-        // Top Left
+      case(DIR_BOTTOMRIGHT):
+        // Arrow points to BOTTOM RIGHT
         triangle(
         this.getX(), 
         this.getY() + this.getHeight() * 0.5, 
@@ -109,8 +118,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
-      case(5):
-        // Top Right
+      case(DIR_BOTTOMLEFT):
+        // Arrow points to BOTTOM LEFT
         triangle( 
         this.getX() + this.getWidth() * 0.5,
         this.getY(),
@@ -119,8 +128,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5);
         break;
-      case(6):
-        // Bottom Left
+      case(DIR_TOPRIGHT):
+        // Arrow points to TOP RIGHT
         triangle(
         this.getX(), 
         this.getY() + this.getHeight() * 0.5, 
@@ -129,8 +138,8 @@ class Note extends GridBlock {
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight());
         break;
-      case(7):
-        // Bottom Right
+      case(DIR_TOPLEFT):
+        // Arrow points to TOP LEFT
         triangle( 
         this.getX() + this.getWidth() * 0.5,
         this.getY() + this.getHeight() * 0.5,

@@ -2,21 +2,13 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-boolean shiftPressed, controlPressed, showHelpText;
+boolean shiftPressed, controlPressed, altPressed, showHelpText;
 Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
 int previousMouseButton;
 
-final int DIR_TOP         = 0;
-final int DIR_BOTTOM      = 1;
-final int DIR_LEFT        = 2;
-final int DIR_RIGHT       = 3;
-final int DIR_TOPLEFT     = 4;
-final int DIR_TOPRIGHT    = 5;
-final int DIR_BOTTOMLEFT  = 6;
-final int DIR_BOTTOMRIGHT = 7;
 
 boolean up = false;
 boolean down = false;
@@ -38,9 +30,10 @@ String[] helpText = {
   "",
   "  Place RED note : Left click", 
   "  Place BLUE note: Right click",
-  "                              or: Shift + Left Click",
-  "  Place MINE : Middle click",
   "                              or: Control + Left Click",
+  "  Place MINE : Middle click",
+  "                              or: Alt + Left Click",
+  "  Delete note: Shift + Left Click",
   "",
   "  SCROLL WHEEL: Scroll Up / Down",
   "",
@@ -71,6 +64,7 @@ void setup(){
   
   shiftPressed = false;
   controlPressed = false;
+  altPressed = false;
   showHelpText = true;
   
   // This needs to be in the main class
@@ -123,14 +117,27 @@ void draw(){
   
 }
 
+void mousePressed(){
+  checkClick();
+}
+
 void mouseDragged(){
+  checkClick();
+}
+
+void mouseReleased(){
   
+}
+
+void checkClick(){
   int type = 0;
   
-  if(mouseButton == LEFT){
-    if(shiftPressed)
+  if(shiftPressed){
+    type = -1;
+  }else if(mouseButton == LEFT){
+    if(controlPressed)
       type = Note.TYPE_BLUE;
-    else if(controlPressed)
+    else if(altPressed)
       type = Note.TYPE_MINE;
     else
       type = Note.TYPE_RED;
@@ -148,10 +155,6 @@ void mouseDragged(){
   }
 }
 
-void mouseReleased(){
-  
-}
-
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   sequencer.scrollY(-e);
@@ -164,6 +167,9 @@ void keyPressed(){
     }
     if (keyCode == CONTROL) {
       controlPressed = true;
+    }
+    if (keyCode == ALT) {
+      altPressed = true;
     }
   }
   
@@ -208,6 +214,9 @@ void keyReleased(){
     if (keyCode == CONTROL) {
       controlPressed = false;
     }
+    if (keyCode == ALT) {
+      altPressed = false;
+    }
   }
   
   switch(key){
@@ -225,22 +234,22 @@ void keyReleased(){
 public int getNewCutDirection(){
   int dir = 8;
   if(up)
-    dir = DIR_TOP;
+    dir = Note.DIR_BOTTOM;
   if(down)
-    dir = DIR_BOTTOM;
+    dir = Note.DIR_TOP;
   if(left)
-    dir = DIR_LEFT;
+    dir = Note.DIR_RIGHT;
   if(right)
-    dir = DIR_RIGHT;
+    dir = Note.DIR_LEFT;
     
   if(up && left)
-    dir = DIR_TOPLEFT;
+    dir = Note.DIR_BOTTOMRIGHT;
   else if(up && right)
-    dir = DIR_TOPRIGHT;
+    dir = Note.DIR_BOTTOMLEFT;
   else if(down && left)
-    dir = DIR_BOTTOMLEFT;
+    dir = Note.DIR_TOPRIGHT;
   else if(down && right)
-    dir = DIR_BOTTOMRIGHT;
+    dir = Note.DIR_TOPLEFT;
 
   return dir; 
 }

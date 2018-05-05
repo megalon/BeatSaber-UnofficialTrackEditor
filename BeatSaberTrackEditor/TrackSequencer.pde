@@ -52,7 +52,6 @@ class TrackSequencer extends GUIElement{
     //multiTracks.add(obstaclesTracks);
   }
   
-  
   public int getTypeFromMouseButton(int mb){
     int type = 0;
     switch(mb){
@@ -66,6 +65,10 @@ class TrackSequencer extends GUIElement{
         type = Note.TYPE_RED;
     }
     return type;
+  }
+  
+  public void checkRemoveNote(int mx, int my){
+    checkClickedTrack(mx, my, -1);
   }
   
   public void checkClickedTrack(int mx, int my, int type){

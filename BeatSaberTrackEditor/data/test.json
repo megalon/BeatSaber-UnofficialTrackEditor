@@ -1,0 +1,68 @@
+{
+  "_noteJumpSpeed": 10,
+  "_obstacles": [],
+  "_shufflePeriod": 0.25,
+  "_beatsPerMinute": 60,
+  "_beatsPerBar": 16,
+  "_notes": [
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 0.125,
+      "_cutDirection": 5
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 1,
+      "_type": 0,
+      "_time": 0.125,
+      "_cutDirection": 7
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 0.125,
+      "_cutDirection": 6
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 3,
+      "_type": 0,
+      "_time": 0.125,
+      "_cutDirection": 4
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 0.5,
+      "_cutDirection": 2
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 1,
+      "_type": 0,
+      "_time": 0.5,
+      "_cutDirection": 3
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 0.5,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 3,
+      "_type": 0,
+      "_time": 0.5,
+      "_cutDirection": 1
+    }
+  ],
+  "_version": "1.5.0",
+  "_shuffle": 0,
+  "_events": []
+}
