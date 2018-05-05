@@ -134,7 +134,9 @@ void mousePressed(){
   // so I have to do this
   previousMouseButton = mouseButton;
   
-  sequencer.setTrackerPosition(mouseY);
+  if(!sequencer.getPlaying()){
+    sequencer.setTrackerPosition(mouseY);
+  }
 }
 
 void mouseReleased(){
