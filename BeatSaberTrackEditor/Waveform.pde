@@ -6,55 +6,70 @@ class Waveform extends GUIElement {
   AudioPlayer soundbis;
   private FloatList sampleAverage; 
   private int border, leftLength, rightLength;
-  private int sampleRate = 0;
+  private int sampleRate = 44100;
+  private float bpm = 90;
   
   // Resolution of the display
-  private int sizeOfAvg   = 300;//29400 ;
+  private float sizeOfAvg = 0;
   private int heightScale = 1;
   
-  // width adjustment for audio display
-  private int widthScale = 300;
+  private int gridSize = 0;
+  
+  // width adjustment for audio display  
+  private int widthScale = 200;
   
   String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
   
   Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim){
     super(parent, x, y, gridSize, gridSize);
     
+    this.gridSize = gridSize;
+    
     this.minim = minim;
     border = 10;
-    
-    loadSoundFile(soundfilePath);
   }
   
   public void loadSoundFile(String path){
     soundfilePath = path;
-    sound = minim.loadSample(soundfilePath, 2048);
+    sound = minim.loadSample(soundfilePath, 1024);
     soundbis = minim.loadFile(soundfilePath);
-    println(soundbis.bufferSize());
-    
+        
     setSampleRate((int)sound.sampleRate());
+    
+    println("Loading sound file: " + path);
     
     resizeDisplay();
   }
   
+  public void setBPM(float bpm){
+    this.bpm = bpm;
+    resizeDisplay();
+  }
+  
+  private void calculateSizeOfAVG(){
+    sizeOfAvg = (this.sampleRate / (this.bpm / 60)) / this.gridSize;
+    println("sizeOfAvg: " + sizeOfAvg);
+  }
+  
   public void resizeDisplay(){
+    calculateSizeOfAVG();
     float[] leftSamples = sound.getChannel(AudioSample.LEFT);
     float[] rightSamples = sound.getChannel(AudioSample.RIGHT);
-    float [] samplesVal = new float[rightSamples.length];
-    for (int i=0; i <rightSamples.length; i++) {
+    float[] samplesVal = new float[rightSamples.length];
+    for (int i = 0; i < rightSamples.length; ++i) {
       samplesVal[i] = leftSamples[i]+ rightSamples[i];
     }
     
     leftLength  = leftSamples.length;
     rightLength = rightSamples.length;
    
-    //2. reduce quantity : get an average from those values each  16 348 samples
+    //2. reduce quantity : get an average from those values
     sampleAverage = new FloatList();
     int average=0;
-    for (int i = 0; i< samplesVal.length; i+=1) {
+    for (int i = 0; i < samplesVal.length; ++i) {
       average += abs(samplesVal[i] * widthScale) ; // sample are low value so we increase the size to see them
       
-      if ( i % sizeOfAvg == 0 && i!=0) { 
+      if ( i % sizeOfAvg == 0) { 
         sampleAverage.append( average / sizeOfAvg);
         average = 0;
       }
@@ -63,6 +78,16 @@ class Waveform extends GUIElement {
   
   public void setSampleRate(int sampleRate){
     this.sampleRate = sampleRate;
+    
+  }
+  
+  // Get number of samples in soundfile
+  public int getNumSamples(){
+    return max(leftLength, rightLength);
+  }
+  
+  public int getLength(){
+    return soundbis.length();
   }
   
   public void play(){
@@ -85,7 +110,7 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -i*heightScale + this.getY(), border*2 + sampleAverage.get(i), -i*heightScale + this.getY());
+          line(border*2, -i + this.getY(), border*2 + sampleAverage.get(i), -i + this.getY());
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);

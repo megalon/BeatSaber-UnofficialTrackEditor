@@ -11,6 +11,10 @@ Install the Minim library
 
 Tools -> Add Tool... -> Libraries tab -> Search for "Minim" -> Select it then click "Install"
 
+Install the G4P library
+
+Tools -> Add Tool... -> Libraries tab -> Search for "G4P" -> Select it then click "Install"
+
 Open BeatSaberTrackEditor.pde
 
 Run the project by clicking the triangular play button. Press the square stop button to end.

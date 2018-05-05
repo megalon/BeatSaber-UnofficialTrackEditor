@@ -8,16 +8,12 @@ class Track extends GUIElement{
   Track(GUIElement parent, int gridSize, int trackSize){
     this.setParent(parent);
     
+    this.gridSize = gridSize;
+    
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));
     this.setWidth(gridSize);
-    this.trackSize = trackSize;
-    this.setY(-this.trackSize * gridSize);     // Move track up 
-    this.setHeight(this.trackSize * gridSize); // Then set the height so it reaches the starting point
-    
-    gridBlocks = new GridBlock[trackSize];
-    
-    this.gridSize = gridSize;
+    this.resizeTrack(trackSize);
     
     for(int i = 1; i < trackSize; ++i){
       if((int)random(5) == 0){
@@ -40,8 +36,8 @@ class Track extends GUIElement{
   }
   
   public void addNote(int gridX, int gridY, int type, int cutDirection){
-    //println("Adding note at grid: " + gridX + ", " + gridY + " type: " + type + " cutDirection: " + cutDirection);
-    //println();
+    println("Adding note at grid: " + gridX + ", " + gridY + " type: " + type + " cutDirection: " + cutDirection);
+    println();
     // Add the note to the correct position in the list, but flip it's Y position so that it displays correctly on the grid
     if(gridY < gridBlocks.length && gridY >= 0)
       gridBlocks[gridY] = new Note(this, gridX, trackSize - gridY - 1, gridSize, type, cutDirection);
@@ -55,6 +51,30 @@ class Track extends GUIElement{
   
   public void removeNote(int gridY){
     gridBlocks[gridY] = null;
+  }
+  
+  public void resizeTrack(int trackSize){
+    if(gridBlocks != null){
+        GridBlock tempGridBlocks[] = new GridBlock[gridBlocks.length];
+        
+        for(int i = 0; i < gridBlocks.length; ++i){
+          tempGridBlocks[i] = gridBlocks[i];
+        }
+        
+        gridBlocks = new GridBlock[trackSize];
+        
+        // Copy all of the data that will fit into the new array
+        for(int i = 0; i < min(tempGridBlocks.length, gridBlocks.length); ++i){
+          gridBlocks[i] = tempGridBlocks[i];
+        }
+    }else{
+      gridBlocks = new GridBlock[trackSize];
+    }
+    
+    this.trackSize = trackSize;
+    this.setY(-this.trackSize * gridSize);     // Move track up 
+    this.setHeight(this.trackSize * gridSize); // Then set the height so it reaches the starting point
+    yStartingPosition = this.getY();
   }
   
   public void display(){

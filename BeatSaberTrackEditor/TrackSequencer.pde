@@ -12,12 +12,14 @@ class TrackSequencer extends GUIElement{
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
   private int startYPosition = 0;
   
+  private float bpm = 90;
+  
   private boolean playing = false;
   
   private int currentType = 0;
   private int currentCutDirection = 8;
   
-  private ArrayList<MultiTrack> multiTracks;
+  public ArrayList<MultiTrack> multiTracks;
   
   TrackSequencer(int x, int y, int w, int h, Minim minim){
     super(x, y, w, h);
@@ -56,6 +58,7 @@ class TrackSequencer extends GUIElement{
         //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
     }
   }
+  
   public void setPlaying(boolean playing){
     
     if(this.playing == playing)
@@ -98,8 +101,38 @@ class TrackSequencer extends GUIElement{
     } 
   }
   
+  public float getBPM(){
+    return this.bpm;
+  }
+  
+  public void setBPM(float bpm){
+    this.bpm = bpm;
+    waveform.setBPM(bpm);
+    
+    int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0));
+    
+    //println("minutes: " + waveform.getLength() / 60000.0);
+    //println("Numbeats:" + numBeats);
+    
+    println("Samples per beat: " + (44100 * 60 / this.getBPM()));
+    
+    int scale = (int)map(29400, 0, 44100, 0, 1);
+    println("Scale: " + (29400.0 / (29400.0 / 30.0)));
+    
+    updateTrackSize(numBeats);
+  }
+  
   public void loadSoundFile(String path){
     waveform.loadSoundFile(path);
+    setBPM(this.bpm);
+  }
+  
+  public void updateTrackSize(int size){
+    for (MultiTrack m : multiTracks){
+      for (Track t : m.tracks){
+        t.resizeTrack(size);
+      }
+    }
   }
   
   public void display(){
@@ -115,10 +148,9 @@ class TrackSequencer extends GUIElement{
     fill(0);
     stroke(0x55000000);
     
-    int gridDisplaySize = 30;
     int gridYPos = 0;
     for(int i = 0; i < 1000; ++i){
-      gridYPos = this.getY() -i * gridDisplaySize;
+      gridYPos = (int)(this.getY() -i * this.gridSize);
       
       if(i % 4 == 0)
         strokeWeight(4);

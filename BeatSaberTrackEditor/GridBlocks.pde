@@ -12,7 +12,7 @@ class GridBlock extends ClickableBox{
   }
 }
 
-// Not gridblock
+// Note gridblock
 class Note extends GridBlock {
   private int type, cutDirection;
   private color redColor = color(#ff0000);
