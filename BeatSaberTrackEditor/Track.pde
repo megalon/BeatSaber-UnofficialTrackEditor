@@ -34,14 +34,14 @@ class Track extends GUIElement{
   }
   
   public void addNoteMouseClick(int mx, int my, int type, int cutDirection){
-    println("startingPosition: " + yStartingPosition);
-    println("getY(): " + this.getY());
+    //println("startingPosition: " + yStartingPosition);
+    //println("getY(): " + this.getY());
     this.addNote(0, cordToGrid(my + yStartingPosition - this.getY()), type, cutDirection);
   }
   
   public void addNote(int gridX, int gridY, int type, int cutDirection){
-    println("Adding note at grid: " + gridX + ", " + gridY + " type: " + type + " cutDirection: " + cutDirection);
-    println();
+    //println("Adding note at grid: " + gridX + ", " + gridY + " type: " + type + " cutDirection: " + cutDirection);
+    //println();
     // Add the note to the correct position in the list, but flip it's Y position so that it displays correctly on the grid
     if(gridY < gridBlocks.length && gridY >= 0)
       gridBlocks[gridY] = new Note(this, gridX, trackSize - gridY - 1, gridSize, type, cutDirection);

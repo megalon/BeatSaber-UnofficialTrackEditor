@@ -64,6 +64,15 @@ class Waveform extends GUIElement {
     this.sampleRate = sampleRate;
   }
   
+  public void play(){
+    soundbis.play();
+  }
+  
+  public void pause(){
+    soundbis.pause();
+    soundbis.rewind();
+  }
+  
   public void display(){
     if(sampleRate != 0){
       if(sound != null){
@@ -75,16 +84,22 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -i + height, border*2 + sampleAverage.get(i), -i + height);
+          line(border*2, -i + this.getY(), border*2 + sampleAverage.get(i), -i + this.getY());
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
           if(prevTime != time){
             prevTime = time;
             //text(round(time), i + border, height-border/2);
-            text(round(time), border/2, height - i - border);
+            text(round(time), border/2, this.getY() - i - border);
           }
         }
+        
+        // Draw the play head (red line moving across)
+        strokeWeight(2);
+        stroke(#ff0000);
+        float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg;
+        line(0, -ypos + this.getY(), width, -ypos + this.getY());
       }else{
         println("Error: Could not display waveform, sound is null!");
       }

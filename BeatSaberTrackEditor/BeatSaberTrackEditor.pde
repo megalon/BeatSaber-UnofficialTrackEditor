@@ -27,6 +27,8 @@ boolean down = false;
 boolean left = false;
 boolean right = false;
 
+boolean playing = false;
+
 int type = 0;
 
 String[] helpText = {
@@ -54,7 +56,7 @@ void setup(){
 
 void draw(){
   // Redraw background
-  background(#AAAAAA);
+  background(#111111);
   
   stroke(0,0,0);
   // Draw help text
@@ -102,6 +104,13 @@ void keyPressed(){
     if (keyCode == SHIFT) {
       shiftPressed = true;
     }
+  }
+  
+  if(key == ' '){
+    if(sequencer.getPlaying())
+      sequencer.setPlaying(false);
+    else
+      sequencer.setPlaying(true);
   }
   
   if(key == 'w'){

@@ -12,6 +12,8 @@ class TrackSequencer extends GUIElement{
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
   private int startYPosition = 0;
   
+  private boolean playing = false;
+  
   private int currentType = 0;
   private int currentCutDirection = 8;
   
@@ -23,36 +25,52 @@ class TrackSequencer extends GUIElement{
     
     this.setFillColor(color(#111111));
     
-    waveform = new Waveform(this, this.getX(), this.getY(), gridSize, minim);
+    waveform = new Waveform(this, 0, 0, gridSize, minim);
     
-    eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, trackSize, "Events");
+    //eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, trackSize, "Events");
     bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Bottom Notes");
     middleTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Middle Notes");
     topTracks       = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Top Notes");
-    obstaclesTracks = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Obstacles");
+    //obstaclesTracks = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Obstacles");
     
     // Move the track groups
-    eventsTracks.setX(   (tracksXOffset + trackGroupSpacing));
+    //eventsTracks.setX(   (tracksXOffset + trackGroupSpacing));
     bottomTracks.setX(   (tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 2) + trackGroupSpacing * 2);
     middleTracks.setX(   (tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 3) + trackGroupSpacing * 3);
     topTracks.setX(      (tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 4) + trackGroupSpacing * 4);
-    obstaclesTracks.setX((tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 5) + trackGroupSpacing * 5);
+    //obstaclesTracks.setX((tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 5) + trackGroupSpacing * 5);
     
     multiTracks = new ArrayList<MultiTrack>();
     
-    multiTracks.add(eventsTracks);
+    //multiTracks.add(eventsTracks);
     multiTracks.add(bottomTracks);
     multiTracks.add(middleTracks);
     multiTracks.add(topTracks);
-    multiTracks.add(obstaclesTracks);
+    //multiTracks.add(obstaclesTracks);
   }
   
   public void checkClickedTrack(int mx, int my, int mb){
-    println("Checking track click at:" + mx + " " + my);
+    //println("Checking track click at:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
         m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
         //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
     }
+  }
+  public void setPlaying(boolean playing){
+    
+    if(this.playing == playing)
+      return;
+     
+    this.playing = playing;
+    
+    if(playing)
+      waveform.play();
+    else
+      waveform.pause();
+  }
+  
+  public boolean getPlaying(){
+    return playing;
   }
   
   public void setType(int type){
