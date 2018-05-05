@@ -98,6 +98,10 @@ class TrackSequencer extends GUIElement{
     } 
   }
   
+  public void loadSoundFile(String path){
+    waveform.loadSoundFile(path);
+  }
+  
   public void display(){
     
     //eventsTracks.display();

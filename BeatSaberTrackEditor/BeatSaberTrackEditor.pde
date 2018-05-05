@@ -29,14 +29,28 @@ boolean right = false;
 
 boolean playing = false;
 
+String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
+
 int type = 0;
 
 String[] helpText = {
-  "  Help text WIP",
-  "  Esc: Exit",
+  "  SPACE:        Play / Stop", 
+  "  LEFT CLICK:   Place notes",
+  "  RIGHT CLICK:  Delete notes",
+  "  Number key 1: RED",
+  "  Number key 2: BLUE",
+  "  Number key 3: MINE",
   "",
-  "Hide / Show",
-  "  Tab: This guide"};
+  "  Directional arrows:",
+  "  W: Up",
+  "  S: Down",
+  "  A: Left",
+  "  D: Right",
+  "",
+  "  Tab: Hide / show guide",
+  "",
+  "  To exit, click the square stop button",
+  "  in processing."};
 
 void setup(){
   size(1280, 720);
@@ -52,26 +66,13 @@ void setup(){
   
   int seqOffsetY = 200;
   sequencer = new TrackSequencer(0, height, width, -height, minim);
+  
+  sequencer.loadSoundFile(soundfilePath);
 }
 
 void draw(){
   // Redraw background
   background(#111111);
-  
-  stroke(0,0,0);
-  // Draw help text
-  if(showHelpText){
-    textSize(12);
-    fill(0);
-    text("GUIDE", 10, 15);
-    
-    int helpIndex = 0;
-    int helpIndexSpacing = 20;
-    for(String s : helpText){
-      ++helpIndex;
-      text(s, 10, 15 + helpIndex * helpIndexSpacing);
-    }
-  }
   
   sequencer.setCutDirection(getNewCutDirection());
   sequencer.setType(type);
@@ -81,6 +82,26 @@ void draw(){
   fill(0);
   stroke(0);
   rect(0, 0, width, 50);
+  
+  stroke(0,0,0);
+  // Draw help text
+  if(showHelpText){
+    
+    int helpboxX = width - 250;
+    
+    rect(helpboxX, 0, 250, height);
+    
+    textSize(12);
+    fill(#ffffff);
+    text("GUIDE", helpboxX + 10, 15);
+    
+    int helpIndex = 0;
+    int helpIndexSpacing = 20;
+    for(String s : helpText){
+      ++helpIndex;
+      text(s, helpboxX + 10, 15 + helpIndex * helpIndexSpacing);
+    }
+  }
 }
 
 void mousePressed(){

@@ -29,7 +29,7 @@ class MultiTrack extends GUIElement{
     for (Track t : tracks){
       //println("TrackPosition: " + t.getX() + " " + t.getY());
       if(t.checkClicked(mx, my)){
-        println("Track clicked!");
+        //println("Track clicked!");
         if(mb == LEFT)
           t.addNoteMouseClick(mx, my, type, cutDirection);
         else
