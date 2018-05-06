@@ -4,9 +4,11 @@
 
 There are a couple of critical bugs involving loading saved tracks, and tracks that are over 5 minutes.
 
+![Example image](https://i.imgur.com/P3jDnxv.png)
+
 To run:
 
-### Grab the latest binary from the Releases tab
+## Grab the latest binary from the Releases tab
 
 or 
 
