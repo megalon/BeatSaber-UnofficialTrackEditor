@@ -4,7 +4,7 @@
 
 There are a couple of critical bugs involving loading saved tracks, and tracks that are over 5 minutes.
 
-![Example image](https://i.imgur.com/P3jDnxv.png)
+![Example image](https://i.imgur.com/sGG9i2A.png)
 
 To run:
 
