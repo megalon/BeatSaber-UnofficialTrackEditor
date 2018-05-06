@@ -110,6 +110,14 @@ class TrackSequencer extends GUIElement{
     return currentCutDirection;
   }
   
+  public int getGridSize(){
+    return gridSize;
+  }
+  
+  public int timeToGrid(float time){
+    return (int)(time * (gridSize / (beatsPerBar/2)));
+  }
+  
   public void scrollY(float scroll){
     if(scroll > 0){
       this.setY((int)(this.getY() + scroll * gridSize));

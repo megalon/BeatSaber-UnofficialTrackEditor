@@ -77,6 +77,10 @@ class Track extends GUIElement{
     yStartingPosition = this.getY();
   }
   
+  public int getTrackSize(){
+    return this.trackSize;
+  }
+  
   public void display(){
     super.display();    
     

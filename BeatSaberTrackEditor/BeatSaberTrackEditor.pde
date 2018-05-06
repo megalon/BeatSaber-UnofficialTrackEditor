@@ -157,7 +157,11 @@ void checkClick(){
 
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
-  sequencer.scrollY(-e);
+  if(shiftPressed){
+    sequencer.scrollY(-e * 10);
+  }else{
+    sequencer.scrollY(-e);
+  }
 }
 
 void keyPressed(){
@@ -305,6 +309,12 @@ public void handleFileDialog(GButton button) {
     fname = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
     lblFile.setText(fname);
     sequencer.loadSoundFile(fname);
+  }
+  // File output selection
+  else if (button == btnInput) {
+    fname = G4P.selectInput("Input Dialog");
+    lblFile.setText(fname);
+    jsonManager.loadTrack(fname);
   }
   // File output selection
   else if (button == btnOutput) {
