@@ -2,6 +2,8 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
+String versionText = "v0.0.6";
+
 boolean shiftPressed, controlPressed, altPressed, showHelpText;
 Minim minim;
 TrackSequencer sequencer;
@@ -147,7 +149,7 @@ void draw(){
   
   textSize(12);
   fill(#ffffff);
-  text("TAB: Hide / Show guide", width - 150 , height - 10);
+  text(" TAB: Hide / Show guide   " + versionText, width - 175 , height - 10);
 }
 
 void mousePressed(){
