@@ -14,6 +14,7 @@ class TrackSequencer extends GUIElement{
   private Waveform waveform;
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
   private int startYPosition = 0;
+  private int amountScrolled = 0;
   private boolean snapToggle = true;
   private String clickPath = "data\\noteClickSFX.wav";
   
@@ -199,6 +200,11 @@ class TrackSequencer extends GUIElement{
     
     waveform.display();
     
+    if(playing){
+      if(!waveform.getPlaying())
+        playing = false;
+    }
+    
     // Scroll if the tracker is off screen
     if(playing){
       if(height - waveform.getTrackerPosition() + (this.getY()+this.getHeight()) < 0){
@@ -212,8 +218,10 @@ class TrackSequencer extends GUIElement{
     stroke(0x55000000);
     
     int gridYPos = 0;
-    for(int i = 0; i < 10; ++i){
-      gridYPos = (int)(this.getY() -i * this.gridSize) - 200;
+    
+    for(int i = 0; i < 5000; ++i){
+      //gridYPos = (int)((startYPosition + (this.getY() % height )) -i * this.gridSize - 200);
+      gridYPos = (int)(this.getY() -i * this.gridSize);
       
       if(i % 8 == 0)
         strokeWeight(4);
@@ -222,6 +230,15 @@ class TrackSequencer extends GUIElement{
       else
         strokeWeight(1);
       line(0, gridYPos, width, gridYPos);
+    }
+    
+    if(!snapToggle){
+      noFill();
+      stroke(#ffffff);
+      float gridHalf = gridSize/2;
+      line(0, mouseY+gridHalf, width, mouseY+gridHalf);
+      line(0, mouseY-gridHalf, width, mouseY-gridHalf);
+      
     }
   }
 }

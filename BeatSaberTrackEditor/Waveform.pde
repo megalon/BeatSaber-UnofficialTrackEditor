@@ -125,6 +125,10 @@ class Waveform extends GUIElement {
     soundbis.rewind();
   }
   
+  public boolean getPlaying(){
+    return soundbis.isPlaying();
+  }
+  
   public void setPosition(int gridPos){
     //float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg * beatsPerBar;
     //soundbis.skip();
@@ -174,7 +178,8 @@ class Waveform extends GUIElement {
       if(sound != null){
         fill(190);
         stroke(#ffffff);
-        strokeWeight(1);
+        strokeCap(SQUARE);
+        strokeWeight(beatsPerBar);
         
         // Draw the waveform display and the time. Time is currently showing each second
         float prevTime = -1;
@@ -191,6 +196,8 @@ class Waveform extends GUIElement {
           }
         }
         
+        strokeWeight(1);
+        line(border*2, this.getY(), border*2, -(sampleAverage.size() * beatsPerBar) + this.getY());
         // Draw the play head (red line moving across)
         strokeWeight(2);
         stroke(#ff0000);

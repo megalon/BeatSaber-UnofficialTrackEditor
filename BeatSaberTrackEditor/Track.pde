@@ -28,12 +28,15 @@ class Track extends GUIElement{
   public float mouseCordToTime(int cordY){
     float cy = (float)cordY;
     float gridScale = (gridSize * beatsPerBar);
-    float val = (cy / gridScale);
+    float val = 0;
     if(snapToGrid){
+      val = ((cy) / gridScale);
       if(trackDebug) println("before snap time: " + val);
       int temp = floor(val * beatsPerBar);
       val = ((float)temp) / beatsPerBar;
       if(trackDebug) println("after snap time: " + val);
+    }else{
+      val = ((cy - gridSize/2) / gridScale);
     }
     if(trackDebug) println("mouseCordToTime. cord: " + cordY + " = time: " + val);
     
@@ -62,7 +65,7 @@ class Track extends GUIElement{
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
     
-    float x = mouseCordToTime(height - my + yStartingPosition - this.getY());
+    float x = mouseCordToTime(height - my - (yStartingPosition - this.getY()));
     
     if(trackDebug) println("mouseCordToTime: " + x);
     this.addNote(x, type, cutDirection);
@@ -78,12 +81,11 @@ class Track extends GUIElement{
     
     gridBlocks.put(time, n);
     
-    
     if(trackDebug) println("gridBlocks.size(): " + gridBlocks.size());
   }
   
   public void removeNoteMouseClick(int mx, int my){
-    this.removeNote(mouseCordToTime(height - my + yStartingPosition - this.getY()));
+    this.removeNote(mouseCordToTime(height - my - (yStartingPosition - this.getY())));
   }
   
   public void removeNote(float time){
