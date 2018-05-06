@@ -1,8 +1,10 @@
 # Beat Saber Unofficial Track Editor
 
-## This project is EXPERIMENTAL and currently non functional.
+## This project is EXPERIMENTAL but currently semi-functional!
 
 To run:
+
+Grab the latest binary from the Releases tab, or to build it yourself:
 
 Download Processing 3.3.7
 https://processing.org/download/
@@ -21,11 +23,11 @@ Run the project by clicking the triangular play button. Press the square stop bu
 
 ## Currently working on:
 
-Loading saved tracks.
+View following the play tracker.
+
+Making the GUI look better.
 
 ## Next steps:
-
-Make the GUI look nicer.
 
 Support triplets / arbitrary positions
 
