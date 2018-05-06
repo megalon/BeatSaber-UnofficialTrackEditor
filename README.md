@@ -2,9 +2,17 @@
 
 ## This project is EXPERIMENTAL but currently semi-functional!
 
+There are a couple of critical bugs involving loading saved tracks, and tracks that are over 5 minutes.
+
+![Example image](https://i.imgur.com/P3jDnxv.png)
+
 To run:
 
-Grab the latest binary from the Releases tab, or to build it yourself:
+## Grab the latest binary from the Releases tab
+
+or 
+
+## Build it yourself:
 
 Download Processing 3.3.7
 https://processing.org/download/
@@ -23,6 +31,8 @@ Run the project by clicking the triangular play button. Press the square stop bu
 
 ## Currently working on:
 
+Bugfixes and changing the data structure to allow longer songs to be loaded.
+
 View following the play tracker.
 
 Making the GUI look better.
@@ -32,3 +42,5 @@ Making the GUI look better.
 Support triplets / arbitrary positions
 
 Support obstacles
+
+Support events
