@@ -175,6 +175,26 @@ void keyPressed(){
     }
   }
   
+  if (keyCode == UP){
+    if(shiftPressed){
+      sequencer.scrollY(10);
+    }else{
+      sequencer.scrollY(1);
+    }
+  }
+  
+  if (keyCode == DOWN && sequencer.getY() >= 0){
+    if (controlPressed){
+      sequencer.resetView();
+    }else{
+      if(shiftPressed && sequencer.getY() >= 10){
+        sequencer.scrollY(-10);  
+      }else{
+        sequencer.scrollY(-1);
+      }
+    }
+  }
+
   if(key == ' '){
     if(shiftPressed){
       sequencer.stop();
