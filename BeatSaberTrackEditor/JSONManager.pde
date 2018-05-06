@@ -48,9 +48,6 @@ class JSONManager{
     JSONObject tempNote = notes.getJSONObject(notes.size() - 1);
     float songLength = tempNote.getFloat("_time");
     
-    // Update the size of the tracks to fit the song being loaded (plus padding)
-    seq.updateTrackSize(seq.timeToGrid(songLength) + 1);
-    
     int gridY;
     for(int n = 0; n < notes.size(); ++n){
       currentNote = notes.getJSONObject(n);
@@ -74,7 +71,7 @@ class JSONManager{
       
       println("note " + n + " gridY : " + gridY);
       
-      t.gridBlocks[gridY] = new Note(t, 0, (t.gridBlocks.length - 1) - gridY, seq.getGridSize(), currentType, currentCutDirection);
+      t.addNote(currentTime, currentType, currentCutDirection);
     }
   }
   
@@ -116,17 +113,19 @@ class JSONManager{
     int trackCount = 0;
     int multiCount = 0;
     int noteCount = 0;
-    int trackSize = seq.multiTracks.get(0).tracks.get(0).trackSize;
-    for(int i = 0; i < trackSize; ++i){
-      multiCount = 0;
-      for(MultiTrack m : seq.multiTracks){
-        trackCount = 0;
-        for(Track t : m.tracks){
-          Note block = (Note)t.gridBlocks[i];
+    multiCount = 0;
+    Note n = null;
+    for(MultiTrack m : seq.multiTracks){
+      trackCount = 0;
+      for(Track t : m.tracks){
+        
+        // Iterate through all gridblocks in hashmap
+        for (Float f: t.gridBlocks.keySet()) {
+          Note block = (Note)t.gridBlocks.get(f);
           if(block != null){
             JSONObject note = new JSONObject();
             
-            note.setFloat("_time", (float)(trackSize - block.getGridY()) / seq.beatsPerBar);
+            note.setFloat("_time", block.getTime());
             note.setInt("_lineIndex", trackCount);
             note.setInt("_lineLayer", multiCount);
             note.setInt("_type", block.getType());
@@ -138,6 +137,7 @@ class JSONManager{
           ++trackCount;
         }
         ++multiCount;
+        
       }
     }
   }

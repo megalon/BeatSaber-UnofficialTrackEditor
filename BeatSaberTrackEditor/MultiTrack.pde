@@ -6,14 +6,14 @@ class MultiTrack extends GUIElement{
   
   public ArrayList<Track> tracks;
   
-  MultiTrack(GUIElement parent, int numTracks, int gridSize, int trackSize, String name){
+  MultiTrack(GUIElement parent, int numTracks, int gridSize, int beatsPerBar, String name){
     this.setParent(parent);
     this.setElementName(name);
     
     tracks = new ArrayList<Track>();
     
     for(int i = 0; i < numTracks; ++i){
-      Track t = new Track(this, gridSize, trackSize);
+      Track t = new Track(this, gridSize, beatsPerBar);
       t.setX(gridSize * i);
       tracks.add(t);
     }
@@ -35,6 +35,12 @@ class MultiTrack extends GUIElement{
         else
           t.addNoteMouseClick(mx, my, type, cutDirection);
       }
+    }
+  }
+  
+  public void setBPM(float bpm){
+    for(Track t : tracks){
+      t.setBPM(bpm);
     }
   }
   

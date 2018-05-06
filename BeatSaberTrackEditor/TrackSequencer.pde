@@ -2,6 +2,9 @@
 
 class TrackSequencer extends GUIElement{
   
+  Minim minim; 
+  AudioSample sound; 
+  AudioPlayer soundbis;
   private int gridSize = 30;
   private int trackSize = 100;
   private int numtracksPerMulti = 4;
@@ -11,6 +14,9 @@ class TrackSequencer extends GUIElement{
   private Waveform waveform;
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
   private int startYPosition = 0;
+  private int amountScrolled = 0;
+  private boolean snapToggle = true;
+  private String clickPath = "data\\noteClickSFX.wav";
   
   private float bpm = 90;
   
@@ -31,9 +37,9 @@ class TrackSequencer extends GUIElement{
     waveform = new Waveform(this, 0, 0, gridSize, minim);
     
     //eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, trackSize, "Events");
-    bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Bottom Notes");
-    middleTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Middle Notes");
-    topTracks       = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Top Notes");
+    bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, beatsPerBar, "Bottom Notes");
+    middleTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, beatsPerBar, "Middle Notes");
+    topTracks       = new MultiTrack(this, numtracksPerMulti, gridSize, beatsPerBar, "Top Notes");
     //obstaclesTracks = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Obstacles");
     
     // Move the track groups
@@ -50,6 +56,11 @@ class TrackSequencer extends GUIElement{
     multiTracks.add(middleTracks);
     multiTracks.add(topTracks);
     //multiTracks.add(obstaclesTracks);
+    
+  
+    sound = minim.loadSample(clickPath, 1024);
+    soundbis = minim.loadFile(clickPath);
+    
   }
   
   public int getTypeFromMouseButton(int mb){
@@ -139,29 +150,22 @@ class TrackSequencer extends GUIElement{
     this.bpm = bpm;
     waveform.setBPM(bpm);
     
-    int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0)) * beatsPerBar;
+    for(MultiTrack mt : multiTracks){
+      mt.setBPM(bpm);
+    }
+    
+    waveform.setBeatsPerBar(beatsPerBar);
+    
+    //int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0)) * beatsPerBar;
     
     //println("minutes: " + waveform.getLength() / 60000.0);
     //println("Numbeats:" + numBeats);
-    
-    println("Samples per beat: " + (44100 * 60 / this.getBPM()));
-    
-    updateTrackSize(numBeats);
-    waveform.setBeatsPerBar(beatsPerBar);
+    //println("Samples per beat: " + (44100 * 60 / this.getBPM()));
   }
   
   public void loadSoundFile(String path){
     waveform.loadSoundFile(path);
     setBPM(this.bpm);
-  }
-  
-  public void updateTrackSize(int size){
-    for (MultiTrack m : multiTracks){
-      for (Track t : m.tracks){
-        t.resizeTrack(size);
-      }
-    }
-    this.trackSize = size;
   }
   
   public int getTrackSize(){
@@ -170,6 +174,19 @@ class TrackSequencer extends GUIElement{
   
   public void setTrackerPosition(int pos){
     waveform.setTrackerPosition((this.getY()) - pos); 
+  }
+  
+  public boolean getSnapToggle(){
+    return snapToggle;
+  }
+  
+  public void setSnapToggle(boolean snap){
+    snapToggle = snap;
+    for(MultiTrack m : multiTracks){
+      for(Track t : m.tracks){
+        t.setSnapToGrid(snap);
+      }
+    }
   }
   
   public void display(){
@@ -183,11 +200,27 @@ class TrackSequencer extends GUIElement{
     
     waveform.display();
     
+    if(playing){
+      if(!waveform.getPlaying())
+        playing = false;
+    }
+    
+    // Scroll if the tracker is off screen
+    if(playing){
+      if(height - waveform.getTrackerPosition() + (this.getY()+this.getHeight()) < 0){
+        this.setY(this.getY() + height);
+      }else if(waveform.getTrackerPosition() < (this.getY()+this.getHeight())){
+        this.setY(this.getY() - height);
+      }
+    }
+    
     fill(0);
     stroke(0x55000000);
     
     int gridYPos = 0;
-    for(int i = 0; i < this.trackSize + 1; ++i){
+    
+    for(int i = 0; i < 5000; ++i){
+      //gridYPos = (int)((startYPosition + (this.getY() % height )) -i * this.gridSize - 200);
       gridYPos = (int)(this.getY() -i * this.gridSize);
       
       if(i % 8 == 0)
@@ -197,6 +230,15 @@ class TrackSequencer extends GUIElement{
       else
         strokeWeight(1);
       line(0, gridYPos, width, gridYPos);
+    }
+    
+    if(!snapToggle){
+      noFill();
+      stroke(#ffffff);
+      float gridHalf = gridSize/2;
+      line(0, mouseY+gridHalf, width, mouseY+gridHalf);
+      line(0, mouseY-gridHalf, width, mouseY-gridHalf);
+      
     }
   }
 }

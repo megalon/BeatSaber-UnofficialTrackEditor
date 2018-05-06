@@ -2,22 +2,25 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-boolean shiftPressed, controlPressed, altPressed, showHelpText;
+String versionText = "v0.0.7";
+
 Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
 int previousMouseButton;
 
-
+// Keypresses
 boolean up = false;
 boolean down = false;
 boolean left = false;
 boolean right = false;
+boolean shiftPressed, controlPressed, altPressed, snapToggle;
+boolean showHelpText;
 
 boolean playing = false;
 
-String soundfilePath = "data\\60BPM_Stereo_ClickTrack.wav";
+String soundfilePath = "data\\120BPM_short-clicktrack.wav";
 float bpm = 60;
 
 int type = 0;
@@ -41,6 +44,7 @@ String[] controlsText = {
   "      Place BLUE note: Right click     or     Control + Left Click",
   "      Place MINE : Middle click     or     Alt + Left Click",
   "      Delete note: Shift + Left Click",
+  "      Grid snap off: G",
   "",
   "  Direction arrows: ",
   "  Click while holding down a key:",
@@ -101,6 +105,7 @@ void resetKeys(){
   altPressed = false;
   controlPressed = false;
   shiftPressed = false;
+  snapToggle = false;
 }
 
 void draw(){
@@ -147,7 +152,7 @@ void draw(){
   
   textSize(12);
   fill(#ffffff);
-  text("TAB: Hide / Show guide", width - 150 , height - 10);
+  text(" TAB: Hide / Show guide   " + versionText, width - 175 , height - 10);
 }
 
 void mousePressed(){
@@ -241,6 +246,17 @@ void keyPressed(){
     }
   }
   
+  if(key == 'g'){
+    if(!snapToggle){
+      if(sequencer.getSnapToggle()){
+        sequencer.setSnapToggle(false);
+      }else{
+        sequencer.setSnapToggle(true);
+      }
+      snapToggle = true;
+    }
+  }
+  
   if(key == 'w'){
     up = true;
   }if(key == 's'){
@@ -262,6 +278,10 @@ void keyReleased(){
     left = false;
   }if(key == 'd'){
     right = false;
+  }
+  
+  if(key == 'g'){
+    snapToggle = false;
   }
   
   if (key == CODED) {

@@ -4,7 +4,7 @@
 class GridBlock extends ClickableBox{
   
   GridBlock(GUIElement parent, int gridX, int gridY, int gridSize){
-    super(parent, gridX * gridSize, gridY * gridSize, gridSize); 
+    super(parent, gridX, gridY, gridSize); 
   }
   
   public void display(){
@@ -33,14 +33,13 @@ class Note extends GridBlock {
   private color blueColor = color(#0000ff);
   private color mineColor = color(#727272);
   private PImage mineImage = loadImage("data\\mine.png");
-  private int gridX, gridY;
+  private float time;
   
-  Note(GUIElement parent, int gridX, int gridY, int gridSize, int type, int cutDirection){
-    super(parent, gridX, gridY, gridSize);
+  Note(GUIElement parent, int yPos, int gridSize, int type, int cutDirection, float time){
+    super(parent, 0, yPos, gridSize);
     this.type = type;
     this.cutDirection = cutDirection;
-    this.gridX = gridX;
-    this.gridY = gridY;
+    this.time = time;
     
     switch(type){
       case(0): this.unSelectedColor = redColor;
@@ -53,8 +52,8 @@ class Note extends GridBlock {
     }
   }
   
-  public int getGridY(){
-    return gridY;
+  public float getTime(){
+    return time;
   }
   
   public int getType(){
