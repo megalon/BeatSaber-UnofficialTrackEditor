@@ -118,6 +118,10 @@ class TrackSequencer extends GUIElement{
     return (int)(time * (gridSize / (beatsPerBar/2)));
   }
   
+  public void resetView(){
+    this.setY(startYPosition);
+  }
+  
   public void scrollY(float scroll){
     if(scroll > 0){
       this.setY((int)(this.getY() + scroll * gridSize));
