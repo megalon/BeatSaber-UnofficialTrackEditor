@@ -170,6 +170,7 @@ class TrackSequencer extends GUIElement{
   
   public void display(){
     
+    strokeWeight(2);
     //eventsTracks.display();
     bottomTracks.display();
     middleTracks.display();
@@ -182,7 +183,7 @@ class TrackSequencer extends GUIElement{
     stroke(0x55000000);
     
     int gridYPos = 0;
-    for(int i = 0; i < 1000; ++i){
+    for(int i = 0; i < this.trackSize + 1; ++i){
       gridYPos = (int)(this.getY() -i * this.gridSize);
       
       if(i % 8 == 0)

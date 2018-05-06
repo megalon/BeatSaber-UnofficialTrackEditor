@@ -100,7 +100,13 @@ class JSONManager{
     json.setJSONArray("_notes", notes);
     json.setJSONArray("_obstacles", obstacles);
     
-    saveJSONObject(json, filename + ".json");
+    
+    int outFileLen = outputFile.length();
+    if(outFileLen < 5 || !this.outputFile.substring(outFileLen - 5, outFileLen).equals(".json")){
+      this.outputFile = this.outputFile + ".json";
+    }
+    
+    saveJSONObject(json, filename);
   }
   
   

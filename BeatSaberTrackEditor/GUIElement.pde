@@ -112,6 +112,7 @@ class GUIElement{
   public void display(){
     fill(fillColor);
     stroke(strokeColor);
+    strokeWeight(1);
     rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
   }
 }

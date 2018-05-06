@@ -36,6 +36,7 @@ String[] helpText = {
   "  Delete note: Shift + Left Click",
   "",
   "  SCROLL WHEEL: Scroll Up / Down",
+  "  SHIFT + SCROLL WHEEL: Scroll faster",
   "",
   "  Directional arrows:",
   "  W: Up",
@@ -95,9 +96,6 @@ void draw(){
   
   fill(0);
   stroke(0);
-  rect(0, 0, width, 50);
-  
-  stroke(0,0,0);
   // Draw help text
   if(showHelpText){
     
