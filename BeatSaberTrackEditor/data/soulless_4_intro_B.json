@@ -1,0 +1,460 @@
+{
+  "_noteJumpSpeed": 10,
+  "_obstacles": [],
+  "_shufflePeriod": 0.25,
+  "_beatsPerMinute": 125,
+  "_beatsPerBar": 16,
+  "_notes": [
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 8.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 9.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 9.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 10.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 10.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 11.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 11.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 12.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 12.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 13.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 13.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 14.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 14.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 15.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 15.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 16.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 16.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 17.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 17.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 18.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 18.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 19.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 19.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 20.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 20.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 21.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 21.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 22.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 22.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 23.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 23.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 24.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 24.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 25.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 25.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 26.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 26.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 27.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 27.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 28.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 28.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 29.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 29.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 30.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 30.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 31.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 31.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 1,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 32.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 32.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 33.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 33.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 34.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 34.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 35.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 35.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 36.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 36.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 37.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 37.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 38.125,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 3,
+      "_type": 1,
+      "_time": 38.625,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 2,
+      "_type": 0,
+      "_time": 39.125,
+      "_cutDirection": 0
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 1,
+      "_type": 1,
+      "_time": 39.625,
+      "_cutDirection": 1
+    },
+    {
+      "_lineLayer": 0,
+      "_lineIndex": 0,
+      "_type": 0,
+      "_time": 40.125,
+      "_cutDirection": 1
+    }
+  ],
+  "_version": "1.5.0",
+  "_shuffle": 0,
+  "_events": []
+}

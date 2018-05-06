@@ -24,32 +24,38 @@ int type = 0;
     
 int helpboxX, helpboxY, helpboxSize;
 
-String[] helpText = {
+String[] instructionsText = { 
+  "  1. Load an audio file using the LOAD AUDIO button",
+  "  2. Set the BPM using the BPM textbox",
+  "  3. Start editing, or load a track json file with LOAD TRACK",
+  "  4. Save the track file with SAVE TRACK when finished",
+  "",
+};
+
+String[] controlsText = { 
   "  SPACE:                 Play / Pause",
   "  SHIFT+SPACE:  Jump to start",
   "",
-  "  Place RED note : Left click", 
-  "  Place BLUE note: Right click",
-  "                              or: Control + Left Click",
-  "  Place MINE : Middle click",
-  "                              or: Alt + Left Click",
-  "  Delete note: Shift + Left Click",
+  "  Notes:", 
+  "      Place RED note : Left click", 
+  "      Place BLUE note: Right click     or     Control + Left Click",
+  "      Place MINE : Middle click     or     Alt + Left Click",
+  "      Delete note: Shift + Left Click",
   "",
-  "  SCROLL WHEEL: Scroll Up / Down",
-  "  SHIFT + SCROLL WHEEL: Scroll faster",
-  "",
-  "  Directional arrows:",
-  "  W: Up",
-  "  S: Down",
-  "  A: Left",
-  "  D: Right",
+  "  Direction arrows: ",
+  "  Click while holding down a key:",
+  "          W: Up",
+  "          S: Down",
+  "          A: Left",
+  "          D: Right",
   "  For diagonals, combine buttons.",
-  "  W+A = UP LEFT, W+D = UP RIGHT, etc",
+  "      W+A = UP LEFT, W+D = UP RIGHT, etc",
   "",
-  "  Tab: Hide / show guide",
-  "",
-  "  To exit, click the square stop button",
-  "  in processing."};
+  "  Scrolling: ",
+  "      SCROLL WHEEL     or     UP / DOWN arrow keys",
+  "      Hold SHIFT to scroll faster",
+  ""
+};
 
 GTextField bpmTextField;
 
@@ -81,7 +87,7 @@ void setup(){
   
   helpboxSize = 350;
   helpboxX = width - 350;
-  helpboxY = 150;
+  helpboxY = 120;
   
   createFileSystemGUI(width - 350, 0, 350, 130, 6);
 }
@@ -96,23 +102,37 @@ void draw(){
   
   fill(0);
   stroke(0);
+  
   // Draw help text
   if(showHelpText){
     
+    fill(#000000);
     rect(helpboxX, 0, helpboxSize, height);
     
-    textSize(12);
     fill(#ffffff);
-    text("GUIDE", helpboxX + 10, 15);
+    textSize(18);
+    text("INSTRUCTIONS", helpboxX + 10, helpboxY + 28);
     
-    int helpIndex = 0;
+    textSize(12);
+    int textIndex = 0;
     int helpIndexSpacing = 20;
-    for(String s : helpText){
-      ++helpIndex;
-      text(s, helpboxX + 10, helpboxY + 15 + helpIndex * helpIndexSpacing);
+    for(String s : instructionsText){
+      ++textIndex;
+      text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
+    }
+    
+    textSize(18);
+    text("CONTROLS", helpboxX + 10, helpboxY + textIndex + 28);
+    textSize(12);
+    for(String s : controlsText){
+      ++textIndex;
+      text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
     }
   }
   
+  textSize(12);
+  fill(#ffffff);
+  text("TAB: Hide / Show guide", width - 150 , height - 10);
 }
 
 void mousePressed(){
