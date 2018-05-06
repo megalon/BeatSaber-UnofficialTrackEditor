@@ -14,6 +14,7 @@ class GridBlock extends ClickableBox{
 
 // Note gridblock
 class Note extends GridBlock {
+
   public static final int TYPE_RED  = 0;
   public static final int TYPE_BLUE = 1;
   public static final int TYPE_MINE = 3;
@@ -31,8 +32,8 @@ class Note extends GridBlock {
   private color redColor = color(#ff0000);
   private color blueColor = color(#0000ff);
   private color mineColor = color(#727272);
+  private PImage mineImage = loadImage("data\\mine.png");
   private int gridX, gridY;
-  
   
   Note(GUIElement parent, int gridX, int gridY, int gridSize, int type, int cutDirection){
     super(parent, gridX, gridY, gridSize);
@@ -64,13 +65,16 @@ class Note extends GridBlock {
     return cutDirection;
   }
   
-  
   public void display(){
     super.display();
     
     fill(#FFFFFF);
     noStroke();
-    switch(cutDirection){
+    // Purely visual, the cut direction is still set in the json.
+    if (this.getType() == 3){
+      image(mineImage, this.getX(), this.getY());
+    }else{
+      switch(cutDirection){
       case(DIR_BOTTOM):
         // Arrow points DOWN
         triangle(
@@ -155,6 +159,7 @@ class Note extends GridBlock {
         // Circle
         ellipse(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, this.getWidth() * 0.5, this.getHeight() * 0.5);
         break;
+      }
     }
   }
 }
