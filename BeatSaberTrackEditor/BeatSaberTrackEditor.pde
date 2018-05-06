@@ -92,7 +92,21 @@ void setup(){
   createFileSystemGUI(width - 350, 0, 350, 130, 6);
 }
 
+void resetKeys(){
+  up = false;
+  down = false;
+  left = false;
+  right = false;
+  
+  altPressed = false;
+  controlPressed = false;
+  shiftPressed = false;
+}
+
 void draw(){
+  if (!focused){
+    resetKeys();
+  }
   // Redraw background
   background(#111111);
   

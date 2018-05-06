@@ -30,6 +30,7 @@ class Note extends GridBlock {
   private int type, cutDirection;
   private color redColor = color(#ff0000);
   private color blueColor = color(#0000ff);
+  private color mineColor = color(#727272);
   private int gridX, gridY;
   
   
@@ -44,6 +45,8 @@ class Note extends GridBlock {
       case(0): this.unSelectedColor = redColor;
         break;
       case(1): this.unSelectedColor = blueColor;
+        break;
+      case(3): this.unSelectedColor = mineColor;
         break;
       default: println("Error! Invalid type" + type + " for gridblock " + this + " !!");
     }
