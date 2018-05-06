@@ -143,6 +143,16 @@ class Waveform extends GUIElement {
     soundbis.skip((int)pixels2SoundPosition(pos));
   }
   
+  // Returns current position in the song in ms
+  public int getSongPosition(){
+    return soundbis.position();
+  }
+  
+  // Returns position of the tracker bar in pixels
+  public int getTrackerPosition(){
+    return soundPosition2Pixels(soundbis.position());
+  }
+  
   public void display(){
     /*
     if(soundbis.isPlaying()){

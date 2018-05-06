@@ -2,20 +2,21 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-String versionText = "v0.0.6";
+String versionText = "v0.0.7";
 
-boolean shiftPressed, controlPressed, altPressed, showHelpText;
 Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
 int previousMouseButton;
 
-
+// Keypresses
 boolean up = false;
 boolean down = false;
 boolean left = false;
 boolean right = false;
+boolean shiftPressed, controlPressed, altPressed, snapToggle;
+boolean showHelpText;
 
 boolean playing = false;
 
@@ -43,6 +44,7 @@ String[] controlsText = {
   "      Place BLUE note: Right click     or     Control + Left Click",
   "      Place MINE : Middle click     or     Alt + Left Click",
   "      Delete note: Shift + Left Click",
+  "      Grid snap off: G",
   "",
   "  Direction arrows: ",
   "  Click while holding down a key:",
@@ -103,6 +105,7 @@ void resetKeys(){
   altPressed = false;
   controlPressed = false;
   shiftPressed = false;
+  snapToggle = false;
 }
 
 void draw(){
@@ -243,6 +246,17 @@ void keyPressed(){
     }
   }
   
+  if(key == 'g'){
+    if(!snapToggle){
+      if(sequencer.getSnapToggle()){
+        sequencer.setSnapToggle(false);
+      }else{
+        sequencer.setSnapToggle(true);
+      }
+      snapToggle = true;
+    }
+  }
+  
   if(key == 'w'){
     up = true;
   }if(key == 's'){
@@ -264,6 +278,10 @@ void keyReleased(){
     left = false;
   }if(key == 'd'){
     right = false;
+  }
+  
+  if(key == 'g'){
+    snapToggle = false;
   }
   
   if (key == CODED) {

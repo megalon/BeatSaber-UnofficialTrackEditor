@@ -1,94 +1,122 @@
 class Track extends GUIElement{
-  GridBlock gridBlocks[];
-  int gridSize = 0;
-  int trackSize = 100;
+  HashMap<Float, GridBlock> gridBlocks;
+  private int gridSize = 0;
+  private int beatsPerBar = 8;
+  private float bpm = 0;
+  private boolean snapToGrid = true;
+  private boolean trackDebug = false;
   
   int yStartingPosition = 0;
   
-  Track(GUIElement parent, int gridSize, int trackSize){
+  Track(GUIElement parent, int gridSize, int beatsPerBar){
     this.setParent(parent);
     
+    gridBlocks = new HashMap<Float, GridBlock>();
     this.gridSize = gridSize;
+    this.beatsPerBar = beatsPerBar;
     
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));
     this.setWidth(gridSize);
-    this.resizeTrack(trackSize);
-    
-    for(int i = 1; i < trackSize; ++i){
-      if((int)random(5) == 0){
-        //addNote(0, i, (int)random(2), (int)random(9));
-      }
-    }
+    this.setHeight(Integer.MAX_VALUE);
+    this.setY(-this.getHeight());
     
     yStartingPosition = this.getY();
   }
   
   // Convert X, Y cordinates (such as mouse click) to grid cordinates
-  public int cordToGrid(int val){
-     return (int)((height - val) / gridSize);
+  public float mouseCordToTime(int cordY){
+    float cy = (float)cordY;
+    float gridScale = (gridSize * beatsPerBar);
+    float val = (cy / gridScale);
+    if(snapToGrid){
+      if(trackDebug) println("before snap time: " + val);
+      int temp = floor(val * beatsPerBar);
+      val = ((float)temp) / beatsPerBar;
+      if(trackDebug) println("after snap time: " + val);
+    }
+    if(trackDebug) println("mouseCordToTime. cord: " + cordY + " = time: " + val);
+    
+    return val;
+    
+    //int cY = cordY;
+    //return (height - cY) / gridSize;
+    
+    // time = (height - cordY) / beatsPerBar / bpm
+    // time * bpm * beatsPerBar = (height - cordY)
+    // time * bpm * beatsPerBar - height = -(cordY)
+    // -((time * bpm * beatsPerBar) - height) = cordY
+  }
+  
+  public int timeToCord(float time){
+    //int val = (int)(-(time) * gridSize);
+    
+    int val = (int)(time * gridSize * beatsPerBar);
+    
+    if(trackDebug) println("timeToCord. time: " + time + " = cord: " + val);
+    return val;
   }
   
   public void addNoteMouseClick(int mx, int my, int type, int cutDirection){
-    //println("startingPosition: " + yStartingPosition);
-    //println("getY(): " + this.getY());
-    this.addNote(0, cordToGrid(my + yStartingPosition - this.getY()), type, cutDirection);
+    if(trackDebug) println();
+    if(trackDebug) println("startingPosition: " + yStartingPosition);
+    if(trackDebug) println("getY(): " + this.getY());
+    
+    float x = mouseCordToTime(height - my + yStartingPosition - this.getY());
+    
+    if(trackDebug) println("mouseCordToTime: " + x);
+    this.addNote(x, type, cutDirection);
   }
   
-  public void addNote(int gridX, int gridY, int type, int cutDirection){
-    println("Adding note at grid: " + gridX + ", " + gridY + " type: " + type + " cutDirection: " + cutDirection);
-    println();
-    // Add the note to the correct position in the list, but flip it's Y position so that it displays correctly on the grid
-    if(gridY < gridBlocks.length && gridY >= 0)
-      gridBlocks[gridY] = new Note(this, gridX, trackSize - gridY - 1, gridSize, type, cutDirection);
-    else
-      println("Error: gridY out of bounds!");
+  public void addNote(float time, int type, int cutDirection){
+    if(trackDebug) println("Attempting to add note at time: " + time + ", type: " + type + ", cutDirection: " + cutDirection);
+    if(trackDebug) println();
+    
+    Note n = new Note(this, this.getHeight() - timeToCord(time) - gridSize, gridSize, type, cutDirection, time);
+    
+    if(trackDebug) println("Adding note at Y position : " + n.getLocalY() + ", time " + n.getTime());
+    
+    gridBlocks.put(time, n);
+    
+    
+    if(trackDebug) println("gridBlocks.size(): " + gridBlocks.size());
   }
   
   public void removeNoteMouseClick(int mx, int my){
-    this.removeNote(cordToGrid(my + yStartingPosition - this.getY()));
+    this.removeNote(mouseCordToTime(height - my + yStartingPosition - this.getY()));
   }
   
-  public void removeNote(int gridY){
-    gridBlocks[gridY] = null;
+  public void removeNote(float time){
+    gridBlocks.remove(time);
   }
   
-  public void resizeTrack(int trackSize){
-    if(gridBlocks != null){
-        GridBlock tempGridBlocks[] = new GridBlock[gridBlocks.length];
-        
-        for(int i = 0; i < gridBlocks.length; ++i){
-          tempGridBlocks[i] = gridBlocks[i];
-        }
-        
-        gridBlocks = new GridBlock[trackSize];
-        
-        // Copy all of the data that will fit into the new array
-        for(int i = 0; i < min(tempGridBlocks.length, gridBlocks.length); ++i){
-          gridBlocks[i] = tempGridBlocks[i];
-        }
-    }else{
-      gridBlocks = new GridBlock[trackSize];
-    }
-    
-    this.trackSize = trackSize;
-    this.setY(-this.trackSize * gridSize);     // Move track up 
-    this.setHeight(this.trackSize * gridSize); // Then set the height so it reaches the starting point
-    yStartingPosition = this.getY();
+  public void setBPM(float bpm){
+    this.bpm = bpm;
   }
   
-  public int getTrackSize(){
-    return this.trackSize;
+  public void setBeatsPerBar(int beatsPerBar){
+    this.beatsPerBar = beatsPerBar;
+  }
+  
+  public void setSnapToGrid(boolean snap){
+    this.snapToGrid = snap;
   }
   
   public void display(){
-    super.display();    
+    super.display();
     
-    for (int i = 0; i < gridBlocks.length; ++ i){
-      if(gridBlocks[i] != null){
-        gridBlocks[i].display(); 
-      }
+    /*
+    println("this.getWidth() " + this.getWidth());
+    println("this.getHeight() " + this.getHeight());
+    println("this.getX() " + this.getX());
+    println("this.getY() " + this.getY());
+    */
+    
+    for (Float f: gridBlocks.keySet()) {
+      
+      // Not sure if this cast is needed
+      Note note = (Note)gridBlocks.get(f);
+        note.display();
     }
   }
-  
 }
