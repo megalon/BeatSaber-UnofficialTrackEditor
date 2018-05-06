@@ -70,11 +70,11 @@ class JSONManager{
       mt = seq.multiTracks.get(currentLineLayer);
       t = mt.tracks.get(currentLineIndex);
       
-      gridY = (t.gridBlocks.length - 1) - seq.timeToGrid(currentTime);
+      gridY = seq.timeToGrid(currentTime);
       
       println("note " + n + " gridY : " + gridY);
       
-      t.gridBlocks[gridY] = new Note(t, 0, gridY, seq.getGridSize(), currentType, currentCutDirection);
+      t.gridBlocks[gridY] = new Note(t, 0, (t.gridBlocks.length - 1) - gridY, seq.getGridSize(), currentType, currentCutDirection);
     }
   }
   
