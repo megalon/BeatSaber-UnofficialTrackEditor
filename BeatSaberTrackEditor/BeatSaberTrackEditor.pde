@@ -187,13 +187,12 @@ void keyPressed(){
     if (controlPressed){
       sequencer.resetView();
     }else{
-    if(shiftPressed && sequencer.getY() >= 10){
-      sequencer.scrollY(-10);  
-    }else{
-      sequencer.scrollY(-1);
+      if(shiftPressed && sequencer.getY() >= 10){
+        sequencer.scrollY(-10);  
+      }else{
+        sequencer.scrollY(-1);
+      }
     }
-    }
-
   }
 
   if(key == ' '){
