@@ -73,6 +73,7 @@ class Note extends GridBlock {
     // Purely visual, the cut direction is still set in the json.
     if (this.getType() == 3){
       image(mineImage, this.getX(), this.getY());
+      this.cutDirection = 8;
     }else{
       switch(cutDirection){
       case(DIR_BOTTOM):
