@@ -12,11 +12,19 @@ class JSONManager{
     this.seq = seq;
   }
   
+  // Load a track from disk
   public void loadTrack(String filename){
     json = loadJSONObject(filename);
     
     float bpmIn = json.getFloat("_beatsPerMinute");
     notes = json.getJSONArray("_notes");
+    events = json.getJSONArray("_events");
+    obstacles = json.getJSONArray("_obstacles");
+    
+    //If events was empty, create some temp events
+    if(events.size() == 0){
+      createPlaceholderEvents();
+    }
     
     println("notes json: " + notes);
     println("bpmInput  : " + bpmIn);
@@ -81,12 +89,13 @@ class JSONManager{
     
     json = new JSONObject();
     
-    events = new JSONArray();
     notes = new JSONArray();
-    obstacles = new JSONArray();
+    
+    // Currently skipping over events and obstacles!
+    //events = new JSONArray();
+    //obstacles = new JSONArray();
     
     setNotesAray();
-    createPlaceholderEvents();
     
     json.setString("_version", versionString);
     json.setFloat("_beatsPerMinute", seq.getBPM());
