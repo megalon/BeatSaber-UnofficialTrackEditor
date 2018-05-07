@@ -5,11 +5,11 @@ class TrackSequencer extends GUIElement{
   Minim minim; 
   AudioSample sound; 
   AudioPlayer soundbis;
-  private int gridSize = 30;
-  private int trackSize = 100;
-  private int numtracksPerMulti = 4;
+  private int gridWidth = 30;
+  private int gridHeight = 60;
+  private int numtracksPerMulti = 1;
   private int numEventTracks = 8;
-  private int trackGroupSpacing = gridSize / 2;
+  private int trackGroupSpacing = gridWidth / 2;
   private int tracksXOffset = 200;
   private Waveform waveform;
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
@@ -34,19 +34,19 @@ class TrackSequencer extends GUIElement{
     
     this.setFillColor(color(#111111));
     
-    waveform = new Waveform(this, 0, 0, gridSize, minim);
+    waveform = new Waveform(this, 0, 0, gridHeight, minim);
     
     //eventsTracks    = new MultiTrack(this, numEventTracks,    gridSize, trackSize, "Events");
-    bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, beatsPerBar, "Bottom Notes");
-    middleTracks    = new MultiTrack(this, numtracksPerMulti, gridSize, beatsPerBar, "Middle Notes");
-    topTracks       = new MultiTrack(this, numtracksPerMulti, gridSize, beatsPerBar, "Top Notes");
+    bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridWidth, gridHeight, beatsPerBar, "Bottom Notes");
+    middleTracks    = new MultiTrack(this, numtracksPerMulti, gridWidth, gridHeight, beatsPerBar, "Middle Notes");
+    topTracks       = new MultiTrack(this, numtracksPerMulti, gridWidth, gridHeight, beatsPerBar, "Top Notes");
     //obstaclesTracks = new MultiTrack(this, numtracksPerMulti, gridSize, trackSize, "Obstacles");
     
     // Move the track groups
     //eventsTracks.setX(   (tracksXOffset + trackGroupSpacing));
-    bottomTracks.setX(   (tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 2) + trackGroupSpacing * 2);
-    middleTracks.setX(   (tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 3) + trackGroupSpacing * 3);
-    topTracks.setX(      (tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 4) + trackGroupSpacing * 4);
+    bottomTracks.setX(   (tracksXOffset + numEventTracks + numtracksPerMulti * gridWidth * 2) + trackGroupSpacing * 2);
+    middleTracks.setX(   (tracksXOffset + numEventTracks + numtracksPerMulti * gridWidth * 3) + trackGroupSpacing * 3);
+    topTracks.setX(      (tracksXOffset + numEventTracks + numtracksPerMulti * gridWidth * 4) + trackGroupSpacing * 4);
     //obstaclesTracks.setX((tracksXOffset + numEventTracks + numtracksPerMulti * gridSize * 5) + trackGroupSpacing * 5);
     
     multiTracks = new ArrayList<MultiTrack>();
@@ -121,12 +121,16 @@ class TrackSequencer extends GUIElement{
     return currentCutDirection;
   }
   
-  public int getGridSize(){
-    return gridSize;
+  public int getGridHeight(){
+    return gridHeight;
+  }
+  
+  public int getGridWidth(){
+    return gridWidth;
   }
   
   public int timeToGrid(float time){
-    return (int)(time * (gridSize / (beatsPerBar/2)));
+    return (int)(time * (gridHeight / (beatsPerBar/2)));
   }
   
   public void resetView(){
@@ -135,10 +139,10 @@ class TrackSequencer extends GUIElement{
   
   public void scrollY(float scroll){
     if(scroll > 0){
-      this.setY((int)(this.getY() + scroll * gridSize));
+      this.setY((int)(this.getY() + scroll * gridHeight));
     }else{
       if(this.getY() > startYPosition)
-        this.setY((int)(this.getY() + scroll * gridSize));
+        this.setY((int)(this.getY() + scroll * gridHeight));
     } 
   }
   
@@ -166,10 +170,6 @@ class TrackSequencer extends GUIElement{
   public void loadSoundFile(String path){
     waveform.loadSoundFile(path);
     setBPM(this.bpm);
-  }
-  
-  public int getTrackSize(){
-    return trackSize;
   }
   
   public void setTrackerPosition(int pos){
@@ -221,7 +221,7 @@ class TrackSequencer extends GUIElement{
     
     for(int i = 0; i < 5000; ++i){
       //gridYPos = (int)((startYPosition + (this.getY() % height )) -i * this.gridSize - 200);
-      gridYPos = (int)(this.getY() -i * this.gridSize);
+      gridYPos = (int)(this.getY() -i * this.gridHeight);
       
       if(i % 8 == 0)
         strokeWeight(4);
@@ -235,9 +235,10 @@ class TrackSequencer extends GUIElement{
     if(!snapToggle){
       noFill();
       stroke(#ffffff);
-      float gridHalf = gridSize/2;
-      line(0, mouseY+gridHalf, width, mouseY+gridHalf);
-      line(0, mouseY-gridHalf, width, mouseY-gridHalf);
+      float widthHalf = gridWidth/2;
+      float heightHalf = gridHeight/2;
+      line(0, mouseY+widthHalf, width, mouseY+heightHalf);
+      line(0, mouseY-widthHalf, width, mouseY-heightHalf);
       
     }
   }

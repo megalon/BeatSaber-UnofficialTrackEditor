@@ -1,5 +1,6 @@
 class Track extends GUIElement{
   HashMap<Float, GridBlock> gridBlocks;
+  private int gridWidth = 0;
   private int gridHeight = 0;
   private int beatsPerBar = 8;
   private float bpm = 0;
@@ -8,16 +9,18 @@ class Track extends GUIElement{
   
   int yStartingPosition = 0;
   
-  Track(GUIElement parent, int gridHeight, int gridWidth, int beatsPerBar){
+  Track(GUIElement parent, int gridWidth, int gridHeight, int beatsPerBar){
     this.setParent(parent);
+    println("track gridWidth: " + gridWidth);
     
     gridBlocks = new HashMap<Float, GridBlock>();
+    this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.beatsPerBar = beatsPerBar;
     
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));
-    this.setWidth(30);
+    this.setWidth(gridWidth);
     this.setHeight(Integer.MAX_VALUE);
     this.setY(-this.getHeight());
     
@@ -27,7 +30,7 @@ class Track extends GUIElement{
   // Convert X, Y cordinates (such as mouse click) to grid cordinates
   public float mouseCordToTime(int cordY){
     float cy = (float)cordY;
-    float gridScale = (gridSize * beatsPerBar);
+    float gridScale = (gridHeight * beatsPerBar);
     float val = 0;
     if(snapToGrid){
       val = ((cy) / gridScale);
@@ -36,7 +39,7 @@ class Track extends GUIElement{
       val = ((float)temp) / beatsPerBar;
       if(trackDebug) println("after snap time: " + val);
     }else{
-      val = ((cy - gridSize/2) / gridScale);
+      val = ((cy - gridHeight/2) / gridScale);
     }
     if(trackDebug) println("mouseCordToTime. cord: " + cordY + " = time: " + val);
     
@@ -54,7 +57,7 @@ class Track extends GUIElement{
   public int timeToCord(float time){
     //int val = (int)(-(time) * gridSize);
     
-    int val = (int)(time * gridSize * beatsPerBar);
+    int val = (int)(time * gridHeight * beatsPerBar);
     
     if(trackDebug) println("timeToCord. time: " + time + " = cord: " + val);
     return val;
@@ -75,7 +78,7 @@ class Track extends GUIElement{
     if(trackDebug) println("Attempting to add note at time: " + time + ", type: " + type + ", cutDirection: " + cutDirection);
     if(trackDebug) println();
     
-    Note n = new Note(this, this.getHeight() - timeToCord(time) - gridSize, gridSize, type, cutDirection, time);
+    Note n = new Note(this, this.getHeight() - timeToCord(time) - gridHeight, gridWidth, gridHeight, type, cutDirection, time);
     
     if(trackDebug) println("Adding note at Y position : " + n.getLocalY() + ", time " + n.getTime());
     

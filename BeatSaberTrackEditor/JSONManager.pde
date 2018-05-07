@@ -26,7 +26,6 @@ class JSONManager{
     int trackCount = 0;
     int multiCount = 0;
     int noteCount = 0;
-    int trackSize = seq.getTrackSize();
     
     
     JSONObject currentNote;

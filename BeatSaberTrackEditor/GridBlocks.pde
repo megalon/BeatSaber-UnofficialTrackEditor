@@ -3,8 +3,8 @@
 
 class GridBlock extends ClickableBox{
   
-  GridBlock(GUIElement parent, int gridX, int gridY, int gridSize){
-    super(parent, gridX, gridY, gridSize); 
+  GridBlock(GUIElement parent, int gridX, int gridY, int gridWidth, int gridHeight){
+    super(parent, gridX, gridY, gridWidth, gridHeight); 
   }
   
   public void display(){
@@ -35,8 +35,8 @@ class Note extends GridBlock {
   private PImage mineImage = loadImage("data\\mine.png");
   private float time;
   
-  Note(GUIElement parent, int yPos, int gridSize, int type, int cutDirection, float time){
-    super(parent, 0, yPos, gridSize);
+  Note(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int cutDirection, float time){
+    super(parent, 0, yPos, gridWidth, gridHeight);    
     this.type = type;
     this.cutDirection = cutDirection;
     this.time = time;
@@ -157,7 +157,8 @@ class Note extends GridBlock {
         break;
       case(8):
         // Circle
-        ellipse(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, this.getWidth() * 0.5, this.getHeight() * 0.5);
+        //ellipse(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, this.getWidth() * 0.5, this.getHeight() * 0.5);
+        ellipse(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, this.getWidth() * 0.5, this.getWidth() * 0.5);
         break;
       }
     }

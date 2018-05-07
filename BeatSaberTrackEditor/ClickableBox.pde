@@ -4,8 +4,8 @@ class ClickableBox extends GUIElement{
   color unSelectedColor = color(#DDDDDD);
   color selectedColor = color(#FFFF00);
   
-  ClickableBox(GUIElement parent, int x, int y, int size) {
-    super(parent, x, y, size, size);
+  ClickableBox(GUIElement parent, int x, int y, int w, int h) {
+    super(parent, x, y, w, h);
   }
   
   public void display(){
