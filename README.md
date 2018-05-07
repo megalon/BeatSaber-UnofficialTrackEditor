@@ -2,9 +2,17 @@
 
 ## This project is EXPERIMENTAL but currently semi-functional!
 
-There are a couple of critical bugs involving loading saved tracks, and tracks that are over 5 minutes.
+Currently supports:
 
-![Example image](https://i.imgur.com/sGG9i2A.png)
++ Loading an audio file into the editor
+
++ Loading / Saving track .json files
+ 
++ Placing / deleting notes and mines
+
++ Locking notes to a grid of 8th notes, or placing at arbitrary positions
+
+![Example image](https://i.imgur.com/a4Y5owE.png)
 
 To run:
 
