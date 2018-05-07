@@ -7,7 +7,9 @@ class Track extends GUIElement{
   HashMap<Float, GridBlock> gridBlocks;
   private int gridWidth = 0;
   private int gridHeight = 0;
+  private int defaultGridHeight = 0;
   private int beatsPerBar = 8;
+  private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
   private boolean trackDebug = false;
@@ -22,6 +24,7 @@ class Track extends GUIElement{
     gridBlocks = new HashMap<Float, GridBlock>();
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
+    this.defaultGridHeight = gridHeight;
     this.beatsPerBar = beatsPerBar;
     this.trackType = trackType;
     
@@ -36,14 +39,19 @@ class Track extends GUIElement{
   
   // Convert X, Y cordinates (such as mouse click) to grid cordinates
   public float mouseCordToTime(int cordY){
-    float cy = (float)cordY;
-    float gridScale = (gridHeight * beatsPerBar);
+    float cy                  = (float)cordY;
+    float gridScale           = (gridHeight * beatsPerBar);
+    float beatsOverResolution = beatsPerBar ;//  / gridResolution;
+    
     float val = 0;
+    
+    if(trackDebug) println("gridScale: " + gridScale);
+    
     if(snapToGrid){
       val = ((cy) / gridScale);
       if(trackDebug) println("before snap time: " + val);
-      int temp = floor(val * beatsPerBar);
-      val = ((float)temp) / beatsPerBar;
+      int temp = floor(val * beatsOverResolution);
+      val = ((float)temp) / (beatsOverResolution);
       if(trackDebug) println("after snap time: " + val);
     }else{
       val = ((cy - gridHeight/2) / gridScale);
@@ -62,12 +70,14 @@ class Track extends GUIElement{
   }
   
   public int timeToCord(float time){
-    //int val = (int)(-(time) * gridSize);
-    
     int val = (int)(time * gridHeight * beatsPerBar);
     
     if(trackDebug) println("timeToCord. time: " + time + " = cord: " + val);
     return val;
+  }
+  
+  public int calculateGridYPos(float time){
+    return this.getHeight() - timeToCord(time) - gridHeight;
   }
   
   public void addGridBlockMouseClick(int mx, int my, int type, int val0, int val1){
@@ -86,7 +96,7 @@ class Track extends GUIElement{
   // Generic function to add a new gridblock depending on type of object to add
   public void addGridBlock(int gridBlockType, float time, int type, int val0, int val1){
     
-    int yPos = this.getHeight() - timeToCord(time) - gridHeight;
+    int yPos = calculateGridYPos(time);
     
     switch(gridBlockType){
       case(GridBlock.GB_TYPE_NOTE):
@@ -113,7 +123,7 @@ class Track extends GUIElement{
     */
   }
   
-  public void removeNoteMouseClick(int mx, int my){
+  public void removeGridBLockMouseClick(int mx, int my){
     // Loop through the notes in this track and check for mouseclicks
     float key = Float.NaN;
     for (Float f: gridBlocks.keySet()) {
@@ -128,12 +138,27 @@ class Track extends GUIElement{
     // Check if the key was found. If it was, delete the value at that key
     if(trackDebug) println("Deleting key :" + key);
     if(!Float.isNaN(key)){
-      this.removeNote(key);
+      this.removeGridBlock(key);
     }
   }
   
-  public void removeNote(float time){
+  public void removeGridBlock(float time){
     gridBlocks.remove(time);
+  }
+  
+  public void updateGridblockHeights(){
+    
+    this.gridHeight = (int)(defaultGridHeight * gridResolution);
+    
+    for (Float f: gridBlocks.keySet()) {
+      GridBlock block = gridBlocks.get(f);
+      
+      float t = block.getTime();
+      println("t = block.getTime() : " + t);
+      int gpy = calculateGridYPos(t);
+      println("calculateGridYPos(t) : " + gpy);
+      block.setY(gpy);
+    }
   }
   
   public void setBPM(float bpm){
@@ -148,20 +173,20 @@ class Track extends GUIElement{
     this.snapToGrid = snap;
   }
   
+  public void setGridResolution(float resolution){
+    this.gridResolution = resolution;
+    updateGridblockHeights();
+  }
+  
+  public float getGridResolution(){
+    return gridResolution;
+  }
+  
   public void display(){
     super.display();
     
-    /*
-    println("this.getWidth() " + this.getWidth());
-    println("this.getHeight() " + this.getHeight());
-    println("this.getX() " + this.getX());
-    println("this.getY() " + this.getY());
-    */
-    
     for (Float f: gridBlocks.keySet()) {
       
-      // Not sure if this cast is needed
-        
       switch(trackType){
         case(GridBlock.GB_TYPE_NOTE):
           Note note = (Note)gridBlocks.get(f);

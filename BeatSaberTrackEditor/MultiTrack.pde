@@ -40,10 +40,22 @@ class MultiTrack extends GUIElement{
       if(t.checkClicked(mx, my)){
         //println("Track clicked!");
         if(type == -1)
-          t.removeNoteMouseClick(mx, my);
+          t.removeGridBLockMouseClick(mx, my);
         else
           t.addGridBlockMouseClick(mx, my, type, val0, val1);
       }
+    }
+  }
+  
+  public void setBeatsPerBar(int beats){
+    for(Track t : tracks){
+      t.setBeatsPerBar(beats);
+    }
+  }
+  
+  public void setGridResolution(float resolution){
+    for(Track t : tracks){
+      t.setGridResolution(resolution);
     }
   }
   
@@ -62,6 +74,6 @@ class MultiTrack extends GUIElement{
     
     fill(#ffffff);
     textFont(f, 18);
-    text(this.getElementName(), this.getX(), this.getY() - 25);
+    text(this.getElementName(), this.getX() + 10, this.getY() - 15);
   }
 }

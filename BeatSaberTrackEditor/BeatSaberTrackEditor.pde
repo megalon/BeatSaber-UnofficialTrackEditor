@@ -4,11 +4,11 @@
 
 import g4p_controls.*;
 import ddf.minim.*;
-
+import java.awt.*;
 
 String versionText = "Megalon v0.0.12";
 
-boolean debug = false;
+boolean debug = true;
 
 Minim minim;
 TrackSequencer sequencer;
@@ -26,7 +26,7 @@ boolean showHelpText;
 
 boolean playing = false;
 
-String soundfilePath = "data\\120BPM_short-clicktrack.wav";
+String soundfilePath = "data\\120BPM_Electro_Test.wav";
 float bpm = 120;
 
 int type = 0;
@@ -257,6 +257,7 @@ void keyPressed(){
   if(key == ' '){
     if(shiftPressed){
       sequencer.stop();
+      sequencer.resetView();
     }else{
       if(sequencer.getPlaying())
         sequencer.setPlaying(false);
@@ -288,8 +289,22 @@ void keyPressed(){
 }
 
 void keyReleased(){
+  /*
+  if(key == '1'){
+    println("Decreasing beats per bar!");
+    sequencer.setGridResolution(sequencer.getGridResolution() / 2);
+    sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() * 2);
+    //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() - 1);
+  }
+  if(key == '2'){
+    println("Increasing beats per bar!");
+    sequencer.setGridResolution(sequencer.getGridResolution() * 2);
+    sequencer.setBeatsPerBar((int)(sequencer.getBeatsPerBar() / 2));
+    //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() + 1);
+  }
+  */
+  
   if(key == 'w'){
-    println("Released W");
     up = false;
   }if(key == 's'){
     down = false;
@@ -434,16 +449,18 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   // Create buttons
   int bgap = 8;
   int bw = round((w - 3 * bgap) / 4.0f);
+  int bh = 30;
   int bs = bgap + bw;
-  btnOpenSong = new GButton(this, x, y+30, bw, 20, "Load Audio");
-  btnInput = new GButton(this, x+2*bs, y+30, bw, 20, "Load Track");
-  btnOutput = new GButton(this, x+3*bs, y+30, bw, 20, "Save Track");
+  btnOpenSong = new GButton(this, x, y+30, bw, bh, "Load Audio");
+  btnInput = new GButton(this, x+2*bs, y+30, bw, bh, "Load Track");
+  btnOutput = new GButton(this, x+3*bs, y+30, bw, bh, "Save Track");
   
-  bpmTextField = new GTextField(this, x+bs, y+30, bw, 20);
+  bpmTextField = new GTextField(this, x+bs, y+30, bw, 30);
   bpmTextField.tag = "bpmText";
   bpmTextField.setPromptText("BPM");
+  bpmTextField.setFont(new Font("Arial", Font.PLAIN, 25));
   
-  lblFile = new GLabel(this, x, y+60, w, 60);
+  lblFile = new GLabel(this, x, y+70, w, 50);
   lblFile.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   lblFile.setOpaque(true);
   lblFile.setLocalColorScheme(G4P.BLUE_SCHEME);

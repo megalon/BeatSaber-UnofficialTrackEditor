@@ -24,7 +24,9 @@ class TrackSequencer extends GUIElement{
   
   private int currentCutDirection = 8;
   
-  int beatsPerBar = 8;
+  private int defaultBeatsPerBar = 8;
+  private int beatsPerBar = 8;
+  private float gridResolution = 1;
   
   public ArrayList<MultiTrack> multiTracks;
   
@@ -35,6 +37,7 @@ class TrackSequencer extends GUIElement{
     this.setFillColor(color(#111111));
     
     waveform = new Waveform(this, 0, 0, gridHeight, minim);
+    waveform.setBeatsPerBar(beatsPerBar);
     
     //eventsTracks    = new MultiTrack(this, numEventTracks,    gridWidth, gridHeight, beatsPerBar, "Events");
     bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridWidth, gridHeight, beatsPerBar, "Bottom Notes");
@@ -159,13 +162,31 @@ class TrackSequencer extends GUIElement{
       mt.setBPM(bpm);
     }
     
-    waveform.setBeatsPerBar(beatsPerBar);
+    //waveform.setBeatsPerBar(beatsPerBar);
+  }
+  
+  public void setBeatsPerBar(int beats){
+    this.beatsPerBar = beats;
     
-    //int numBeats = ceil(this.getBPM() * (waveform.getLength() / 60000.0)) * beatsPerBar;
+    for(MultiTrack mt : multiTracks){
+      mt.setBeatsPerBar(beats);
+    }
+  }
+  
+  public int getBeatsPerBar(){
+    return beatsPerBar;
+  }
+  
+  public void setGridResolution(float resolution){
+    this.gridResolution = resolution;
     
-    //println("minutes: " + waveform.getLength() / 60000.0);
-    //println("Numbeats:" + numBeats);
-    //println("Samples per beat: " + (44100 * 60 / this.getBPM()));
+    for(MultiTrack mt : multiTracks){
+      mt.setGridResolution(resolution);
+    }
+  }
+  
+  public float getGridResolution(){
+    return gridResolution;
   }
   
   public void loadSoundFile(String path){
@@ -221,7 +242,7 @@ class TrackSequencer extends GUIElement{
     
     for(int i = 0; i < 5000; ++i){
       //gridYPos = (int)((startYPosition + (this.getY() % height )) -i * this.gridSize - 200);
-      gridYPos = (int)(this.getY() -i * this.gridHeight);
+      gridYPos = (int)(this.getY() -i * this.gridHeight * gridResolution);
       
       if(i % 8 == 0)
         strokeWeight(4);
