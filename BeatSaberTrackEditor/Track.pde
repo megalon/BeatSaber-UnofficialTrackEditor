@@ -1,8 +1,8 @@
 class Track extends GUIElement{
   // These are used to dermine how to handle notes places on the tracks
-  private static final int NOTES = 0;
-  private static final int EVENTS = 1;
-  private static final int OBSTACLES = 2;
+  private static final int TRACK_TYPE_NOTES = 0;
+  private static final int TRACK_TYPE_EVENTS = 1;
+  private static final int TRACK_TYPE_OBSTACLES = 2;
   
   HashMap<Float, GridBlock> gridBlocks;
   private int gridWidth = 0;
@@ -70,36 +70,54 @@ class Track extends GUIElement{
     return val;
   }
   
-  public void addNoteMouseClick(int mx, int my, int type, int cutDirection){
+  public void addGridBlockMouseClick(int mx, int my, int type, int val0, int val1){
     if(trackDebug) println();
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
     
-    float x = mouseCordToTime(height - my - (yStartingPosition - this.getY()));
+    float t = mouseCordToTime(height - my - (yStartingPosition - this.getY()));
     
-    if(trackDebug) println("mouseCordToTime: " + x);
-    this.addNote(x, type, cutDirection);
+    if(trackDebug) println("mouseCordToTime: " + t);
+    
+    // Add the correct GridBlock based on the track type
+    this.addGridBlock(trackType, t, type, val0, val1);
   }
   
-  public void addNote(float time, int type, int cutDirection){
+  // Generic function to add a new gridblock depending on type of object to add
+  public void addGridBlock(int gridBlockType, float time, int type, int val0, int val1){
+    
+    int yPos = this.getHeight() - timeToCord(time) - gridHeight;
+    
+    switch(gridBlockType){
+      case(GridBlock.GB_TYPE_NOTE):
+        Note n = new Note(this, yPos, gridWidth, gridHeight, type, val0, time);
+        gridBlocks.put(time, n);
+        break;
+      case(GridBlock.GB_TYPE_EVENT):
+        Event e = new Event(this, yPos, gridWidth, gridHeight, type, val0, time);
+        gridBlocks.put(time, e);
+        break;
+      case(GridBlock.GB_TYPE_OBSTACLE):
+        Obstacle w = new Obstacle(this, yPos, gridWidth, gridHeight, type, val0, time, val1);
+        gridBlocks.put(time, w);
+        break;
+      default:
+        println("Error: Invalid grid block type!");
+    }
+    
+    /*
     if(trackDebug) println("Attempting to add note at time: " + time + ", type: " + type + ", cutDirection: " + cutDirection);
     if(trackDebug) println();
-    
-    Note n = new Note(this, this.getHeight() - timeToCord(time) - gridHeight, gridWidth, gridHeight, type, cutDirection, time);
-    
     if(trackDebug) println("Adding note at Y position : " + n.getLocalY() + ", time " + n.getTime());
-    
-    gridBlocks.put(time, n);
-    
     if(trackDebug) println("gridBlocks.size(): " + gridBlocks.size());
+    */
   }
   
   public void removeNoteMouseClick(int mx, int my){
-    
     // Loop through the notes in this track and check for mouseclicks
     float key = Float.NaN;
     for (Float f: gridBlocks.keySet()) {
-      Note block = (Note)gridBlocks.get(f);
+      GridBlock block = gridBlocks.get(f);
       if(trackDebug) println("Checking block " + block + " at position " + block.getX() + ", " + block.getY());
       if(block.checkClicked(mx, my)){
         key = f;
@@ -107,6 +125,7 @@ class Track extends GUIElement{
       }
     }
     
+    // Check if the key was found. If it was, delete the value at that key
     if(trackDebug) println("Deleting key :" + key);
     if(!Float.isNaN(key)){
       this.removeNote(key);
@@ -142,8 +161,23 @@ class Track extends GUIElement{
     for (Float f: gridBlocks.keySet()) {
       
       // Not sure if this cast is needed
-      Note note = (Note)gridBlocks.get(f);
-        note.display();
+        
+      switch(trackType){
+        case(GridBlock.GB_TYPE_NOTE):
+          Note note = (Note)gridBlocks.get(f);
+          note.display();
+          break;
+        case(GridBlock.GB_TYPE_EVENT):
+          Event event = (Event)gridBlocks.get(f);
+          event.display();
+          break;
+        case(GridBlock.GB_TYPE_OBSTACLE):
+          Obstacle obstacle = (Obstacle)gridBlocks.get(f);
+          obstacle.display();
+          break;
+        default:
+          println("Error: Invalid grid block type!");
+      }
     }
   }
 }

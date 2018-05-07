@@ -5,6 +5,11 @@
 
 class GridBlock extends ClickableBox{
   
+  // These are only used internally, these numbers are NOT relevant to the JSON data
+  private static final int GB_TYPE_NOTE = 0;
+  private static final int GB_TYPE_EVENT = 1;
+  private static final int GB_TYPE_OBSTACLE = 3;
+  
   private int type;
   private float time;
   
@@ -37,7 +42,7 @@ class GridBlock extends ClickableBox{
 }
 
 // Wall obstacle
-class Wall extends GridBlock {
+class Obstacle extends GridBlock {
   
   public static final int TYPE_WALL    = 0;
   public static final int TYPE_CEILING = 1;
@@ -45,7 +50,7 @@ class Wall extends GridBlock {
   private int duration = 0;
   private int wallWidth = 0;
 
-  Wall(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int duration, float time, int wallWidth){
+  Obstacle(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int duration, float time, int wallWidth){
     super(parent, 0, yPos, gridWidth, gridHeight, type, time);
     
     this.setDuration(duration);

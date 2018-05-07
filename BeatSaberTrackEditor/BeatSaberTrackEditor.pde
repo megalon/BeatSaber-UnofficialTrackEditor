@@ -1,8 +1,11 @@
-import g4p_controls.*;
+/*
+  Beat Saber 2D Unofficial Track Editor by Megalon
+*/
 
+import g4p_controls.*;
 import ddf.minim.*;
 
-String versionText = "v0.0.12";
+String versionText = "Megalon v0.0.12";
 boolean debug = false;
 
 Minim minim;
@@ -155,10 +158,9 @@ void draw(){
       text("mouseY: " + mouseY, 0, 20);
     }
   }
-  
   textSize(12);
   fill(#ffffff);
-  text(" TAB: Hide / Show guide   " + versionText, width - 175 , height - 10);
+  text(versionText, width - 100 , height - 10);
 }
 
 void mousePressed(){
@@ -310,7 +312,7 @@ void keyReleased(){
       altPressed = false;
     }
   }
-  
+  /*
   switch(key){
     case TAB:
       if(showHelpText)
@@ -321,6 +323,7 @@ void keyReleased(){
     default:
       break;
   }
+  */
 }
 
 public int getNewCutDirection(){
