@@ -169,12 +169,16 @@ class Note extends GridBlock {
     this.cutDirection = cutDirection;
     this.setTime(time);
     
+    if(this.getType() == TYPE_MINE){
+      mineImage.resize(this.getWidth(), this.getHeight());
+    }
+    
     switch(type){
-      case(0): this.unSelectedColor = redColor;
+      case(TYPE_RED): this.unSelectedColor = redColor;
         break;
-      case(1): this.unSelectedColor = blueColor;
+      case(TYPE_BLUE): this.unSelectedColor = blueColor;
         break;
-      case(3): this.unSelectedColor = mineColor;
+      case(TYPE_MINE): this.unSelectedColor = mineColor;
         break;
       default: println("Error! Invalid type" + type + " for gridblock " + this + " !!");
     }

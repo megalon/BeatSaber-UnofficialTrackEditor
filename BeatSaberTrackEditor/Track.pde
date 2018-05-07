@@ -12,7 +12,7 @@ class Track extends GUIElement{
   private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
-  private boolean trackDebug = false;
+  private boolean trackDebug = true;
   private int trackType;
   
   int yStartingPosition = 0;
@@ -39,34 +39,25 @@ class Track extends GUIElement{
   
   // Convert X, Y cordinates (such as mouse click) to grid cordinates
   public float mouseCordToTime(int cordY){
-    float cy                  = (float)cordY;
     float gridScale           = (gridHeight * beatsPerBar);
-    float beatsOverResolution = beatsPerBar ;//  / gridResolution;
+    float beatsFloat = beatsPerBar;
     
     float val = 0;
     
     if(trackDebug) println("gridScale: " + gridScale);
     
     if(snapToGrid){
-      val = ((cy) / gridScale);
+      val = ((float)cordY) / gridScale;
       if(trackDebug) println("before snap time: " + val);
-      int temp = floor(val * beatsOverResolution);
-      val = ((float)temp) / (beatsOverResolution);
+      int temp = floor(val * beatsFloat);
+      val = (temp) / (beatsFloat);
       if(trackDebug) println("after snap time: " + val);
     }else{
-      val = ((cy - gridHeight/2) / gridScale);
+      val = (cordY - gridHeight/2) / gridScale;
     }
     if(trackDebug) println("mouseCordToTime. cord: " + cordY + " = time: " + val);
     
-    return val;
-    
-    //int cY = cordY;
-    //return (height - cY) / gridSize;
-    
-    // time = (height - cordY) / beatsPerBar / bpm
-    // time * bpm * beatsPerBar = (height - cordY)
-    // time * bpm * beatsPerBar - height = -(cordY)
-    // -((time * bpm * beatsPerBar) - height) = cordY
+    return val / 4;
   }
   
   public int timeToCord(float time){
@@ -77,7 +68,7 @@ class Track extends GUIElement{
   }
   
   public int calculateGridYPos(float time){
-    return this.getHeight() - timeToCord(time) - gridHeight;
+    return this.getHeight() - timeToCord(time) - (int)gridHeight;
   }
   
   public void addGridBlockMouseClick(int mx, int my, int type, int val0, int val1){
@@ -148,8 +139,6 @@ class Track extends GUIElement{
   
   public void updateGridblockHeights(){
     
-    this.gridHeight = (int)(defaultGridHeight * gridResolution);
-    
     for (Float f: gridBlocks.keySet()) {
       GridBlock block = gridBlocks.get(f);
       
@@ -175,7 +164,8 @@ class Track extends GUIElement{
   
   public void setGridResolution(float resolution){
     this.gridResolution = resolution;
-    updateGridblockHeights();
+    this.gridHeight = (int)(defaultGridHeight * gridResolution);
+    //updateGridblockHeights();
   }
   
   public float getGridResolution(){

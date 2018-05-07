@@ -14,6 +14,7 @@ Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
+int sequencerYOffset = -100;
 int previousMouseButton;
 
 // Keypresses
@@ -51,6 +52,7 @@ String[] controlsText = {
   "      Place MINE : Middle click     or     Alt + Left Click",
   "      Delete note: Shift + Left Click",
   "      Grid snap toggle: G",
+  "      Change snap resolution: Number keys 1 and 2",
   "",
   "  Direction arrows: ",
   "  Click while holding down a key:",
@@ -70,7 +72,7 @@ String[] controlsText = {
 GTextField bpmTextField;
 
 // Controls used for file dialog GUI 
-GButton btnFolder, btnOpenSong, btnInput, btnOutput;
+GButton btnOpenSong, btnInput, btnOutput;
 GLabel lblFile;
 
 void setup(){
@@ -124,6 +126,8 @@ void draw(){
   sequencer.setCutDirection(getNewCutDirection());
   
   sequencer.display();
+  drawGrid();
+  
   
   fill(0);
   stroke(0);
@@ -289,20 +293,19 @@ void keyPressed(){
 }
 
 void keyReleased(){
-  /*
-  if(key == '1'){
-    println("Decreasing beats per bar!");
-    sequencer.setGridResolution(sequencer.getGridResolution() / 2);
-    sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() * 2);
-    //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() - 1);
-  }
-  if(key == '2'){
-    println("Increasing beats per bar!");
+  
+  if(key == '1' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);
     sequencer.setBeatsPerBar((int)(sequencer.getBeatsPerBar() / 2));
     //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() + 1);
+    println("Increasing beats per bar to: " + sequencer.getBeatsPerBar());
   }
-  */
+  if(key == '2' && sequencer.getGridResolution() > TrackSequencer.MAX_GRID_RESOLUTION){
+    sequencer.setGridResolution(sequencer.getGridResolution() / 2);
+    sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() * 2);
+    //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() - 1);
+    println("Decreasing beats per bar to: " + sequencer.getBeatsPerBar());
+  }
   
   if(key == 'w'){
     up = false;
@@ -364,6 +367,31 @@ public int getNewCutDirection(){
     dir = Note.DIR_TOPLEFT;
 
   return dir; 
+}
+
+public void drawGrid(){
+  int amountScrolled = sequencer.getAmountScrolled();
+  int gridYPos = 0;
+  int colorTrackerNum = 0;
+  
+  float gridSpacing = (sequencer.getGridHeight() * sequencer.getGridResolution());
+  
+  fill(0);
+  stroke(0x55000000);
+  
+  for(int i = 0; i < 250; ++i){
+    gridYPos = (int)(height - (i * gridSpacing));
+    
+    colorTrackerNum = i + amountScrolled;
+    
+    if(colorTrackerNum % 8 == 0)
+      strokeWeight(4);
+    else if(colorTrackerNum % 4 == 0)
+      strokeWeight(2);
+    else
+      strokeWeight(1);
+    line(0, gridYPos, width, gridYPos);
+  }
 }
 
 public void displayEvent(String name, GEvent event) {

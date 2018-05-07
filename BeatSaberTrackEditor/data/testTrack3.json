@@ -1,6 +1,5 @@
 {
   "_noteJumpSpeed": 10,
-  "_obstacles": [],
   "_shufflePeriod": 0.25,
   "_beatsPerMinute": 120,
   "_beatsPerBar": 16,
@@ -9,14 +8,7 @@
       "_lineLayer": 0,
       "_lineIndex": 0,
       "_type": 0,
-      "_time": 0,
-      "_cutDirection": 8
-    },
-    {
-      "_lineLayer": 0,
-      "_lineIndex": 0,
-      "_type": 0,
-      "_time": 0.875,
+      "_time": 1,
       "_cutDirection": 8
     },
     {
@@ -30,58 +22,17 @@
       "_lineLayer": 0,
       "_lineIndex": 2,
       "_type": 0,
-      "_time": 1,
-      "_cutDirection": 8
-    },
-    {
-      "_lineLayer": 0,
-      "_lineIndex": 2,
-      "_type": 0,
-      "_time": 0.375,
+      "_time": 1.0625,
       "_cutDirection": 8
     },
     {
       "_lineLayer": 0,
       "_lineIndex": 3,
       "_type": 0,
-      "_time": 1,
-      "_cutDirection": 8
-    },
-    {
-      "_lineLayer": 0,
-      "_lineIndex": 3,
-      "_type": 0,
-      "_time": 0.875,
+      "_time": 1.234375,
       "_cutDirection": 8
     }
   ],
   "_version": "1.5.0",
-  "_shuffle": 0,
-  "_events": [
-    {
-      "_type": 0,
-      "_value": 1,
-      "_time": 0
-    },
-    {
-      "_type": 1,
-      "_value": 1,
-      "_time": 0
-    },
-    {
-      "_type": 2,
-      "_value": 1,
-      "_time": 0
-    },
-    {
-      "_type": 3,
-      "_value": 1,
-      "_time": 0
-    },
-    {
-      "_type": 4,
-      "_value": 1,
-      "_time": 0
-    }
-  ]
+  "_shuffle": 0
 }

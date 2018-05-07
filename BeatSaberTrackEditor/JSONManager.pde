@@ -22,19 +22,14 @@ class JSONManager{
     obstacles = json.getJSONArray("_obstacles");
     
     //If events was empty, create some temp events
-    if(events.size() == 0){
+    if(events == null){
       createPlaceholderEvents();
     }
     
     println("notes json: " + notes);
-    println("bpmInput  : " + bpmIn);
+    //println("bpmInput  : " + bpmIn);
     
     this.seq.setBPM(bpmIn);
-    
-    int trackCount = 0;
-    int multiCount = 0;
-    int noteCount = 0;
-    
     
     JSONObject currentNote;
     float currentTime;
@@ -79,7 +74,7 @@ class JSONManager{
       println("note " + n + " gridY : " + gridY);
       
       // Add note to the grid
-      // The 0 on the end is dummy data that is unused in the this function for GB_TYPE_NOTE
+      // NOTE: The 0 on the end of this function is unused for GB_TYPE_NOTE
       t.addGridBlock(GridBlock.GB_TYPE_NOTE, currentTime, currentType, currentCutDirection, 0);
     }
   }
@@ -154,6 +149,9 @@ class JSONManager{
   
   private void createPlaceholderEvents(){
     int eventCount = 0;
+    
+    events = new JSONArray();
+    
     for(int i = 0; i < 5; ++i){
       JSONObject event = new JSONObject();
       

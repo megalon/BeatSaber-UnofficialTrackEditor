@@ -2,11 +2,15 @@
 
 class TrackSequencer extends GUIElement{
   
+  private static final float MAX_GRID_RESOLUTION = 0.125;
+  private static final float MIN_GRID_RESOLUTION = 1;
+  
   Minim minim; 
   AudioSample sound; 
   AudioPlayer soundbis;
   private int gridWidth = 30;
   private int gridHeight = 30;
+  private int defaultGridHeight = 30;
   private int numtracksPerMulti = 4;
   private int numEventTracks = 7;
   private int trackGroupSpacing = gridWidth / 2;
@@ -26,7 +30,7 @@ class TrackSequencer extends GUIElement{
   
   private int defaultBeatsPerBar = 8;
   private int beatsPerBar = 8;
-  private float gridResolution = 1;
+  private float gridResolution = 1.0;
   
   public ArrayList<MultiTrack> multiTracks;
   
@@ -37,7 +41,6 @@ class TrackSequencer extends GUIElement{
     this.setFillColor(color(#111111));
     
     waveform = new Waveform(this, 0, 0, gridHeight, minim);
-    waveform.setBeatsPerBar(beatsPerBar);
     
     //eventsTracks    = new MultiTrack(this, numEventTracks,    gridWidth, gridHeight, beatsPerBar, "Events");
     bottomTracks    = new MultiTrack(this, numtracksPerMulti, gridWidth, gridHeight, beatsPerBar, "Bottom Notes");
@@ -88,9 +91,21 @@ class TrackSequencer extends GUIElement{
   public void checkClickedTrack(int mx, int my, int type){
     //println("Checking track click at:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
-        println("TESTING HERE! CHANGE THIS FUNCTION");
-        m.checkTrackClicked(mx, my, type, currentCutDirection, 0);
-        //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      //println("TESTING HERE! CHANGE THIS FUNCTION TO SUPPORT EVENTS AND OBSTACLES!");
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      // ------------------------------------------
+      m.checkTrackClicked(mx, my, type, currentCutDirection, 0);
+      //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
     }
   }
   
@@ -162,7 +177,7 @@ class TrackSequencer extends GUIElement{
       mt.setBPM(bpm);
     }
     
-    //waveform.setBeatsPerBar(beatsPerBar);
+    waveform.setBeatsPerBar(beatsPerBar);
   }
   
   public void setBeatsPerBar(int beats){
@@ -211,6 +226,10 @@ class TrackSequencer extends GUIElement{
     }
   }
   
+  public int getAmountScrolled(){
+    return amountScrolled = (this.getY() - startYPosition) / defaultGridHeight;
+  }
+  
   public void display(){
     
     strokeWeight(2);
@@ -235,32 +254,14 @@ class TrackSequencer extends GUIElement{
       }
     }
     
-    fill(0);
-    stroke(0x55000000);
-    
-    int gridYPos = 0;
-    
-    for(int i = 0; i < 5000; ++i){
-      //gridYPos = (int)((startYPosition + (this.getY() % height )) -i * this.gridSize - 200);
-      gridYPos = (int)(this.getY() -i * this.gridHeight * gridResolution);
-      
-      if(i % 8 == 0)
-        strokeWeight(4);
-      else if(i % 4 == 0)
-        strokeWeight(2);
-      else
-        strokeWeight(1);
-      line(0, gridYPos, width, gridYPos);
-    }
-    
     if(!snapToggle){
       noFill();
+      strokeWeight(1);
       stroke(#ffffff);
       float widthHalf = gridWidth/2;
       float heightHalf = gridHeight/2;
       line(0, mouseY+widthHalf, width, mouseY+heightHalf);
       line(0, mouseY-widthHalf, width, mouseY-heightHalf);
-      
     }
   }
 }
