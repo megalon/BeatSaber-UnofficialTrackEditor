@@ -19,7 +19,7 @@ class Waveform extends GUIElement {
   private int beatsPerBar = 1;
   
   // width adjustment for audio display  
-  private int widthScale = 200;
+  private int widthScale = 50;
   
   String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
   
@@ -185,7 +185,7 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + sampleAverage.get(i), -(i * beatsPerBar) + this.getY()+8);
+          line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);

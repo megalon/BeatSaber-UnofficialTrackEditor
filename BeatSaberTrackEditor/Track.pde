@@ -1,4 +1,9 @@
 class Track extends GUIElement{
+  // These are used to dermine how to handle notes places on the tracks
+  private static final int NOTES = 0;
+  private static final int EVENTS = 1;
+  private static final int OBSTACLES = 2;
+  
   HashMap<Float, GridBlock> gridBlocks;
   private int gridWidth = 0;
   private int gridHeight = 0;
@@ -6,10 +11,11 @@ class Track extends GUIElement{
   private float bpm = 0;
   private boolean snapToGrid = true;
   private boolean trackDebug = false;
+  private int trackType;
   
   int yStartingPosition = 0;
   
-  Track(GUIElement parent, int gridWidth, int gridHeight, int beatsPerBar){
+  Track(GUIElement parent, int gridWidth, int gridHeight, int beatsPerBar, int trackType){
     this.setParent(parent);
     println("track gridWidth: " + gridWidth);
     
@@ -17,6 +23,7 @@ class Track extends GUIElement{
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.beatsPerBar = beatsPerBar;
+    this.trackType = trackType;
     
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));

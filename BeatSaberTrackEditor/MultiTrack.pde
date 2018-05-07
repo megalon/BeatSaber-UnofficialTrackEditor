@@ -13,7 +13,16 @@ class MultiTrack extends GUIElement{
     tracks = new ArrayList<Track>();
     
     for(int i = 0; i < numTracks; ++i){
-      Track t = new Track(this, gridWidth, gridHeight, beatsPerBar);
+      
+      int trackType = Track.NOTES;
+      
+      if(name.equals("Events")){
+        trackType = Track.EVENTS;
+      }else if(name.equals("Obstacles")){
+        trackType = Track.OBSTACLES;
+      }
+      
+      Track t = new Track(this, gridWidth, gridHeight, beatsPerBar, trackType);
       t.setX(gridWidth * i);
       tracks.add(t);
     }
