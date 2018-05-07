@@ -115,6 +115,7 @@ class GUIElement{
   }
   
   public void display(boolean debug){
+    debug = true;
     fill(fillColor);
     stroke(strokeColor);
     strokeWeight(1);

@@ -6,15 +6,24 @@ class MultiTrack extends GUIElement{
   
   public ArrayList<Track> tracks;
   
-  MultiTrack(GUIElement parent, int numTracks, int gridSize, int beatsPerBar, String name){
+  MultiTrack(GUIElement parent, int numTracks, int gridWidth, int gridHeight, int beatsPerBar, String name){
     this.setParent(parent);
     this.setElementName(name);
     
     tracks = new ArrayList<Track>();
     
     for(int i = 0; i < numTracks; ++i){
-      Track t = new Track(this, gridSize, beatsPerBar);
-      t.setX(gridSize * i);
+      
+      int trackType = Track.TRACK_TYPE_NOTES;
+      
+      if(name.equals("Events")){
+        trackType = Track.TRACK_TYPE_EVENTS;
+      }else if(name.equals("Obstacles")){
+        trackType = Track.TRACK_TYPE_OBSTACLES;
+      }
+      
+      Track t = new Track(this, gridWidth, gridHeight, beatsPerBar, trackType);
+      t.setX(gridWidth * i);
       tracks.add(t);
     }
     
@@ -23,7 +32,7 @@ class MultiTrack extends GUIElement{
     
   }
   
-  public void checkTrackClicked(int mx, int my, int type, int cutDirection){
+  public void checkTrackClicked(int mx, int my, int type, int val0, int val1){
     //println("Checking click at:" + mx + " " + my);
     //println("Multitrack xy: " + this.getX() + " " + this.getY());
     for (Track t : tracks){
@@ -33,7 +42,7 @@ class MultiTrack extends GUIElement{
         if(type == -1)
           t.removeNoteMouseClick(mx, my);
         else
-          t.addNoteMouseClick(mx, my, type, cutDirection);
+          t.addGridBlockMouseClick(mx, my, type, val0, val1);
       }
     }
   }

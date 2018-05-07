@@ -34,7 +34,6 @@ class JSONManager{
     int trackCount = 0;
     int multiCount = 0;
     int noteCount = 0;
-    int trackSize = seq.getTrackSize();
     
     
     JSONObject currentNote;
@@ -79,7 +78,9 @@ class JSONManager{
       
       println("note " + n + " gridY : " + gridY);
       
-      t.addNote(currentTime, currentType, currentCutDirection);
+      // Add note to the grid
+      // The 0 on the end is dummy data that is unused in the this function for GB_TYPE_NOTE
+      t.addGridBlock(GridBlock.GB_TYPE_NOTE, currentTime, currentType, currentCutDirection, 0);
     }
   }
   
