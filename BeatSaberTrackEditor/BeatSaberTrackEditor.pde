@@ -2,7 +2,8 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-String versionText = "v0.0.8";
+String versionText = "v0.0.9";
+boolean debug = false;
 
 Minim minim;
 TrackSequencer sequencer;
@@ -149,8 +150,10 @@ void draw(){
       text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
     }
     
-    text("mouseX: " + mouseX, 0, 10);
-    text("mouseY: " + mouseY, 0, 20);
+    if(debug){
+      text("mouseX: " + mouseX, 0, 10);
+      text("mouseY: " + mouseY, 0, 20);
+    }
   }
   
   textSize(12);
