@@ -160,7 +160,9 @@ void mousePressed(){
 }
 
 void mouseDragged(){
-  checkClick();
+  if(snapToggle){
+    checkClick();
+  }
 }
 
 void mouseReleased(){
@@ -361,7 +363,10 @@ public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
   if (textControl.tag.equals(bpmTextField.tag)){
   switch(event) {
     case ENTERED:
+      // Check for invalid input
+      if(!Float.isNaN(float(bpmTextField.getText()))){
         sequencer.setBPM(float(bpmTextField.getText()));
+      }
       break;
     }
   }
