@@ -2,7 +2,7 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-String versionText = "v0.0.7";
+String versionText = "v0.0.8";
 
 Minim minim;
 TrackSequencer sequencer;
