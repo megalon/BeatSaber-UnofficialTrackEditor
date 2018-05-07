@@ -2,7 +2,7 @@ import g4p_controls.*;
 
 import ddf.minim.*;
 
-String versionText = "v0.0.9";
+String versionText = "v0.0.10";
 boolean debug = false;
 
 Minim minim;

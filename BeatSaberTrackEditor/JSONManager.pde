@@ -86,6 +86,7 @@ class JSONManager{
     obstacles = new JSONArray();
     
     setNotesAray();
+    createPlaceholderEvents();
     
     json.setString("_version", versionString);
     json.setFloat("_beatsPerMinute", seq.getBPM());
@@ -138,6 +139,20 @@ class JSONManager{
         ++trackCount;
       }
       ++multiCount;
+    }
+  }
+  
+  private void createPlaceholderEvents(){
+    int eventCount = 0;
+    for(int i = 0; i < 5; ++i){
+      JSONObject event = new JSONObject();
+      
+      event.setInt("_time", 0);
+      event.setInt("_type", i);
+      event.setInt("_value", 1);
+      
+      events.setJSONObject(eventCount, event);
+      ++eventCount;
     }
   }
 }
