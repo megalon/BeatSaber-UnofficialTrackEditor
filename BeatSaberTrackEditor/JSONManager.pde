@@ -134,11 +134,10 @@ class JSONManager{
             notes.setJSONObject(noteCount, note);
             ++noteCount;
           }
-          ++trackCount;
         }
-        ++multiCount;
-        
+        ++trackCount;
       }
+      ++multiCount;
     }
   }
 }
