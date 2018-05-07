@@ -83,7 +83,7 @@ class Waveform extends GUIElement {
       average += abs(samplesVal[i] * widthScale) ; // sample are low value so we increase the size to see them
       
       thisRemainder = (i % (sizeOfAvg));
-      if ((i % (sizeOfAvg)) < lastRemainder) {
+      if (thisRemainder < lastRemainder) {
         avgCounter++;
         float newVal = average / sizeOfAvg;
         sampleAverage.append(newVal);
