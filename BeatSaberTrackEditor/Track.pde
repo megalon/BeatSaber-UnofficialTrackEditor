@@ -17,7 +17,7 @@ class Track extends GUIElement{
     
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));
-    this.setWidth(gridSize);
+    this.setWidth(30);
     this.setHeight(Integer.MAX_VALUE);
     this.setY(-this.getHeight());
     
@@ -85,7 +85,22 @@ class Track extends GUIElement{
   }
   
   public void removeNoteMouseClick(int mx, int my){
-    this.removeNote(mouseCordToTime(height - my - (yStartingPosition - this.getY())));
+    
+    // Loop through the notes in this track and check for mouseclicks
+    float key = Float.NaN;
+    for (Float f: gridBlocks.keySet()) {
+      Note block = (Note)gridBlocks.get(f);
+      if(trackDebug) println("Checking block " + block + " at position " + block.getX() + ", " + block.getY());
+      if(block.checkClicked(mx, my)){
+        key = f;
+        break;
+      }
+    }
+    
+    if(trackDebug) println("Deleting key :" + key);
+    if(!Float.isNaN(key)){
+      this.removeNote(key);
+    }
   }
   
   public void removeNote(float time){

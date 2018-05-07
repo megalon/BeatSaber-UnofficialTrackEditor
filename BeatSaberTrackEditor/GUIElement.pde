@@ -7,6 +7,7 @@ class GUIElement{
   private String name = null;
   
   
+  
   GUIElement(){
     parent = null;
   }
@@ -110,9 +111,20 @@ class GUIElement{
   }
   
   public void display(){
+    this.display(false);
+  }
+  
+  public void display(boolean debug){
     fill(fillColor);
     stroke(strokeColor);
     strokeWeight(1);
     rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    
+    if(debug){
+      fill(#ffffff);
+      textSize(10);
+      text("x: " + this.getX(), this.getX() - this.getWidth(), this.getY());
+      text("y: " + this.getY(), this.getX() - this.getWidth(), this.getY() + 10);
+    }
   }
 }

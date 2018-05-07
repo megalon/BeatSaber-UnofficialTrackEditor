@@ -148,6 +148,9 @@ void draw(){
       ++textIndex;
       text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
     }
+    
+    text("mouseX: " + mouseX, 0, 10);
+    text("mouseY: " + mouseY, 0, 20);
   }
   
   textSize(12);
@@ -160,7 +163,9 @@ void mousePressed(){
 }
 
 void mouseDragged(){
-  if(snapToggle){
+  // Only allow drag painting notes if we are snapped to the grid,
+  // or if we are deleting notes using rightclick
+  if(sequencer.getSnapToggle()){
     checkClick();
   }
 }
@@ -175,6 +180,7 @@ void checkClick(){
   if(shiftPressed){
     type = -1;
   }else if(mouseButton == LEFT){
+    // For the left mouse, we need to allow the hotkey + mouse controls
     if(controlPressed)
       type = Note.TYPE_BLUE;
     else if(altPressed)
@@ -197,10 +203,14 @@ void checkClick(){
 
 void mouseWheel(MouseEvent event) {
   float e = event.getCount();
-  if(shiftPressed){
-    sequencer.scrollY(-e * 10);
+  if(controlPressed){
+    //sequencer.
   }else{
-    sequencer.scrollY(-e);
+    if(shiftPressed){
+      sequencer.scrollY(-e * 10);
+    }else{
+      sequencer.scrollY(-e);
+    }
   }
 }
 
