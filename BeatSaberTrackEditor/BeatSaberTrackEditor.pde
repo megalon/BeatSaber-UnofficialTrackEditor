@@ -21,7 +21,7 @@ boolean showHelpText;
 boolean playing = false;
 
 String soundfilePath = "data\\120BPM_short-clicktrack.wav";
-float bpm = 60;
+float bpm = 120;
 
 int type = 0;
     
@@ -44,7 +44,7 @@ String[] controlsText = {
   "      Place BLUE note: Right click     or     Control + Left Click",
   "      Place MINE : Middle click     or     Alt + Left Click",
   "      Delete note: Shift + Left Click",
-  "      Grid snap off: G",
+  "      Grid snap toggle: G",
   "",
   "  Direction arrows: ",
   "  Click while holding down a key:",

@@ -179,13 +179,13 @@ class Waveform extends GUIElement {
         fill(190);
         stroke(#ffffff);
         strokeCap(SQUARE);
-        strokeWeight(beatsPerBar);
+        //strokeWeight(beatsPerBar);
         
         // Draw the waveform display and the time. Time is currently showing each second
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -(i * beatsPerBar) + this.getY(), border*2 + sampleAverage.get(i), -(i * beatsPerBar) + this.getY());
+          line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + sampleAverage.get(i), -(i * beatsPerBar) + this.getY()+8);
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
