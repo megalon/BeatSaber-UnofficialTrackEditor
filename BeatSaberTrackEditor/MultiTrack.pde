@@ -6,15 +6,15 @@ class MultiTrack extends GUIElement{
   
   public ArrayList<Track> tracks;
   
-  MultiTrack(GUIElement parent, int numTracks, int gridSize, int beatsPerBar, String name){
+  MultiTrack(GUIElement parent, int numTracks, int gridWidth, int gridHeight, int beatsPerBar, String name){
     this.setParent(parent);
     this.setElementName(name);
     
     tracks = new ArrayList<Track>();
     
     for(int i = 0; i < numTracks; ++i){
-      Track t = new Track(this, gridSize, beatsPerBar);
-      t.setX(gridSize * i);
+      Track t = new Track(this, gridWidth, gridHeight, beatsPerBar);
+      t.setX(gridWidth * i);
       tracks.add(t);
     }
     

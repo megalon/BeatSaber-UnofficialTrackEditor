@@ -1,6 +1,6 @@
 class Track extends GUIElement{
   HashMap<Float, GridBlock> gridBlocks;
-  private int gridSize = 0;
+  private int gridHeight = 0;
   private int beatsPerBar = 8;
   private float bpm = 0;
   private boolean snapToGrid = true;
@@ -8,11 +8,11 @@ class Track extends GUIElement{
   
   int yStartingPosition = 0;
   
-  Track(GUIElement parent, int gridSize, int beatsPerBar){
+  Track(GUIElement parent, int gridHeight, int gridWidth, int beatsPerBar){
     this.setParent(parent);
     
     gridBlocks = new HashMap<Float, GridBlock>();
-    this.gridSize = gridSize;
+    this.gridHeight = gridHeight;
     this.beatsPerBar = beatsPerBar;
     
     this.setFillColor(color(#333333));
