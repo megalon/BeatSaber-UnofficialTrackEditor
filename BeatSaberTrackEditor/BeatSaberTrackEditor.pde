@@ -5,7 +5,9 @@
 import g4p_controls.*;
 import ddf.minim.*;
 
+
 String versionText = "Megalon v0.0.12";
+
 boolean debug = false;
 
 Minim minim;
