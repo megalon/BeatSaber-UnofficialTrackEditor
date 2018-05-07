@@ -77,10 +77,13 @@ class Waveform extends GUIElement {
     int average=0;
     
     int avgCounter = 0;
+    float lastRemainder = 9999;
+    float thisRemainder;
     for (int i = 0; i < samplesVal.length; ++i) {
       average += abs(samplesVal[i] * widthScale) ; // sample are low value so we increase the size to see them
       
-      if ( (i % (sizeOfAvg)) == 0) {
+      thisRemainder = (i % (sizeOfAvg));
+      if (thisRemainder < lastRemainder) {
         avgCounter++;
         float newVal = average / sizeOfAvg;
         sampleAverage.append(newVal);
@@ -88,6 +91,7 @@ class Waveform extends GUIElement {
           maxSize = newVal;
         average = 0;
       }
+      lastRemainder = thisRemainder;
     } 
     
     println("avgCounter  : "   + avgCounter);
