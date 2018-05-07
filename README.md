@@ -18,6 +18,8 @@ To run:
 
 ## Grab the latest binary from the Releases tab
 
+https://github.com/megalon/BeatSaber-UnofficialTrackEditor/releases
+
 or 
 
 ## Build it yourself:
