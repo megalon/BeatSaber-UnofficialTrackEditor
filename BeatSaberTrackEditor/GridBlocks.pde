@@ -241,7 +241,7 @@ class Event extends GridBlock {
       //println("Drawing rotation block");
       // Draw box with number to show rotation speed
       fill(this.getFillColor());
-      strokeWeight(1);
+      strokeWeight(0);
       rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
       fill(255);
       textSize(18);
