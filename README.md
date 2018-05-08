@@ -27,13 +27,13 @@ or
 Download Processing 3.3.7
 https://processing.org/download/
 
-Install the Minim library
+**Install the Minim library**
 
 Tools -> Add Tool... -> Libraries tab -> Search for "Minim" -> Select it then click "Install"
 
-Install the G4P library
+**Install the G4P library**
 
-Tools -> Add Tool... -> Libraries tab -> Search for "G4P" -> Select it then click "Install"
+http://www.lagers.org.uk/g4p/download.html
 
 Open BeatSaberTrackEditor.pde
 
@@ -41,16 +41,8 @@ Run the project by clicking the triangular play button. Press the square stop bu
 
 ## Currently working on:
 
-Bugfixes and changing the data structure to allow longer songs to be loaded.
-
-View following the play tracker.
-
-Making the GUI look better.
+Grid snapping, GUI updates, Events, Obstacles
 
 ## Next steps:
 
-Support triplets / arbitrary positions
-
-Support obstacles
-
-Support events
+Support triplets, zooming
