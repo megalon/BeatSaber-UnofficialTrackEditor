@@ -6,7 +6,7 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.13";
+String versionText = "Megalon v0.0.14";
 
 boolean debug = false;
 
@@ -61,7 +61,7 @@ String[] controlsText = {
   "      Place MINE : Middle click     or     Alt + Left Click",
   "      Delete note: Shift + Left Click",
   "      Grid snap toggle: G",
-  "      Change snap resolution: Number keys 1 and 2",
+  "      Change snap resolution: Square brackets [ and ]",
   "",
   "  Direction arrows: ",
   "  Click while holding down a key:",
@@ -367,13 +367,13 @@ void keyPressed(){
 
 void keyReleased(){
 
-  if(key == '1' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
+  if(key == '[' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);
     sequencer.setBeatsPerBar((int)(sequencer.getBeatsPerBar() / 2));
     //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() + 1);
     println("Increasing beats per bar to: " + sequencer.getBeatsPerBar());
   }
-  if(key == '2' && sequencer.getGridResolution() > TrackSequencer.MAX_GRID_RESOLUTION){
+  if(key == ']' && sequencer.getGridResolution() > TrackSequencer.MAX_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() / 2);
     sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() * 2);
     //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() - 1);
