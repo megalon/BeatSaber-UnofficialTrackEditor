@@ -47,23 +47,41 @@ class Obstacle extends GridBlock {
   public static final int TYPE_WALL    = 0;
   public static final int TYPE_CEILING = 1;
   
-  private int duration = 0;
+  private float duration = 0;
   private int wallWidth = 0;
+  private color wallColor = color(#ff0000);
+  private color ceilingColor = color(#0000ff);
 
-  Obstacle(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int duration, float time, int wallWidth){
+  Obstacle(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int wallWidth, float time, float duration){
     super(parent, 0, yPos, gridWidth, gridHeight, type, time);
+    
+    this.setY(this.getLocalY() + gridHeight);
+    this.setWidth(this.getWidth() * wallWidth);
+    
+    println("This.getY(): " + this.getY());
+    println("wallWidth: " + wallWidth);
+    println();
+    this.setHeight((int)(this.getHeight() * -duration * 8));
     
     this.setDuration(duration);
     this.setWallWidth(wallWidth);
     
     println("Created wall at : " + yPos + " type: " + type + " duration: " + duration + " width: " + wallWidth);
+    
+    switch(type){
+      case(TYPE_WALL): this.unSelectedColor = wallColor;
+        break;
+      case(TYPE_CEILING): this.unSelectedColor = ceilingColor;
+        break;
+      default: println("Error! Invalid type" + type + " for gridblock " + this + " !!");
+    }
   }
   
-  public void setDuration(int duration){
+  public void setDuration(float duration){
     this.duration = duration;
   }
   
-  public int getDuration(){
+  public float getDuration(){
     return duration;
   }
   

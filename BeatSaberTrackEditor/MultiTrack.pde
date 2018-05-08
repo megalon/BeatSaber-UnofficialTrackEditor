@@ -32,7 +32,7 @@ class MultiTrack extends GUIElement{
     
   }
   
-  public void checkTrackClicked(int mx, int my, int type, int val0, int val1){
+  public void checkTrackClicked(int mx, int my, int seqYOffset, int type, int val0, float val1){
     //println("Checking click at:" + mx + " " + my);
     //println("Multitrack xy: " + this.getX() + " " + this.getY());
     for (Track t : tracks){
@@ -40,7 +40,7 @@ class MultiTrack extends GUIElement{
       if(t.checkClicked(mx, my)){
         //println("Track clicked!");
         if(type == -1)
-          t.removeGridBLockMouseClick(mx, my);
+          t.removeGridBlockMouseClick(mx, my - seqYOffset);
         else
           t.addGridBlockMouseClick(mx, my, type, val0, val1);
       }
@@ -72,8 +72,10 @@ class MultiTrack extends GUIElement{
        t.display();
     }
     
+    /*
     fill(#ffffff);
     textFont(f, 18);
     text(this.getElementName(), this.getX() + 10, this.getY() - 15);
+    */
   }
 }

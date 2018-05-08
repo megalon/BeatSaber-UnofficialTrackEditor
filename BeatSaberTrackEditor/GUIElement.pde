@@ -95,6 +95,10 @@ class GUIElement{
     this.parent = parent; 
   }
   
+  public GUIElement getParent(){
+    return this.parent;
+  }
+  
   public void setFillColor(color fillColor){
     this.fillColor = fillColor;
   }
@@ -113,6 +117,9 @@ class GUIElement{
   }
   
   public void display(boolean debug){
+    
+    debug = false;
+    
     fill(fillColor);
     stroke(strokeColor);
     strokeWeight(1);
@@ -123,6 +130,10 @@ class GUIElement{
       textSize(10);
       text("x: " + this.getX(), this.getX() - this.getWidth(), this.getY());
       text("y: " + this.getY(), this.getX() - this.getWidth(), this.getY() + 10);
+      
+      noFill();
+      stroke(#ffff00);
+      rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
   }
 }

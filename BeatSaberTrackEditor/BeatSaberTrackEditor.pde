@@ -28,6 +28,10 @@ boolean showHelpText;
 boolean playing = false;
 
 String soundfilePath = "data\\120BPM_Electro_Test.wav";
+String tempPath = "data\\tmp\\tmp-track-";
+int tempTrackIndex = 0;
+float timeCounter = 0;
+int numTmpFiles = 5;
 String inputTrackPath;
 String outputTrackPath;
 float bpm = 120;
@@ -72,6 +76,7 @@ String[] controlsText = {
 };
 
 GTextField bpmTextField;
+GTextField audioOffsetTextField;
 
 // Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
@@ -90,8 +95,8 @@ void setup(){
 
   // Minim must be declared in the main class!
   minim = new Minim(this);
-
-  sequencer = new TrackSequencer(0, height, width, -height, minim);
+  
+  sequencer = new TrackSequencer(0, height + sequencerYOffset, width, -(height + sequencerYOffset), minim);
 
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
@@ -116,10 +121,24 @@ void resetKeys(){
   snapToggle = false;
 }
 
+
 void draw(){
   if (!focused){
     resetKeys();
   }
+  
+  timeCounter++;
+  // Autosave
+  // Save every 30 seconds at 60fps
+  if(timeCounter % (30 * 60) == 0){
+    jsonManager.saveTrack(tempPath + getDateFormatted() + "-" + tempTrackIndex + ".json");
+    if(tempTrackIndex == numTmpFiles)
+      tempTrackIndex = 0;
+    else
+      tempTrackIndex++;
+  }
+  
+  
   // Redraw background
   background(#111111);
 
@@ -131,7 +150,21 @@ void draw(){
 
   fill(0);
   stroke(0);
-
+  
+  // Draw box below sequencer
+  rect(0, height + sequencerYOffset, width, -sequencerYOffset);
+  
+  fill(#FFFFFF);
+  int seqTextY = height + sequencerYOffset + 25;
+  textSize(18);
+  text("Events\nWIP",       sequencer.multiTracks.get(0).getX(), seqTextY);
+  text("Bottom Notes", sequencer.multiTracks.get(1).getX(), seqTextY);
+  text("Middle Notes", sequencer.multiTracks.get(2).getX(), seqTextY);
+  text("Top Notes",    sequencer.multiTracks.get(3).getX(), seqTextY);
+  text("Obstacles\n(Edit WIP)",    sequencer.multiTracks.get(4).getX(), seqTextY);
+  
+  text("---------------------\n---------------------\n-----EVENTS WIP------\n---------------------\n---------------------\n", sequencer.multiTracks.get(0).getX(), 400 + (sequencer.getY() - sequencer.startYPosition));
+  
   // Draw help text
   if(showHelpText){
 
@@ -396,8 +429,9 @@ public void drawGrid(){
   stroke(0x55000000);
 
   for(int i = 0; i < 250; ++i){
-    gridYPos = (int)(height - (i * gridSpacing));
-
+  
+    gridYPos = (int)(height - (i * gridSpacing) + sequencerYOffset);
+    
     colorTrackerNum = i + amountScrolled;
 
     if(colorTrackerNum % 8 == 0)
@@ -446,6 +480,15 @@ public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
       }
       break;
     }
+  }else if(textControl.tag.equals(audioOffsetTextField.tag)){
+    switch(event) {
+      case ENTERED:
+        // Check for invalid input
+        if(!Float.isNaN(float(audioOffsetTextField.getText()))){
+          println("Audio offset entered!");
+        }
+        break;
+      }
   }
 }
 
@@ -508,4 +551,9 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   lblConsole.setOpaque(true);
   lblConsole.setLocalColorScheme(G4P.BLUE_SCHEME);
   lblConsole.setText("Loaded default audio file: " + soundfilePath);
+}
+
+// Format a date string for the temp file
+public String getDateFormatted(){
+  return "" + (year() + "-" + month() + "-" + day() + "--" + hour() + "-" + minute() + "-" + second() + "-" + millis());
 }
