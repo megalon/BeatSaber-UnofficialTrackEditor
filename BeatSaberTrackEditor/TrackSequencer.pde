@@ -114,7 +114,8 @@ class TrackSequencer extends GUIElement{
       // ------------------------------------------
       // ------------------------------------------
       // ------------------------------------------
-      m.checkTrackClicked(mx, my - seqWindowBottom, type, currentCutDirection, 0);
+      m.checkTrackClicked(mx, my - seqWindowBottom, (this.getY() - startYPosition), type, currentCutDirection, 0);
+      //println("checkTrackClicked(" + mx + ", " + (my - seqWindowBottom) + ", " + type);
       //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
     }
   }

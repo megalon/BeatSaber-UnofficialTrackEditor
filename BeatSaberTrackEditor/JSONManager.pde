@@ -75,8 +75,8 @@ class JSONManager{
       //println("currentType : " + currentType);
       //println("currentCutDirection : " + currentCutDirection);
       
-      // Get notes multitracks
-      mt = seq.multiTracks.get(currentLineLayer);
+      // Get notes multitracks. Add one to skip events track
+      mt = seq.multiTracks.get(currentLineLayer + 1);
       t = mt.tracks.get(currentLineIndex);
       
       gridY = seq.timeToGrid(currentTime);
@@ -131,7 +131,8 @@ class JSONManager{
     int noteCount = 0;
     multiCount = 0;
     Note n = null;
-    for(MultiTrack m : seq.multiTracks){
+    for(int i = 1; i < 4; ++i){
+      MultiTrack m = seq.multiTracks.get(i);
       trackCount = 0;
       for(Track t : m.tracks){
         

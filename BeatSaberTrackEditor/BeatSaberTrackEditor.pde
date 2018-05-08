@@ -14,7 +14,7 @@ Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
-int sequencerYOffset = -100;
+int sequencerYOffset = -50;
 int previousMouseButton;
 
 // Keypresses
@@ -31,6 +31,7 @@ String soundfilePath = "data\\120BPM_Electro_Test.wav";
 String tempPath = "data\\tmp\\tmp-track-";
 int tempTrackIndex = 0;
 float timeCounter = 0;
+int numTmpFiles = 5;
 float bpm = 120;
 
 int type = 0;
@@ -132,7 +133,7 @@ void draw(){
   // Save every 30 seconds at 60fps
   if(timeCounter % (30 * 60) == 0){
     jsonManager.saveTrack(tempPath + getDateFormatted() + "-" + tempTrackIndex + ".json");
-    if(tempTrackIndex == 3)
+    if(tempTrackIndex == numTmpFiles)
       tempTrackIndex = 0;
     else
       tempTrackIndex++;
@@ -411,7 +412,7 @@ public void drawGrid(){
   stroke(0x55000000);
   
   for(int i = 0; i < 250; ++i){
-    gridYPos = (int)(height - (i * gridSpacing));
+    gridYPos = (int)(height - (i * gridSpacing) + sequencerYOffset);
     
     colorTrackerNum = i + amountScrolled;
     

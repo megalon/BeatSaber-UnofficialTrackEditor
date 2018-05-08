@@ -12,7 +12,7 @@ class Track extends GUIElement{
   private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
-  private boolean trackDebug = false;
+  private boolean trackDebug = true;
   private int trackType;
   
   int yStartingPosition = 0;
@@ -72,11 +72,12 @@ class Track extends GUIElement{
   }
   
   public void addGridBlockMouseClick(int mx, int my, int type, int val0, int val1){
+    if(trackDebug) println("addGridBlockMouseClick(" + mx + ", " + my + ", " + type + ", " + val0 + ", " + val1);  
     if(trackDebug) println();
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
     
-    float t = mouseCordToTime( - my - (yStartingPosition - this.getY()));
+    float t = mouseCordToTime(-my - (yStartingPosition - this.getY()));
     
     if(trackDebug) println("mouseCordToTime: " + t);
     
@@ -114,13 +115,15 @@ class Track extends GUIElement{
     */
   }
   
-  public void removeGridBLockMouseClick(int mx, int my){
+  public void removeGridBlockMouseClick(int mx, int my){
+    // Shouldn't have to do this equation, but so be it!
+    if(trackDebug) println("removeGridBLockMouseClick(" + mx + ", " + (-my) + ", this.getY()+my: " + (this.getHeight() + this.getY()+my));
     // Loop through the notes in this track and check for mouseclicks
     float key = Float.NaN;
     for (Float f: gridBlocks.keySet()) {
       GridBlock block = gridBlocks.get(f);
       if(trackDebug) println("Checking block " + block + " at position " + block.getX() + ", " + block.getY());
-      if(block.checkClicked(mx, my)){
+      if(block.checkClicked(mx, (this.getHeight() + this.getY()+my))){
         key = f;
         break;
       }
