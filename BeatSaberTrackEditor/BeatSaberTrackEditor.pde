@@ -28,6 +28,8 @@ boolean showHelpText;
 boolean playing = false;
 
 String soundfilePath = "data\\120BPM_Electro_Test.wav";
+String inputTrackPath;
+String outputTrackPath;
 float bpm = 120;
 
 int type = 0;
@@ -73,7 +75,7 @@ GTextField bpmTextField;
 
 // Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
-GLabel lblFile;
+GLabel lblConsole;
 
 void setup(){
   size(1280, 720);
@@ -86,22 +88,20 @@ void setup(){
   altPressed = false;
   showHelpText = true;
 
-  // This needs to be in the main class
+  // Minim must be declared in the main class!
   minim = new Minim(this);
 
-  int seqOffsetY = 200;
   sequencer = new TrackSequencer(0, height, width, -height, minim);
 
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
 
-  jsonManager = new JSONManager(sequencer);
+  createFileSystemGUI(width - 350, 0, 350, 130, 6);
+  jsonManager = new JSONManager(sequencer, lblConsole);
 
   helpboxSize = 350;
   helpboxX = width - 350;
   helpboxY = 120;
-
-  createFileSystemGUI(width - 350, 0, 350, 130, 6);
 }
 
 void resetKeys(){
@@ -166,7 +166,7 @@ void draw(){
   }
   textSize(12);
   fill(#ffffff);
-  text(versionText, width - 100 , height - 10);
+  text(versionText, width - 100 , 148);
 }
 
 void mousePressed(){
@@ -282,14 +282,16 @@ void keyPressed(){
   }
   if (keyCode == 83){
     if(controlPressed){
-      String fname = lblFile.getText();
-      fname = fname.trim();
-      if (fname.isEmpty() || fname == null){
-        fname = G4P.selectOutput("Output Dialog");
-        lblFile.setText(fname);
-        jsonManager.saveTrack(fname);
-      } else {
-        jsonManager.saveTrack(fname);
+      String fname = outputTrackPath;//lblConsole.getText();
+      if(fname != null){
+        fname = fname.trim();
+        if (fname.isEmpty() || fname.equals("")){
+          fname = G4P.selectOutput("Output Dialog");
+          lblConsole.setText(fname);
+          jsonManager.saveTrack(fname);
+        } else {
+          jsonManager.saveTrack(fname);
+        }
       }
     }
 }
@@ -459,21 +461,20 @@ public void handleFileDialog(GButton button) {
   // File input selection
   if (button == btnOpenSong) {
     // Use file filter if possible
-    fname = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
-    lblFile.setText(fname);
-    sequencer.loadSoundFile(fname);
+    soundfilePath = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
+    lblConsole.setText("Opening audio file: " + soundfilePath);
+    sequencer.loadSoundFile(soundfilePath);
+    lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
   }
   // File output selection
   else if (button == btnInput) {
-    fname = G4P.selectInput("Input Dialog");
-    lblFile.setText(fname);
-    jsonManager.loadTrack(fname);
+    inputTrackPath = G4P.selectInput("Input Dialog");
+    jsonManager.loadTrack(inputTrackPath);
   }
   // File output selection
   else if (button == btnOutput) {
-    fname = G4P.selectOutput("Output Dialog");
-    lblFile.setText(fname);
-    jsonManager.saveTrack(fname);
+    outputTrackPath = G4P.selectOutput("Output Dialog");
+    jsonManager.saveTrack(outputTrackPath);
   }
 }
 
@@ -502,8 +503,9 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   bpmTextField.setPromptText("BPM");
   bpmTextField.setFont(new Font("Arial", Font.PLAIN, 25));
 
-  lblFile = new GLabel(this, x, y+70, w, 50);
-  lblFile.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-  lblFile.setOpaque(true);
-  lblFile.setLocalColorScheme(G4P.BLUE_SCHEME);
+  lblConsole = new GLabel(this, x, y+70, w, 50);
+  lblConsole.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  lblConsole.setOpaque(true);
+  lblConsole.setLocalColorScheme(G4P.BLUE_SCHEME);
+  lblConsole.setText("Loaded default audio file: " + soundfilePath);
 }
