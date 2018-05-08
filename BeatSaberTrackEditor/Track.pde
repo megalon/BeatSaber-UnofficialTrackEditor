@@ -57,7 +57,7 @@ class Track extends GUIElement{
     }
     if(trackDebug) println("mouseCordToTime. cord: " + cordY + " = time: " + val);
     
-    return val / 4;
+    return val;
   }
   
   public int timeToCord(float time){
