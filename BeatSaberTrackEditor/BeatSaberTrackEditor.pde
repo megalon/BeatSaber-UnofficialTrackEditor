@@ -28,13 +28,15 @@ boolean showHelpText;
 boolean playing = false;
 
 String soundfilePath = "data\\120BPM_Electro_Test.wav";
+String inputTrackPath;
+String outputTrackPath;
 float bpm = 120;
 
 int type = 0;
-    
+
 int helpboxX, helpboxY, helpboxSize;
 
-String[] instructionsText = { 
+String[] instructionsText = {
   "  1. Load an audio file using the LOAD AUDIO button",
   "  2. Set the BPM using the BPM textbox",
   "  3. Start editing, or load a track json file with LOAD TRACK",
@@ -42,12 +44,12 @@ String[] instructionsText = {
   "",
 };
 
-String[] controlsText = { 
+String[] controlsText = {
   "  SPACE:                 Play / Pause",
   "  SHIFT+SPACE:  Jump to start",
   "",
-  "  Notes:", 
-  "      Place RED note : Left click", 
+  "  Notes:",
+  "      Place RED note : Left click",
   "      Place BLUE note: Right click     or     Control + Left Click",
   "      Place MINE : Middle click     or     Alt + Left Click",
   "      Delete note: Shift + Left Click",
@@ -71,37 +73,35 @@ String[] controlsText = {
 
 GTextField bpmTextField;
 
-// Controls used for file dialog GUI 
+// Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
-GLabel lblFile;
+GLabel lblConsole;
 
 void setup(){
   size(1280, 720);
   noSmooth();
   stroke(0);
   background(0);
-  
+
   shiftPressed = false;
   controlPressed = false;
   altPressed = false;
   showHelpText = true;
-  
-  // This needs to be in the main class
+
+  // Minim must be declared in the main class!
   minim = new Minim(this);
-  
-  int seqOffsetY = 200;
+
   sequencer = new TrackSequencer(0, height, width, -height, minim);
-  
+
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
-  
-  jsonManager = new JSONManager(sequencer);
-  
+
+  createFileSystemGUI(width - 350, 0, 350, 130, 6);
+  jsonManager = new JSONManager(sequencer, lblConsole);
+
   helpboxSize = 350;
   helpboxX = width - 350;
   helpboxY = 120;
-  
-  createFileSystemGUI(width - 350, 0, 350, 130, 6);
 }
 
 void resetKeys(){
@@ -109,7 +109,7 @@ void resetKeys(){
   down = false;
   left = false;
   right = false;
-  
+
   altPressed = false;
   controlPressed = false;
   shiftPressed = false;
@@ -122,26 +122,26 @@ void draw(){
   }
   // Redraw background
   background(#111111);
-  
+
   sequencer.setCutDirection(getNewCutDirection());
-  
+
   sequencer.display();
   drawGrid();
-  
-  
+
+
   fill(0);
   stroke(0);
-  
+
   // Draw help text
   if(showHelpText){
-    
+
     fill(#000000);
     rect(helpboxX, 0, helpboxSize, height);
-    
+
     fill(#ffffff);
     textSize(18);
     text("INSTRUCTIONS", helpboxX + 10, helpboxY + 28);
-    
+
     textSize(12);
     int textIndex = 0;
     int helpIndexSpacing = 20;
@@ -149,7 +149,7 @@ void draw(){
       ++textIndex;
       text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
     }
-    
+
     ++textIndex;
     textSize(18);
     text("CONTROLS", helpboxX + 10, helpboxY + 28 + textIndex * helpIndexSpacing);
@@ -158,7 +158,7 @@ void draw(){
       ++textIndex;
       text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
     }
-    
+
     if(debug){
       text("mouseX: " + mouseX, 0, 10);
       text("mouseY: " + mouseY, 0, 20);
@@ -166,7 +166,7 @@ void draw(){
   }
   textSize(12);
   fill(#ffffff);
-  text(versionText, width - 100 , height - 10);
+  text(versionText, width - 100 , 148);
 }
 
 void mousePressed(){
@@ -182,12 +182,12 @@ void mouseDragged(){
 }
 
 void mouseReleased(){
-  
+
 }
 
 void checkClick(){
   int type = 0;
-  
+
   if(shiftPressed){
     type = -1;
   }else if(mouseButton == LEFT){
@@ -202,11 +202,11 @@ void checkClick(){
     type = sequencer.getTypeFromMouseButton(mouseButton);
   }
   sequencer.checkClickedTrack(mouseX, mouseY, type);
-  
+
   // Processing doesn't store what button was released,
   // so I have to do this
   previousMouseButton = mouseButton;
-  
+
   if(!sequencer.getPlaying()){
     sequencer.setTrackerPosition(mouseY);
   }
@@ -237,7 +237,7 @@ void keyPressed(){
       altPressed = true;
     }
   }
-  
+
   if (keyCode == UP){
     if(shiftPressed){
       sequencer.scrollY(10);
@@ -245,13 +245,13 @@ void keyPressed(){
       sequencer.scrollY(1);
     }
   }
-  
+
   if (keyCode == DOWN && sequencer.getY() >= 0){
     if (controlPressed){
       sequencer.resetView();
     }else{
       if(shiftPressed && sequencer.getY() >= 10){
-        sequencer.scrollY(-10);  
+        sequencer.scrollY(-10);
       }else{
         sequencer.scrollY(-1);
       }
@@ -269,7 +269,7 @@ void keyPressed(){
         sequencer.setPlaying(true);
     }
   }
-  
+
   if(key == 'g'){
     if(!snapToggle){
       if(sequencer.getSnapToggle()){
@@ -280,7 +280,23 @@ void keyPressed(){
       snapToggle = true;
     }
   }
-  
+  if (keyCode == 83){
+    if(controlPressed){
+      String fname = outputTrackPath;//lblConsole.getText();
+      if(fname != null){
+        fname = fname.trim();
+        if (fname.isEmpty() || fname.equals("")){
+          fname = G4P.selectOutput("Output Dialog");
+          lblConsole.setText(fname);
+          jsonManager.saveTrack(fname);
+        } else {
+          jsonManager.saveTrack(fname);
+        }
+      }
+    }
+}
+
+
   if(key == 'w'){
     up = true;
   }if(key == 's'){
@@ -293,7 +309,7 @@ void keyPressed(){
 }
 
 void keyReleased(){
-  
+
   if(key == '1' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);
     sequencer.setBeatsPerBar((int)(sequencer.getBeatsPerBar() / 2));
@@ -306,7 +322,7 @@ void keyReleased(){
     //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() - 1);
     println("Decreasing beats per bar to: " + sequencer.getBeatsPerBar());
   }
-  
+
   if(key == 'w'){
     up = false;
   }if(key == 's'){
@@ -316,11 +332,11 @@ void keyReleased(){
   }if(key == 'd'){
     right = false;
   }
-  
+
   if(key == 'g'){
     snapToggle = false;
   }
-  
+
   if (key == CODED) {
     if (keyCode == SHIFT) {
       shiftPressed = false;
@@ -356,7 +372,7 @@ public int getNewCutDirection(){
     dir = Note.DIR_RIGHT;
   if(right)
     dir = Note.DIR_LEFT;
-    
+
   if(up && left)
     dir = Note.DIR_BOTTOMRIGHT;
   else if(up && right)
@@ -366,24 +382,24 @@ public int getNewCutDirection(){
   else if(down && right)
     dir = Note.DIR_TOPLEFT;
 
-  return dir; 
+  return dir;
 }
 
 public void drawGrid(){
   int amountScrolled = sequencer.getAmountScrolled();
   int gridYPos = 0;
   int colorTrackerNum = 0;
-  
+
   float gridSpacing = (sequencer.getGridHeight() * sequencer.getGridResolution());
-  
+
   fill(0);
   stroke(0x55000000);
-  
+
   for(int i = 0; i < 250; ++i){
     gridYPos = (int)(height - (i * gridSpacing));
-    
+
     colorTrackerNum = i + amountScrolled;
-    
+
     if(colorTrackerNum % 8 == 0)
       strokeWeight(4);
     else if(colorTrackerNum % 4 == 0)
@@ -411,16 +427,16 @@ public void displayEvent(String name, GEvent event) {
     println("GETS_FOCUS " + extra);
     break;
   case ENTERED:
-    println("ENTERED " + extra);  
+    println("ENTERED " + extra);
     break;
   default:
     println("UNKNOWN " + extra);
   }
 }
 
-public void handleTextEvents(GEditableTextControl textControl, GEvent event) { 
+public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
   displayEvent(textControl.tag, event);
-  
+
   if (textControl.tag.equals(bpmTextField.tag)){
   switch(event) {
     case ENTERED:
@@ -433,7 +449,7 @@ public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
   }
 }
 
-public void handleButtonEvents(GButton button, GEvent event) { 
+public void handleButtonEvents(GButton button, GEvent event) {
   // Folder selection
   if (button == btnOpenSong || button == btnInput || button == btnOutput)
     handleFileDialog(button);
@@ -445,28 +461,27 @@ public void handleFileDialog(GButton button) {
   // File input selection
   if (button == btnOpenSong) {
     // Use file filter if possible
-    fname = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
-    lblFile.setText(fname);
-    sequencer.loadSoundFile(fname);
+    soundfilePath = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
+    lblConsole.setText("Opening audio file: " + soundfilePath);
+    sequencer.loadSoundFile(soundfilePath);
+    lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
   }
   // File output selection
   else if (button == btnInput) {
-    fname = G4P.selectInput("Input Dialog");
-    lblFile.setText(fname);
-    jsonManager.loadTrack(fname);
+    inputTrackPath = G4P.selectInput("Input Dialog");
+    jsonManager.loadTrack(inputTrackPath);
   }
   // File output selection
   else if (button == btnOutput) {
-    fname = G4P.selectOutput("Output Dialog");
-    lblFile.setText(fname);
-    jsonManager.saveTrack(fname);
+    outputTrackPath = G4P.selectOutput("Output Dialog");
+    jsonManager.saveTrack(outputTrackPath);
   }
 }
 
 
 public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   // Set inner frame position
-  x += border; 
+  x += border;
   y += border;
   w -= 2*border;
   h -= 2*border;
@@ -482,14 +497,15 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   btnOpenSong = new GButton(this, x, y+30, bw, bh, "Load Audio");
   btnInput = new GButton(this, x+2*bs, y+30, bw, bh, "Load Track");
   btnOutput = new GButton(this, x+3*bs, y+30, bw, bh, "Save Track");
-  
+
   bpmTextField = new GTextField(this, x+bs, y+30, bw, 30);
   bpmTextField.tag = "bpmText";
   bpmTextField.setPromptText("BPM");
   bpmTextField.setFont(new Font("Arial", Font.PLAIN, 25));
-  
-  lblFile = new GLabel(this, x, y+70, w, 50);
-  lblFile.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-  lblFile.setOpaque(true);
-  lblFile.setLocalColorScheme(G4P.BLUE_SCHEME);
+
+  lblConsole = new GLabel(this, x, y+70, w, 50);
+  lblConsole.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  lblConsole.setOpaque(true);
+  lblConsole.setLocalColorScheme(G4P.BLUE_SCHEME);
+  lblConsole.setText("Loaded default audio file: " + soundfilePath);
 }

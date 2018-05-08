@@ -3,17 +3,21 @@ class JSONManager{
   String outputFile, inputFile;
   JSONObject json;
   JSONArray events, notes, obstacles;
+  GLabel consoleOutLabel;
   
   String versionString = "1.5.0";
   int beatsPerBar = 16;
   int notesPerBar = 1; // Change this value later
   
-  public JSONManager(TrackSequencer seq){
+  public JSONManager(TrackSequencer seq, GLabel consoleOutLabel){
     this.seq = seq;
+    this.consoleOutLabel = consoleOutLabel;
   }
   
   // Load a track from disk
   public void loadTrack(String filename){
+    this.consoleOutLabel.setText("Opening track file: " + filename);
+    
     json = loadJSONObject(filename);
     
     float bpmIn = json.getFloat("_beatsPerMinute");
@@ -77,10 +81,15 @@ class JSONManager{
       // NOTE: The 0 on the end of this function is unused for GB_TYPE_NOTE
       t.addGridBlock(GridBlock.GB_TYPE_NOTE, currentTime, currentType, currentCutDirection, 0);
     }
+    
+    this.consoleOutLabel.setText("++++ Track file loaded! ++++\n " + filename);
   }
   
   // Save the created track to output json file
   public void saveTrack(String filename){
+    this.consoleOutLabel.setText("Saving track file: " + filename);
+    println("Saving track to file: " + filename);
+    
     this.outputFile = filename;
     
     json = new JSONObject();
@@ -110,6 +119,8 @@ class JSONManager{
     }
     
     saveJSONObject(json, filename);
+    
+    this.consoleOutLabel.setText("++++ Track file saved! ++++ " + hour() + ":" + minute() + ":" + second() + "\n" + filename);
   }
   
   
