@@ -3,19 +3,24 @@ class JSONManager{
   String outputFile, inputFile;
   JSONObject json;
   JSONArray events, notes, obstacles;
+  GLabel consoleOutLabel;
   
   String versionString = "1.5.0";
   int beatsPerBar = 16;
   int notesPerBar = 1; // Change this value later
   
-  public JSONManager(TrackSequencer seq){
+  public JSONManager(TrackSequencer seq, GLabel consoleOutLabel){
     this.seq = seq;
+    this.consoleOutLabel = consoleOutLabel;
   }
   
   // Load a track from disk
   public void loadTrack(String filename){
     
     seq.clearSeq();
+
+    this.consoleOutLabel.setText("Opening track file: " + filename);
+
     
     json = loadJSONObject(filename);
     
@@ -78,6 +83,7 @@ class JSONManager{
       t.addGridBlock(GridBlock.GB_TYPE_NOTE, currentTime, currentType, currentCutDirection, 0);
     }
     
+
     //{"_lineIndex":2,"_type":0,"_duration":1,"_time":76,"_width":2},
     for(int o = 0; o < obstacles.size(); ++o){
       currentObject       = obstacles.getJSONObject(o);
@@ -102,10 +108,16 @@ class JSONManager{
       // public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
       t.addGridBlock(GridBlock.GB_TYPE_OBSTACLE, currentTime, currentType, currentWidth, currentDuration);
     }
+
+    this.consoleOutLabel.setText("++++ Track file loaded! ++++\n " + filename);
+
   }
   
   // Save the created track to output json file
   public void saveTrack(String filename){
+    this.consoleOutLabel.setText("Saving track file: " + filename);
+    println("Saving track to file: " + filename);
+    
     this.outputFile = filename;
     
     json = new JSONObject();
@@ -136,6 +148,8 @@ class JSONManager{
     }
     
     saveJSONObject(json, filename);
+    
+    this.consoleOutLabel.setText("++++ Track file saved! ++++ " + hour() + ":" + minute() + ":" + second() + "\n" + filename);
   }
   
   
