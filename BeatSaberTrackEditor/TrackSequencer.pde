@@ -1,6 +1,10 @@
 // The collection of all tracks.
 
 class TrackSequencer extends GUIElement{
+
+  private static final int SOUND_FILE_VALID = 0;
+  private static final int SOUND_FILE_OGG = 1;
+  private static final int SOUND_FILE_INVALID = 2;
   
   private static final float MAX_GRID_RESOLUTION = 0.5;
   private static final float MIN_GRID_RESOLUTION = 1;
@@ -12,7 +16,7 @@ class TrackSequencer extends GUIElement{
   private int gridHeight = 24;
   private int defaultGridHeight = 30;
   private int numtracksPerMulti = 4;
-  private int numEventTracks = 14;
+  private int numEventTracks = 9;
   private int trackGroupSpacing = gridWidth / 2;
   private int tracksXOffset = 150;
   private Waveform waveform;

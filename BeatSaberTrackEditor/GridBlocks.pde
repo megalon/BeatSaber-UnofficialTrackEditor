@@ -150,7 +150,7 @@ class Event extends GridBlock {
   int minColorFadeValue = 0;
   int maxColorFadeValue = 255;
   
-  int flashValue = 5;
+  int flashValue = 8;
   int slowFadeValue = 1;
   
   private int value = 0;

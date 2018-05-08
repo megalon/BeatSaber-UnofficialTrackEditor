@@ -8,7 +8,7 @@ import java.awt.*;
 
 String versionText = "Megalon v0.0.13";
 
-boolean debug = true;
+boolean debug = false;
 
 Minim minim;
 TrackSequencer sequencer;
@@ -176,7 +176,7 @@ void draw(){
   fill(#FFFFFF);
   int seqTextY = height + sequencerYOffset + 25;
   textSize(18);
-  //text("Events\nWIP",       sequencer.multiTracks.get(0).getX(), seqTextY);
+  //text("Events",        sequencer.multiTracks.get(0).getX(), height - 10);
   text("Bottom\nNotes", sequencer.multiTracks.get(1).getX(), seqTextY);
   text("Middle\nNotes", sequencer.multiTracks.get(2).getX(), seqTextY);
   text("Top\nNotes",    sequencer.multiTracks.get(3).getX(), seqTextY);
@@ -185,7 +185,7 @@ void draw(){
   //text("---------------------\n---------------------\n-----EVENTS WIP------\n---------------------\n---------------------\n", sequencer.multiTracks.get(0).getX(), 400 + (sequencer.getY() - sequencer.startYPosition));
   
   textSize(12);
-  image(eventLabels, sequencer.multiTracks.get(0).getX() - 70, height + sequencerYOffset - 10);
+  image(eventLabels, sequencer.multiTracks.get(0).getX() - 80, height + sequencerYOffset);
   
   text("FPS: " + (int)frameRate,0, height);
   
@@ -529,9 +529,19 @@ public void handleFileDialog(GButton button) {
   if (button == btnOpenSong) {
     // Use file filter if possible
     soundfilePath = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
-    lblConsole.setText("Opening audio file: " + soundfilePath);
-    sequencer.loadSoundFile(soundfilePath);
-    lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
+    switch(validSoundFile(soundfilePath)){
+      case(TrackSequencer.SOUND_FILE_VALID):
+        lblConsole.setText("Opening audio file: " + soundfilePath);
+        sequencer.loadSoundFile(soundfilePath);
+        lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
+        break;
+      case(TrackSequencer.SOUND_FILE_OGG):
+        lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported!");
+        showErrorMessage(".ogg files not supported!\nTry a stereo WAV file");
+        break;
+      default:
+        showErrorMessage("Filetype not supported!\nPlease select a stereo WAV, AIFF, or MP3");
+    }
   }
   // File output selection
   else if (button == btnInput) {
@@ -577,7 +587,30 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   lblConsole.setText("Loaded default audio file: " + soundfilePath);
 }
 
+
+// G4P code for message dialogs
+public void showErrorMessage(String message) {
+  String title = "Error";
+  G4P.showMessage(this, message, title, G4P.ERROR);
+}
+
+
 // Format a date string for the temp file
 public String getDateFormatted(){
   return "" + (year() + "-" + month() + "-" + day() + "--" + hour() + "-" + minute() + "-" + second() + "-" + millis());
+}
+
+public int validSoundFile(String soundfilePath){
+  if(soundfilePath.length() > 4){
+    String soundfileFileExtension = soundfilePath.substring(soundfilePath.length()-4, soundfilePath.length());
+    
+    println("soundfileFileExtension", soundfileFileExtension);
+    
+    if(soundfileFileExtension.equals(".wav") || soundfileFileExtension.equals(".mp3") || soundfileFileExtension.equals("aiff")){
+      return TrackSequencer.SOUND_FILE_VALID;
+    }else if(soundfileFileExtension.equals(".ogg")){
+      return TrackSequencer.SOUND_FILE_OGG;
+    }
+  }
+  return TrackSequencer.SOUND_FILE_INVALID;
 }

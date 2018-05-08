@@ -1,5 +1,6 @@
 
 class Waveform extends GUIElement {
+  
     
   Minim minim; 
   AudioSample sound; 
@@ -64,9 +65,9 @@ class Waveform extends GUIElement {
     calculateSizeOfAVG();
     float[] leftSamples = sound.getChannel(AudioSample.LEFT);
     float[] rightSamples = sound.getChannel(AudioSample.RIGHT);
-    float[] samplesVal = new float[rightSamples.length];
+    float[] samplesVal = new float[rightSamples.length];    
     for (int i = 0; i < rightSamples.length; ++i) {
-      samplesVal[i] = leftSamples[i]+ rightSamples[i];
+      samplesVal[i] = leftSamples[i] + rightSamples[i];
     }
     
     leftLength  = leftSamples.length;

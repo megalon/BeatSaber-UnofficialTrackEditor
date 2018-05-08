@@ -114,19 +114,46 @@ class JSONManager{
       t.addGridBlock(GridBlock.GB_TYPE_OBSTACLE, currentTime, currentType, currentWidth, currentDuration);
     }
     
+    
+      println("---------EVENTS---------");
+    // Only events 0 - 4, 8, 9, 12, 13
     for(int e = 0; e < events.size(); ++e){
       currentObject = events.getJSONObject(e);
       currentTime = currentObject.getFloat("_time");
       currentType = currentObject.getInt("_type");
       currentValue = currentObject.getInt("_value");
       
+      
+      // Since not all tracks are used, we need to convert the currentValue
+      // into the correct track index in the multitrack tracklist
+      int updatedTrackValue = 0;
+      
+      println("currentType:" + currentType);
+      switch(currentType){
+        case(8): updatedTrackValue  = 5;
+          break;
+        case(9): updatedTrackValue  = 6;
+          break;
+        case(12): updatedTrackValue = 7;
+          break;
+        case(13): updatedTrackValue = 8;
+          break;
+        default:
+          println("currentType that defaulted:" + currentType);
+          updatedTrackValue = currentType;
+      }
+      
       // Get events multitrack
       mt = seq.multiTracks.get(0);
-      t = mt.tracks.get(currentType);
+      t = mt.tracks.get(updatedTrackValue);
       
+      println("updatedTrackValue output:" + updatedTrackValue);
+      println("currentValue output:" + currentValue);
+      println("");
       // Add event to the grid
       // NOTE: The 0 on the end of this function is unused for GB_TYPE_EVENT
-      t.addGridBlock(GridBlock.GB_TYPE_EVENT, currentTime, currentType, currentValue, 0);
+      t.addGridBlock(GridBlock.GB_TYPE_EVENT, currentTime, updatedTrackValue, currentValue, 0);
+      
     }
 
     this.consoleOutLabel.setText("++++ Track file loaded! ++++\n " + filename);
