@@ -37,12 +37,17 @@ class Waveform extends GUIElement {
     border = 10;
   }
 
+  // analyzes the spectrum and puts it in spectra and spectraBitmap
+
+  // this function shamelessly stolen from tutorial on web
   private void spectraAnalyze(AudioSample sample){
     println("ANALYZING");
+
+    // right now only using left channel not sure if i should average or just ignore right getChannel
     float[] leftChannel = sample.getChannel(AudioSample.LEFT);
     float[] rightChannel = sample.getChannel(AudioSample.RIGHT);
 
-    int fftSize = 256;
+    int fftSize = 256;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
 
     float[] fftSamples = new float[fftSize];
 
@@ -82,9 +87,11 @@ class Waveform extends GUIElement {
         spectra[chunkIdx][i] = fft.getBand(i);
       }
     }
+
+    // filling colors so i don't have to calculate it every time i draw
     for (int i =0; i<spectra.length; i++){
       for (int j = 0; j<spectra[i].length;j++){
-        spectraBitmap[i][j]=Color.HSBtoRGB(spectra[i][j],1,1);
+        spectraBitmap[i][j]=Color.HSBtoRGB(spectra[i][j]/20,1,1);
       }
     }
 
@@ -245,31 +252,24 @@ class Waveform extends GUIElement {
         stroke(#ffffff);
         strokeCap(SQUARE);
         //strokeWeight(beatsPerBar);
+
+        //heres where the magic happens for spectra
         if (spectraDisp){
-          int songPos = getSongPosition();
+          int yPos = this.getY();
+          int maxPix = soundPosition2Pixels(getLength());
           for (int i =height; i>0;i--){
-            int scaleIndex =songPos*getLength()/spectraBitmap.length;
-            if (scaleIndex>spectraBitmap.length){
-            break;
+            int scaleIndex =(yPos-i)*spectraBitmap.length/maxPix; // magic scaling factor
+            if (scaleIndex>spectra.length){
+              scaleIndex = scaleIndex -1;
             }
             for (int j =0; j< spectra[scaleIndex].length; j++){
               stroke(spectraBitmap[scaleIndex][j]);
-              point(j+border*2,i);
+              point(j*2+border*2,i);//double the length of pixels
+              point(j*2+1+border*2,i);
             }
           }
-/*          float scaleFactor = float(maxPixels)/float(spectra.length);
-
-          println(scaleFactor);
-
-          for (int i =0; i<spectra.length; i++){
-              for (int j =0; j< spectra[i].length; j+=2){
-                int pos = this.getY()-(round(i*scaleFactor));
-                stroke(spectraBitmap[i][j]);
-//                 need to turn this into some kind of image load, drawing the points everytime seems to eat up cpu
-                point(j+border*2,  pos );
-            }
-          }*/
         }
+        //return color to normal
         stroke(255,255,255,255);
         // Draw the waveform display and the time. Time is currently showing each second
         float prevTime = -1;
