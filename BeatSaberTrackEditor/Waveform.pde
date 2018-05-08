@@ -89,12 +89,12 @@ class Waveform extends GUIElement {
     }
 
     // filling colors so i don't have to calculate it every time i draw
+    int spectraItemLength = spectra[1].length;
     for (int i =0; i<spectra.length; i++){
-      for (int j = 0; j<spectra[i].length;j++){
+      for (int j = 0; j<spectraItemLength;j++){
         spectraBitmap[i][j]=Color.HSBtoRGB(spectra[i][j]/20,1,1);
       }
     }
-
   }
 
   public void loadSoundFile(String path){
@@ -248,10 +248,6 @@ class Waveform extends GUIElement {
     */
     if(sampleRate != 0){
       if(sound != null){
-        fill(190);
-        stroke(#ffffff);
-        strokeCap(SQUARE);
-        //strokeWeight(beatsPerBar);
 
         //heres where the magic happens for spectra
         if (spectraDisp){
@@ -259,8 +255,8 @@ class Waveform extends GUIElement {
           int maxPix = soundPosition2Pixels(getLength());
           for (int i =height; i>0;i--){
             int scaleIndex =(yPos-i)*spectraBitmap.length/maxPix; // magic scaling factor
-            if (scaleIndex>spectra.length){
-              scaleIndex = scaleIndex -1;
+            if (scaleIndex>=spectra.length){
+              scaleIndex = 0 ;
             }
             for (int j =0; j< spectra[scaleIndex].length; j++){
               stroke(spectraBitmap[scaleIndex][j]);
@@ -270,7 +266,10 @@ class Waveform extends GUIElement {
           }
         }
         //return color to normal
-        stroke(255,255,255,255);
+        fill(190);
+        stroke(#ffffff);
+        strokeCap(SQUARE);
+        //strokeWeight(beatsPerBar);
         // Draw the waveform display and the time. Time is currently showing each second
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
