@@ -70,6 +70,15 @@ class TrackSequencer extends GUIElement{
     
   }
   
+  // Clear the entire sequence
+  public void clearSeq(){
+    for(MultiTrack mt : multiTracks){
+      for(Track t : mt.tracks){
+        t.gridBlocks.clear();
+      }
+    }
+  }
+  
   public int getTypeFromMouseButton(int mb){
     int type = 0;
     switch(mb){

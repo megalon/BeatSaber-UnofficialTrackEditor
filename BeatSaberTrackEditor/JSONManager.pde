@@ -14,6 +14,9 @@ class JSONManager{
   
   // Load a track from disk
   public void loadTrack(String filename){
+    
+    seq.clearSeq();
+    
     json = loadJSONObject(filename);
     
     float bpmIn = json.getFloat("_beatsPerMinute");
@@ -47,8 +50,14 @@ class JSONManager{
       return;
     }
     
-    JSONObject tempNote = notes.getJSONObject(notes.size() - 1);
-    float songLength = tempNote.getFloat("_time");
+    /*
+    float songLength = 0;
+    JSONObject tempNote;
+    for(int n = 0; n < notes.size(); ++n){
+    // Get the song length by taking the last note in the array
+      tempNote = notes.getJSONObject(notes.size() - 1);
+      songLength = tempNote.getFloat("_time");
+    }*/
     
     int gridY;
     for(int n = 0; n < notes.size(); ++n){
@@ -66,6 +75,7 @@ class JSONManager{
       //println("currentType : " + currentType);
       //println("currentCutDirection : " + currentCutDirection);
       
+      // Get notes multitracks
       mt = seq.multiTracks.get(currentLineLayer);
       t = mt.tracks.get(currentLineIndex);
       

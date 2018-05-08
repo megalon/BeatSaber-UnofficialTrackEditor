@@ -14,7 +14,7 @@ Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
-int sequencerYOffset = -60;
+int sequencerYOffset = -100;
 int previousMouseButton;
 
 // Keypresses
@@ -28,11 +28,16 @@ boolean showHelpText;
 boolean playing = false;
 
 String soundfilePath = "data\\120BPM_Electro_Test.wav";
+String tempPath = "data\\tmp\\tmp-track-";
+int tempTrackIndex = 0;
+float timeCounter = 0;
 float bpm = 120;
 
 int type = 0;
     
 int helpboxX, helpboxY, helpboxSize;
+
+
 
 String[] instructionsText = { 
   "  1. Load an audio file using the LOAD AUDIO button",
@@ -116,10 +121,24 @@ void resetKeys(){
   snapToggle = false;
 }
 
+
 void draw(){
   if (!focused){
     resetKeys();
   }
+  
+  timeCounter++;
+  // Autosave
+  // Save every 30 seconds at 60fps
+  if(timeCounter % (30 * 60) == 0){
+    jsonManager.saveTrack(tempPath + getDateFormatted() + "-" + tempTrackIndex + ".json");
+    if(tempTrackIndex == 3)
+      tempTrackIndex = 0;
+    else
+      tempTrackIndex++;
+  }
+  
+  
   // Redraw background
   background(#111111);
   
@@ -474,7 +493,10 @@ public void handleFileDialog(GButton button) {
   else if (button == btnInput) {
     fname = G4P.selectInput("Input Dialog");
     lblFile.setText(fname);
-    jsonManager.loadTrack(fname);
+    
+    if(fname != null){
+      jsonManager.loadTrack(fname);
+    }
   }
   // File output selection
   else if (button == btnOutput) {
@@ -518,4 +540,9 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   lblFile.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   lblFile.setOpaque(true);
   lblFile.setLocalColorScheme(G4P.BLUE_SCHEME);
+}
+
+// Format a date string for the temp file
+public String getDateFormatted(){
+  return "" + (year() + "-" + month() + "-" + day() + "--" + hour() + "-" + minute() + "-" + second() + "-" + millis());
 }
