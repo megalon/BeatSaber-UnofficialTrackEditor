@@ -14,7 +14,7 @@ Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
-int sequencerYOffset = -50;
+int sequencerYOffset = -100;
 int previousMouseButton;
 
 // Keypresses
@@ -158,11 +158,13 @@ void draw(){
   fill(#FFFFFF);
   int seqTextY = height + sequencerYOffset + 25;
   textSize(18);
-  text("Events",       sequencer.multiTracks.get(0).getX(), seqTextY);
+  text("Events\nWIP",       sequencer.multiTracks.get(0).getX(), seqTextY);
   text("Bottom Notes", sequencer.multiTracks.get(1).getX(), seqTextY);
   text("Middle Notes", sequencer.multiTracks.get(2).getX(), seqTextY);
   text("Top Notes",    sequencer.multiTracks.get(3).getX(), seqTextY);
-  text("Obstacles",    sequencer.multiTracks.get(4).getX(), seqTextY);
+  text("Obstacles\n(Edit WIP)",    sequencer.multiTracks.get(4).getX(), seqTextY);
+  
+  text("---------------------\n---------------------\n-----EVENTS WIP------\n---------------------\n---------------------\n", sequencer.multiTracks.get(0).getX(), 400 + (sequencer.getY() - sequencer.startYPosition));
   
   // Draw help text
   if(showHelpText){

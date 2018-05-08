@@ -32,7 +32,7 @@ class MultiTrack extends GUIElement{
     
   }
   
-  public void checkTrackClicked(int mx, int my, int seqYOffset, int type, int val0, int val1){
+  public void checkTrackClicked(int mx, int my, int seqYOffset, int type, int val0, float val1){
     //println("Checking click at:" + mx + " " + my);
     //println("Multitrack xy: " + this.getX() + " " + this.getY());
     for (Track t : tracks){

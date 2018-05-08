@@ -101,22 +101,31 @@ class TrackSequencer extends GUIElement{
   public void checkClickedTrack(int mx, int my, int type){
     //println("Checking track click at:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      //println("TESTING HERE! CHANGE THIS FUNCTION TO SUPPORT EVENTS AND OBSTACLES!");
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      // ------------------------------------------
-      m.checkTrackClicked(mx, my - seqWindowBottom, (this.getY() - startYPosition), type, currentCutDirection, 0);
-      //println("checkTrackClicked(" + mx + ", " + (my - seqWindowBottom) + ", " + type);
-      //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
+      
+      
+      if(m.getElementName().equals("Events") || m.getElementName().equals("Obstacles")){
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        //       skipping events for now!
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+        // ------------------------------------------
+      }else{
+        if(my < seqWindowBottom){
+          m.checkTrackClicked(mx, my - seqWindowBottom, (this.getY() - startYPosition), type, currentCutDirection, 0);
+        }else{
+          println("Not clicking in sequencer!");
+        }
+        //println("checkTrackClicked(" + mx + ", " + (my - seqWindowBottom) + ", " + type);
+        //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
+      }
     }
   }
   

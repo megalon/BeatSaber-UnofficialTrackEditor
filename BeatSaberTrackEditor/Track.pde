@@ -2,7 +2,7 @@ class Track extends GUIElement{
   // These are used to dermine how to handle notes places on the tracks
   private static final int TRACK_TYPE_NOTES = 0;
   private static final int TRACK_TYPE_EVENTS = 1;
-  private static final int TRACK_TYPE_OBSTACLES = 2;
+  private static final int TRACK_TYPE_OBSTACLES = 3;
   
   HashMap<Float, GridBlock> gridBlocks;
   private int gridWidth = 0;
@@ -12,7 +12,7 @@ class Track extends GUIElement{
   private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
-  private boolean trackDebug = true;
+  private boolean trackDebug = false;
   private int trackType;
   
   int yStartingPosition = 0;
@@ -71,7 +71,7 @@ class Track extends GUIElement{
     return this.getHeight() - timeToCord(time) - (int)gridHeight;
   }
   
-  public void addGridBlockMouseClick(int mx, int my, int type, int val0, int val1){
+  public void addGridBlockMouseClick(int mx, int my, int type, int val0, float val1){
     if(trackDebug) println("addGridBlockMouseClick(" + mx + ", " + my + ", " + type + ", " + val0 + ", " + val1);  
     if(trackDebug) println();
     if(trackDebug) println("startingPosition: " + yStartingPosition);
@@ -86,7 +86,7 @@ class Track extends GUIElement{
   }
   
   // Generic function to add a new gridblock depending on type of object to add
-  public void addGridBlock(int gridBlockType, float time, int type, int val0, int val1){
+  public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
     
     int yPos = calculateGridYPos(time);
     
@@ -104,6 +104,7 @@ class Track extends GUIElement{
         gridBlocks.put(time, w);
         break;
       default:
+        println("gridBlockType in Track class: " + gridBlockType);
         println("Error: Invalid grid block type!");
     }
     
@@ -194,6 +195,7 @@ class Track extends GUIElement{
           obstacle.display();
           break;
         default:
+          println("gridBlockType in Track display function: " + trackType);
           println("Error: Invalid grid block type!");
       }
     }

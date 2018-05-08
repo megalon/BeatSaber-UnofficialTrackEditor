@@ -34,12 +34,15 @@ class JSONManager{
     
     this.seq.setBPM(bpmIn);
     
-    JSONObject currentNote;
+    JSONObject currentObject;
     float currentTime;
     int currentLineIndex;
     int currentLineLayer;
     int currentType;
     int currentCutDirection;
+    
+    float currentDuration; 
+    int currentWidth;
     
     MultiTrack mt;
     Track t;
@@ -50,30 +53,17 @@ class JSONManager{
       return;
     }
     
-    /*
-    float songLength = 0;
-    JSONObject tempNote;
-    for(int n = 0; n < notes.size(); ++n){
-    // Get the song length by taking the last note in the array
-      tempNote = notes.getJSONObject(notes.size() - 1);
-      songLength = tempNote.getFloat("_time");
-    }*/
-    
     int gridY;
     for(int n = 0; n < notes.size(); ++n){
-      currentNote = notes.getJSONObject(n);
-      currentTime = currentNote.getFloat("_time");
-      currentLineIndex = currentNote.getInt("_lineIndex");
-      currentLineLayer = currentNote.getInt("_lineLayer");
-      currentType = currentNote.getInt("_type");
-      currentCutDirection = currentNote.getInt("_cutDirection");
+      currentObject = notes.getJSONObject(n);
+      currentTime = currentObject.getFloat("_time");
+      currentLineIndex = currentObject.getInt("_lineIndex");
+      currentLineLayer = currentObject.getInt("_lineLayer");
+      currentType = currentObject.getInt("_type");
+      currentCutDirection = currentObject.getInt("_cutDirection");
       
-      //println("currentNote : " + currentNote);
       println("currentTime : " + currentTime);
-      //println("currentLineIndex : " + currentLineIndex);
-      //println("currentLineLayer : " + currentLineLayer);
-      //println("currentType : " + currentType);
-      //println("currentCutDirection : " + currentCutDirection);
+      //println("currentNote : " + currentNote); //println("currentLineIndex : " + currentLineIndex); //println("currentLineLayer : " + currentLineLayer); //println("currentType : " + currentType);  //println("currentCutDirection : " + currentCutDirection);
       
       // Get notes multitracks. Add one to skip events track
       mt = seq.multiTracks.get(currentLineLayer + 1);
@@ -87,6 +77,31 @@ class JSONManager{
       // NOTE: The 0 on the end of this function is unused for GB_TYPE_NOTE
       t.addGridBlock(GridBlock.GB_TYPE_NOTE, currentTime, currentType, currentCutDirection, 0);
     }
+    
+    //{"_lineIndex":2,"_type":0,"_duration":1,"_time":76,"_width":2},
+    for(int o = 0; o < obstacles.size(); ++o){
+      currentObject       = obstacles.getJSONObject(o);
+      currentTime         = currentObject.getFloat("_time");
+      currentLineIndex    = currentObject.getInt("_lineIndex");
+      currentType         = currentObject.getInt("_type");
+      currentDuration     = currentObject.getFloat("_duration");
+      currentWidth        = currentObject.getInt("_width");
+      
+      println("currentTime : " + currentTime);
+      
+      // Get obstacle multitracks
+      mt = seq.multiTracks.get(4);
+      t = mt.tracks.get(currentLineIndex);
+      
+      gridY = seq.timeToGrid(currentTime);
+      
+      println("obstacle " + o + " gridY : " + gridY);
+      
+      // Add note to the grid
+      // NOTE: The 0 on the end of this function is unused for GB_TYPE_NOTE
+      // public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
+      t.addGridBlock(GridBlock.GB_TYPE_OBSTACLE, currentTime, currentType, currentWidth, currentDuration);
+    }
   }
   
   // Save the created track to output json file
@@ -99,9 +114,10 @@ class JSONManager{
     
     // Currently skipping over events and obstacles!
     //events = new JSONArray();
-    //obstacles = new JSONArray();
+    obstacles = new JSONArray();
     
-    setNotesAray();
+    setNotesArray();
+    setObstaclesArray();
     
     json.setString("_version", versionString);
     json.setFloat("_beatsPerMinute", seq.getBPM());
@@ -123,8 +139,8 @@ class JSONManager{
   }
   
   
-  // Create the notes JSON array
-  private void setNotesAray(){
+  // Create the notes JSON array to save to the track file
+  private void setNotesArray(){
     // Go through every index in the track, but go across all tracks and get the current note
     int trackCount = 0;
     int multiCount = 0;
@@ -155,6 +171,37 @@ class JSONManager{
         ++trackCount;
       }
       ++multiCount;
+    }
+  }
+  
+  // Create the notes JSON array
+  private void setObstaclesArray(){
+    // Go through every index in the track, but go across all tracks and get the current note
+    int trackCount = 0;
+    int multiCount = 0;
+    int obstacleCount = 0;
+    multiCount = 0;
+    MultiTrack m = seq.multiTracks.get(4);
+    trackCount = 0;
+    for(Track t : m.tracks){
+      // Iterate through all gridblocks in hashmap
+      for (Float f: t.gridBlocks.keySet()) {
+        Obstacle block = (Obstacle)t.gridBlocks.get(f);
+        if(block != null){
+          JSONObject obstacle = new JSONObject();
+          
+          // {"_lineIndex":2, "_type":0, "_duration":1, "_time":76, "_width":2},
+          obstacle.setFloat("_time", block.getTime());
+          obstacle.setInt("_lineIndex", trackCount);
+          obstacle.setInt("_type", block.getType());
+          obstacle.setFloat("_duration", block.getDuration());
+          obstacle.setInt("_width", block.getWidth());
+          
+          obstacles.setJSONObject(obstacleCount, obstacle);
+          ++obstacleCount;
+        }
+      }
+      ++trackCount;
     }
   }
   
