@@ -42,12 +42,18 @@ class JSONManager{
     JSONObject currentObject;
     float currentTime;
     int currentLineIndex;
+    
+    // Note specific
     int currentLineLayer;
     int currentType;
     int currentCutDirection;
     
+    // Obstacle specific
     float currentDuration; 
     int currentWidth;
+    
+    // Event specific
+    int currentValue;
     
     MultiTrack mt;
     Track t;
@@ -103,10 +109,24 @@ class JSONManager{
       
       println("obstacle " + o + " gridY : " + gridY);
       
-      // Add note to the grid
-      // NOTE: The 0 on the end of this function is unused for GB_TYPE_NOTE
+      // Add an obstacle to the grid
       // public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
       t.addGridBlock(GridBlock.GB_TYPE_OBSTACLE, currentTime, currentType, currentWidth, currentDuration);
+    }
+    
+    for(int e = 0; e < events.size(); ++e){
+      currentObject = events.getJSONObject(e);
+      currentTime = currentObject.getFloat("_time");
+      currentType = currentObject.getInt("_type");
+      currentValue = currentObject.getInt("_value");
+      
+      // Get events multitrack
+      mt = seq.multiTracks.get(0);
+      t = mt.tracks.get(currentType);
+      
+      // Add event to the grid
+      // NOTE: The 0 on the end of this function is unused for GB_TYPE_EVENT
+      t.addGridBlock(GridBlock.GB_TYPE_EVENT, currentTime, currentType, currentValue, 0);
     }
 
     this.consoleOutLabel.setText("++++ Track file loaded! ++++\n " + filename);
@@ -121,13 +141,13 @@ class JSONManager{
     this.outputFile = filename;
     
     json = new JSONObject();
-    
     notes = new JSONArray();
     
     // Currently skipping over events and obstacles!
-    //events = new JSONArray();
+    events = new JSONArray();
     obstacles = new JSONArray();
     
+    setEventsArray();
     setNotesArray();
     setObstaclesArray();
     
@@ -194,7 +214,6 @@ class JSONManager{
     int trackCount = 0;
     int multiCount = 0;
     int obstacleCount = 0;
-    multiCount = 0;
     MultiTrack m = seq.multiTracks.get(4);
     trackCount = 0;
     for(Track t : m.tracks){
@@ -217,6 +236,34 @@ class JSONManager{
       }
       ++trackCount;
     }
+  }
+  
+  private void setEventsArray(){
+    
+    // Go through every index in the track, but go across all tracks and get the current note
+    int trackCount = 0;
+    int eventCount = 0;
+    MultiTrack m = seq.multiTracks.get(0);
+    trackCount = 0;
+    for(Track t : m.tracks){
+      // Iterate through all gridblocks in hashmap
+      for (Float f: t.gridBlocks.keySet()) {
+        Event block = (Event)t.gridBlocks.get(f);
+        if(block != null){
+          JSONObject event = new JSONObject();
+          
+          event.setFloat("_time", block.getTime());
+          event.setInt("_lineIndex", trackCount);
+          event.setInt("_type", block.getType());
+          event.setInt("_value", block.getValue());
+          
+          events.setJSONObject(eventCount, event);
+          ++eventCount;
+        }
+      }
+      ++trackCount;
+    }
+    
   }
   
   private void createPlaceholderEvents(){

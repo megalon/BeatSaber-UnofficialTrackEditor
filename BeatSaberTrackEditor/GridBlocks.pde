@@ -136,10 +136,22 @@ class Event extends GridBlock {
   public static final int VALUE_BLUE_LIGHT = 1;
   public static final int VALUE_BLUE_FLASH = 2;
   public static final int VALUE_BLUE_FADE  = 3;
-  // --------------------------------------- 4   <- null like type 0
+  public static final int VALUE_OFF2       = 4;  // <- null like type 0
   public static final int VALUE_RED_LIGHT  = 5;
   public static final int VALUE_RED_FLASH  = 6;
   public static final int VALUE_RED_FADE   = 7;
+  
+  
+  private color offColor  = color(#000000);
+  private color redColor  = color(#ff0000);
+  private color blueColor = color(#0000ff);
+  
+  int colorFadeValue = 0;
+  int minColorFadeValue = 0;
+  int maxColorFadeValue = 255;
+  
+  int flashValue = 5;
+  int slowFadeValue = 1;
   
   private int value = 0;
   
@@ -147,7 +159,16 @@ class Event extends GridBlock {
   Event(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int value, float time){
     super(parent, 0, yPos, gridWidth, gridHeight, type, time);
     
+    //
+    //
+    // NOTE:
+    //      In this case "TYPE" refers to the track! "VALUE" refers to what is happening
+    //      Thus "type" is unused here!
+    //
+    //
+    
     this.setValue(value);
+    
   }
   
   public void setValue(int value){
@@ -156,6 +177,63 @@ class Event extends GridBlock {
   
   public int getValue(){
     return value;
+  }
+  
+  public void display(){
+    /*
+    public static final int VALUE_OFF        = 0;
+    public static final int VALUE_BLUE_LIGHT = 1;
+    public static final int VALUE_BLUE_FLASH = 2;
+    public static final int VALUE_BLUE_FADE  = 3;
+    public static final int VALUE_OFF2       = 4;  // <- null like type 0
+    public static final int VALUE_RED_LIGHT  = 5;
+    public static final int VALUE_RED_FLASH  = 6;
+    public static final int VALUE_RED_FADE   = 7;
+    */
+    
+    
+    if(value == VALUE_BLUE_FLASH ||
+       value == VALUE_RED_FLASH){
+     if(colorFadeValue > 0){
+        colorFadeValue -= flashValue;
+      }else{
+        colorFadeValue = maxColorFadeValue;
+      }
+    }else if(value == VALUE_BLUE_FADE ||
+             value == VALUE_RED_FADE){
+      if(colorFadeValue > 0){
+        colorFadeValue -= slowFadeValue;
+      }else{
+        colorFadeValue = maxColorFadeValue;
+      }
+    }
+    
+    switch(value){
+      case(VALUE_BLUE_LIGHT):
+        this.setFillColor(blueColor);
+        break;
+      case(VALUE_BLUE_FLASH):
+      case(VALUE_BLUE_FADE):
+        this.setFillColor(color(0, 0, (int)(colorFadeValue)));
+        break;
+      case(VALUE_RED_LIGHT):
+        this.setFillColor(redColor);
+        break;
+      case(VALUE_RED_FLASH):
+      case(VALUE_RED_FADE):
+        this.setFillColor(color((int)colorFadeValue, 0, 0));
+        break;
+      default: this.setFillColor(offColor);
+    }
+    
+    // println("value: " + value);
+    // println("colorFadeValue: " + colorFadeValue);
+    // println("fillColor: " + this.getFillColor());
+    // println();
+    
+    fill(this.getFillColor());
+    strokeWeight(1);
+    rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
   }
 }
 

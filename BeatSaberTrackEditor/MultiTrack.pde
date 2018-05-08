@@ -71,11 +71,5 @@ class MultiTrack extends GUIElement{
     for (Track t : tracks){
        t.display();
     }
-    
-    /*
-    fill(#ffffff);
-    textFont(f, 18);
-    text(this.getElementName(), this.getX() + 10, this.getY() - 15);
-    */
   }
 }

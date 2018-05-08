@@ -120,7 +120,7 @@ class GUIElement{
     
     debug = false;
     
-    fill(fillColor);
+    fill(this.getFillColor());
     stroke(strokeColor);
     strokeWeight(1);
     rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());

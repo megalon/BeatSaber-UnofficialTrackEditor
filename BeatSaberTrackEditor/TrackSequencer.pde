@@ -8,11 +8,11 @@ class TrackSequencer extends GUIElement{
   Minim minim; 
   AudioSample sound; 
   AudioPlayer soundbis;
-  private int gridWidth = 30;
-  private int gridHeight = 30;
+  private int gridWidth = 24;
+  private int gridHeight = 24;
   private int defaultGridHeight = 30;
   private int numtracksPerMulti = 4;
-  private int numEventTracks = 7;
+  private int numEventTracks = 14;
   private int trackGroupSpacing = gridWidth / 2;
   private int tracksXOffset = 150;
   private Waveform waveform;
@@ -103,14 +103,64 @@ class TrackSequencer extends GUIElement{
     for (MultiTrack m : multiTracks){
       
       
-      if(m.getElementName().equals("Events") || m.getElementName().equals("Obstacles")){
+      if(m.getElementName().equals("Events")){
+        if(my < seqWindowBottom){
+          
+          //
+          //
+          // NOTE:
+          //      In this case "TYPE" refers to the track! "VALUE" refers to what is happening
+          //      Thus "type" is unused here, becuase we already are in the track we want!
+          //
+          //
+          
+          int lightEvent = 0;
+          println("currentCutDirection: " + currentCutDirection);
+          
+          if(type == Note.TYPE_MINE){
+            lightEvent = Event.VALUE_OFF;
+          }else{
+            switch(currentCutDirection){
+                  case(Note.DIR_BOTTOM):
+                    // Arrow points UP
+                    lightEvent = Event.VALUE_OFF;
+                    break;
+                  case(Note.DIR_RIGHT):
+                    // Arrow points RIGHT
+                    if(type == Note.TYPE_RED)
+                      lightEvent = Event.VALUE_RED_FLASH;
+                    else
+                      lightEvent = Event.VALUE_BLUE_FLASH;
+                    break;
+                  case(Note.DIR_LEFT):
+                    // Arrow points LEFT
+                    if(type == Note.TYPE_RED)
+                      lightEvent = Event.VALUE_RED_FADE;
+                    else
+                      lightEvent = Event.VALUE_BLUE_FADE;
+                    break;
+                  default:
+                    // Circle
+                    if(type == Note.TYPE_RED)
+                      lightEvent = Event.VALUE_RED_LIGHT;
+                    else
+                      lightEvent = Event.VALUE_BLUE_LIGHT;
+                    break;
+            }
+          }
+            
+          m.checkTrackClicked(mx, my - seqWindowBottom, (this.getY() - startYPosition), type, lightEvent, 0);
+        }else{
+          println("Not clicking in sequencer!");
+        }
+      }else if(m.getElementName().equals("Obstacles")){
         // ------------------------------------------
         // ------------------------------------------
         // ------------------------------------------
         // ------------------------------------------
         // ------------------------------------------
         // ------------------------------------------
-        //       skipping events for now!
+        //       skipping obstacles for now!
         // ------------------------------------------
         // ------------------------------------------
         // ------------------------------------------

@@ -6,7 +6,7 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.12";
+String versionText = "Megalon v0.0.13";
 
 boolean debug = true;
 
@@ -27,6 +27,9 @@ boolean showHelpText;
 
 boolean playing = false;
 
+PImage eventLabels;
+
+String eventLabelsImagePath = "eventlabels.png";
 String soundfilePath = "data\\120BPM_Electro_Test.wav";
 String tempPath = "data\\tmp\\tmp-track-";
 int tempTrackIndex = 0;
@@ -75,6 +78,20 @@ String[] controlsText = {
   ""
 };
 
+String eventNames[] = {
+    "X_LIGHTS",
+    "OVERHEAD_LIGHTS", 
+    "LEFT_LIGHTS",
+    "RIGHT_LIGHTS",
+    "???",
+    "???",
+    "???",
+    "TURN_OBJECT",
+    "???",
+    "???",
+    "MOVE_LIGHT2",
+    "MOVE_LIGHT3"};
+
 GTextField bpmTextField;
 GTextField audioOffsetTextField;
 
@@ -95,6 +112,8 @@ void setup(){
 
   // Minim must be declared in the main class!
   minim = new Minim(this);
+  
+  eventLabels = loadImage(eventLabelsImagePath);
   
   sequencer = new TrackSequencer(0, height + sequencerYOffset, width, -(height + sequencerYOffset), minim);
 
@@ -157,13 +176,18 @@ void draw(){
   fill(#FFFFFF);
   int seqTextY = height + sequencerYOffset + 25;
   textSize(18);
-  text("Events\nWIP",       sequencer.multiTracks.get(0).getX(), seqTextY);
-  text("Bottom Notes", sequencer.multiTracks.get(1).getX(), seqTextY);
-  text("Middle Notes", sequencer.multiTracks.get(2).getX(), seqTextY);
-  text("Top Notes",    sequencer.multiTracks.get(3).getX(), seqTextY);
+  //text("Events\nWIP",       sequencer.multiTracks.get(0).getX(), seqTextY);
+  text("Bottom\nNotes", sequencer.multiTracks.get(1).getX(), seqTextY);
+  text("Middle\nNotes", sequencer.multiTracks.get(2).getX(), seqTextY);
+  text("Top\nNotes",    sequencer.multiTracks.get(3).getX(), seqTextY);
   text("Obstacles\n(Edit WIP)",    sequencer.multiTracks.get(4).getX(), seqTextY);
   
-  text("---------------------\n---------------------\n-----EVENTS WIP------\n---------------------\n---------------------\n", sequencer.multiTracks.get(0).getX(), 400 + (sequencer.getY() - sequencer.startYPosition));
+  //text("---------------------\n---------------------\n-----EVENTS WIP------\n---------------------\n---------------------\n", sequencer.multiTracks.get(0).getX(), 400 + (sequencer.getY() - sequencer.startYPosition));
+  
+  textSize(12);
+  image(eventLabels, sequencer.multiTracks.get(0).getX() - 70, height + sequencerYOffset - 10);
+  
+  text("FPS: " + (int)frameRate,0, height);
   
   // Draw help text
   if(showHelpText){
@@ -355,7 +379,7 @@ void keyReleased(){
     //sequencer.setBeatsPerBar(sequencer.getBeatsPerBar() - 1);
     println("Decreasing beats per bar to: " + sequencer.getBeatsPerBar());
   }
-
+  
   if(key == 'w'){
     up = false;
   }if(key == 's'){
