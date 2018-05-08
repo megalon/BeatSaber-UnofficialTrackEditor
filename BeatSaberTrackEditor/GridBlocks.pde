@@ -122,15 +122,17 @@ class Event extends GridBlock {
   13: makes light 3 move.
 */
   
-  public static final int TYPE_X_LIGHTS        = 0;
-  public static final int TYPE_OVERHEAD_LIGHTS = 1;
-  public static final int TYPE_LEFT_LIGHTS     = 2;
-  public static final int TYPE_RIGHT_LIGHTS    = 3;
-  // ----------------------------------------- = 5 - 7     <- unused?
-  public static final int TYPE_TURN_OBJECT     = 8;
-  // ----------------------------------------- = 10 - 11   <- unused?
-  public static final int TYPE_MOVE_LIGHT2     = 12;
-  public static final int TYPE_MOVE_LIGHT3     = 13;
+  public static final int TYPE_BACK_TOP_LIGHTS         = 0;
+  public static final int TYPE_NEON_RINGS              = 1;
+  public static final int TYPE_LEFT_LASERS             = 2;
+  public static final int TYPE_RIGHT_LASERS            = 3;
+  public static final int TYPE_BOTTOM_BACK_SIDE_LASERS = 4;
+  // -----------------------------------------         = 5 - 7     unused
+  public static final int TYPE_ALL_TRACK_RINGS         = 8;
+  public static final int TYPE_SMALL_TRACK_RINGS       = 9;
+  // -----------------------------------------         = 10 - 11   unused
+  public static final int TYPE_MOVE_LEFT_LASERS        = 12;
+  public static final int TYPE_MOVE_RIGHT_LASERS       = 13;
   
   public static final int VALUE_OFF        = 0;
   public static final int VALUE_BLUE_LIGHT = 1;
@@ -158,6 +160,8 @@ class Event extends GridBlock {
   //{"_type":4,"_value":6,"_time":0},
   Event(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int value, float time){
     super(parent, 0, yPos, gridWidth, gridHeight, type, time);
+    
+    println("Type: " + type);
     
     //
     //
@@ -191,49 +195,63 @@ class Event extends GridBlock {
     public static final int VALUE_RED_FADE   = 7;
     */
     
+    //println("GridBlock type: " + this.getType());
     
-    if(value == VALUE_BLUE_FLASH ||
-       value == VALUE_RED_FLASH){
-     if(colorFadeValue > 0){
-        colorFadeValue -= flashValue;
-      }else{
-        colorFadeValue = maxColorFadeValue;
+    if(this.getType() <= TYPE_BOTTOM_BACK_SIDE_LASERS){
+      if(value == VALUE_BLUE_FLASH ||
+         value == VALUE_RED_FLASH){
+       if(colorFadeValue > 0){
+          colorFadeValue -= flashValue;
+        }else{
+          colorFadeValue = maxColorFadeValue;
+        }
+      }else if(value == VALUE_BLUE_FADE ||
+               value == VALUE_RED_FADE){
+        if(colorFadeValue > 0){
+          colorFadeValue -= slowFadeValue;
+        }else{
+          colorFadeValue = maxColorFadeValue;
+        }
       }
-    }else if(value == VALUE_BLUE_FADE ||
-             value == VALUE_RED_FADE){
-      if(colorFadeValue > 0){
-        colorFadeValue -= slowFadeValue;
-      }else{
-        colorFadeValue = maxColorFadeValue;
+      
+      switch(this.getValue()){
+        case(VALUE_BLUE_LIGHT):
+          this.setFillColor(blueColor);
+          break;
+        case(VALUE_BLUE_FLASH):
+        case(VALUE_BLUE_FADE):
+          this.setFillColor(color(0, 0, (int)(colorFadeValue)));
+          break;
+        case(VALUE_RED_LIGHT):
+          this.setFillColor(redColor);
+          break;
+        case(VALUE_RED_FLASH):
+        case(VALUE_RED_FADE):
+          this.setFillColor(color((int)colorFadeValue, 0, 0));
+          break;
+        default: this.setFillColor(offColor);
       }
-    }
     
-    switch(value){
-      case(VALUE_BLUE_LIGHT):
-        this.setFillColor(blueColor);
-        break;
-      case(VALUE_BLUE_FLASH):
-      case(VALUE_BLUE_FADE):
-        this.setFillColor(color(0, 0, (int)(colorFadeValue)));
-        break;
-      case(VALUE_RED_LIGHT):
-        this.setFillColor(redColor);
-        break;
-      case(VALUE_RED_FLASH):
-      case(VALUE_RED_FADE):
-        this.setFillColor(color((int)colorFadeValue, 0, 0));
-        break;
-      default: this.setFillColor(offColor);
+      // Draw colored box based on fade color
+      fill(this.getFillColor());
+      strokeWeight(1);
+      rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    }else{
+      
+      //println("Drawing rotation block");
+      // Draw box with number to show rotation speed
+      fill(this.getFillColor());
+      strokeWeight(1);
+      rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      fill(255);
+      textSize(18);
+      text(value, this.getX(), this.getY() + (this.getHeight()/2) + 4);
     }
     
     // println("value: " + value);
     // println("colorFadeValue: " + colorFadeValue);
     // println("fillColor: " + this.getFillColor());
     // println();
-    
-    fill(this.getFillColor());
-    strokeWeight(1);
-    rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
   }
 }
 

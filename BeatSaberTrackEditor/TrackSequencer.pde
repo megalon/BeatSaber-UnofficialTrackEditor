@@ -119,7 +119,7 @@ class TrackSequencer extends GUIElement{
           //
           
           int lightEvent = 0;
-          println("currentCutDirection: " + currentCutDirection);
+          //println("currentCutDirection: " + currentCutDirection);
           
           if(type == Note.TYPE_MINE){
             lightEvent = Event.VALUE_OFF;
@@ -152,8 +152,8 @@ class TrackSequencer extends GUIElement{
                     break;
             }
           }
-            
-          m.checkTrackClicked(mx, my - seqWindowBottom, (this.getY() - startYPosition), type, lightEvent, 0);
+          //println("Setting type based on events track!");
+          m.checkTrackClickedEvents(mx, my - seqWindowBottom, (this.getY() - startYPosition), lightEvent, 0);
         }else{
           println("Not clicking in sequencer!");
         }

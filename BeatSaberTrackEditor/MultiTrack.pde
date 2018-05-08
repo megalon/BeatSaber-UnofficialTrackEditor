@@ -32,6 +32,27 @@ class MultiTrack extends GUIElement{
     
   }
   
+  // This is a replacement for checkTrackClicked designed only for events.
+  // This is needed because event "types" are based off of the track that they are on
+  // Unlike not tracks where each track can have notes of any type or value
+  // Events tracks can only have events of ONE type, but different values
+  // Thus we need to use the track as the type
+  public void checkTrackClickedEvents(int mx, int my, int seqYOffset, int val0, float val1){
+    int trackCount = 0;
+    for (Track t : tracks){
+      if(t.checkClicked(mx, my)){
+        
+        //println("type should be :" + trackCount);
+        
+        if(type == -1)
+          t.removeGridBlockMouseClick(mx, my - seqYOffset);
+        else
+          t.addGridBlockMouseClick(mx, my, trackCount, val0, val1);
+      }
+      ++trackCount;
+    }
+  }
+  
   public void checkTrackClicked(int mx, int my, int seqYOffset, int type, int val0, float val1){
     //println("Checking click at:" + mx + " " + my);
     //println("Multitrack xy: " + this.getX() + " " + this.getY());
