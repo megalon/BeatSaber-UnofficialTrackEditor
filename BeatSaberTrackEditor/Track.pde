@@ -12,7 +12,7 @@ class Track extends GUIElement{
   private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
-  private boolean trackDebug = true;
+  private boolean trackDebug = false;
   private int trackType;
   
   int yStartingPosition = 0;
@@ -57,7 +57,7 @@ class Track extends GUIElement{
     }
     if(trackDebug) println("mouseCordToTime. cord: " + cordY + " = time: " + val);
     
-    return val / 4;
+    return val;
   }
   
   public int timeToCord(float time){
@@ -76,7 +76,7 @@ class Track extends GUIElement{
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
     
-    float t = mouseCordToTime(height - my - (yStartingPosition - this.getY()));
+    float t = mouseCordToTime( - my - (yStartingPosition - this.getY()));
     
     if(trackDebug) println("mouseCordToTime: " + t);
     

@@ -14,7 +14,7 @@ Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
-int sequencerYOffset = -100;
+int sequencerYOffset = -60;
 int previousMouseButton;
 
 // Keypresses
@@ -70,6 +70,7 @@ String[] controlsText = {
 };
 
 GTextField bpmTextField;
+GTextField audioOffsetTextField;
 
 // Controls used for file dialog GUI 
 GButton btnOpenSong, btnInput, btnOutput;
@@ -89,8 +90,7 @@ void setup(){
   // This needs to be in the main class
   minim = new Minim(this);
   
-  int seqOffsetY = 200;
-  sequencer = new TrackSequencer(0, height, width, -height, minim);
+  sequencer = new TrackSequencer(0, height + sequencerYOffset, width, -(height + sequencerYOffset), minim);
   
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
@@ -131,6 +131,18 @@ void draw(){
   
   fill(0);
   stroke(0);
+  
+  // Draw box below sequencer
+  rect(0, height + sequencerYOffset, width, -sequencerYOffset);
+  
+  fill(#FFFFFF);
+  int seqTextY = height + sequencerYOffset + 25;
+  textSize(18);
+  text("Events",       sequencer.multiTracks.get(0).getX(), seqTextY);
+  text("Bottom Notes", sequencer.multiTracks.get(1).getX(), seqTextY);
+  text("Middle Notes", sequencer.multiTracks.get(2).getX(), seqTextY);
+  text("Top Notes",    sequencer.multiTracks.get(3).getX(), seqTextY);
+  text("Obstacles",    sequencer.multiTracks.get(4).getX(), seqTextY);
   
   // Draw help text
   if(showHelpText){
@@ -430,6 +442,15 @@ public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
       }
       break;
     }
+  }else if(textControl.tag.equals(audioOffsetTextField.tag)){
+    switch(event) {
+      case ENTERED:
+        // Check for invalid input
+        if(!Float.isNaN(float(audioOffsetTextField.getText()))){
+          println("Audio offset entered!");
+        }
+        break;
+      }
   }
 }
 
@@ -487,6 +508,11 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   bpmTextField.tag = "bpmText";
   bpmTextField.setPromptText("BPM");
   bpmTextField.setFont(new Font("Arial", Font.PLAIN, 25));
+  
+  audioOffsetTextField = new GTextField(this, bgap, height + sequencerYOffset + bgap, bw, 25);
+  audioOffsetTextField.tag = "audioOffsetText";
+  audioOffsetTextField.setPromptText("OFFSET");
+  audioOffsetTextField.setFont(new Font("Arial", Font.PLAIN, 18));
   
   lblFile = new GLabel(this, x, y+70, w, 50);
   lblFile.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
