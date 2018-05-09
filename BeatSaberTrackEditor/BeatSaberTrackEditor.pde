@@ -224,9 +224,6 @@ void draw(){
   textSize(12);
   fill(#ffffff);
   text(versionText, width - 100 , 148);
-  
-  rect(390, 224, 10, 10);
-
 }
 
 void mousePressed(){

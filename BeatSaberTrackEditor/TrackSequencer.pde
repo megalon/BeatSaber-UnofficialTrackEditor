@@ -103,9 +103,8 @@ class TrackSequencer extends GUIElement{
   }
   
   public void checkClickedTrack(int mx, int my, int type){
-    println("checkClickedTrack:" + mx + " " + my);
+    //println("checkClickedTrack:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
-      
       
       if(m.getElementName().equals("Events")){
         if(my < seqWindowBottom){
@@ -154,8 +153,9 @@ class TrackSequencer extends GUIElement{
             }
           }
           //println("Setting type based on events track!");
-          println("Checking click at inside TrackSequencer:" + mx + " " + my);
-          m.checkTrackClickedEvents(mx, my, (this.getY() - startYPosition), lightEvent, 0);
+          //println("Checking click at inside TrackSequencer:" + mx + " " + my);
+          //println("this.getY() - startYPosition:" + (this.getY() - startYPosition));
+          m.checkTrackClickedEvents(mx, my, this.getY() - startYPosition, lightEvent, 0);
         }else{
           println("Not clicking in sequencer!");
         }
@@ -173,9 +173,13 @@ class TrackSequencer extends GUIElement{
         // ------------------------------------------
         // ------------------------------------------
         // ------------------------------------------
+        //println("mx, my : " + mx + ", " + my);
+        //println("getX, getY      : " + m.getX() + ", " + m.getY());
+        //println("+width, +height : " + (m.getX() + m.getWidth()) + ", " + (m.getY() + m.getHeight()));
+        //println("Check if multitrack clicked: " + m.checkClicked(mx, my));
       }else{
         if(my < seqWindowBottom){ //
-          m.checkTrackClicked(mx, my, startYPosition, type, currentCutDirection, 0);
+          m.checkTrackClicked(mx, my, this.getY() - startYPosition, type, currentCutDirection, 0);
         }else{
           println("Not clicking in sequencer!");
         }

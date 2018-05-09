@@ -12,7 +12,7 @@ class Track extends GUIElement{
   private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
-  private boolean trackDebug = true;
+  private boolean trackDebug = false;
   private int trackType;
   
   int yStartingPosition = 0;
@@ -37,6 +37,7 @@ class Track extends GUIElement{
   
   // Convert X, Y cordinates (such as mouse click) to grid cordinates
   public float mouseCordToTime(int cordY){
+    cordY = this.getHeight() - cordY;
     float gridScale           = (gridHeight * beatsPerBar);
     float beatsFloat = beatsPerBar;
     
@@ -59,14 +60,14 @@ class Track extends GUIElement{
   }
   
   public int timeToCord(float time){
-    int val = (int)(time * gridHeight * beatsPerBar);
+    int val = this.getHeight() - (int)(time * gridHeight * beatsPerBar) - gridHeight;
     
     if(trackDebug) println("timeToCord. time: " + time + " = cord: " + val);
     return val;
   }
   
   public int calculateGridYPos(float time){
-    return this.getHeight() - timeToCord(time) - (int)gridHeight;
+    return timeToCord(time);
   }
   
   public void addGridBlockMouseClick(int mx, int my, int type, int val0, float val1){
@@ -74,8 +75,9 @@ class Track extends GUIElement{
     if(trackDebug) println();
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
+    if(trackDebug) println("this.getY() - my: " + (this.getY() - my));
     
-    float t = mouseCordToTime(this.getY() - my);
+    float t = mouseCordToTime(my - this.getY());
     
     if(trackDebug) println("mouseCordToTime: " + t);
     
@@ -118,20 +120,20 @@ class Track extends GUIElement{
     // Shouldn't have to do this equation, but so be it!
     if(trackDebug) println("removeGridBLockMouseClick(" + mx + ", " + (-my) + ", this.getY()+my: " + (this.getHeight() + this.getY()+my));
     // Loop through the notes in this track and check for mouseclicks
-    float key = Float.NaN;
+    float k = Float.NaN;
     for (Float f: gridBlocks.keySet()) {
       GridBlock block = gridBlocks.get(f);
       if(trackDebug) println("Checking block " + block + " at position " + block.getX() + ", " + block.getY());
-      if(block.checkClicked(mx, (this.getHeight() + this.getY()+my))){
-        key = f;
+      if(block.checkClicked(mx, my)){
+        k = f;
         break;
       }
     }
     
     // Check if the key was found. If it was, delete the value at that key
-    if(trackDebug) println("Deleting key :" + key);
-    if(!Float.isNaN(key)){
-      this.removeGridBlock(key);
+    if(trackDebug) println("Deleting key :" + k);
+    if(!Float.isNaN(k)){
+      this.removeGridBlock(k);
     }
   }
   
