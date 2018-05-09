@@ -444,8 +444,7 @@ public int getNewCutDirection(){
 }
 
 public void drawGrid(){
-  int amountScrolled = sequencer.getAmountScrolled() + 1;
-  println("amountScrolled:" + amountScrolled);
+  int amountScrolled = sequencer.getAmountScrolled();
   int gridYPos = 0;
   int colorTrackerNum = 0;
 
