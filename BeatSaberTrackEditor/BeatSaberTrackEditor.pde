@@ -239,10 +239,11 @@ void mouseDragged(){
 }
 
 void mouseReleased(){
-
+  sequencer.stopCreateSelection(mouseX, mouseY, getType());
 }
 
-void checkClick(){
+int getType(){
+  
   int type = 0;
 
   if(shiftPressed){
@@ -258,7 +259,12 @@ void checkClick(){
   }else{
     type = sequencer.getTypeFromMouseButton(mouseButton);
   }
-  sequencer.checkClickedTrack(mouseX, mouseY, type);
+  
+  return type;
+}
+
+void checkClick(){
+  sequencer.checkClickedTrack(mouseX, mouseY, getType());
 
   // Processing doesn't store what button was released,
   // so I have to do this

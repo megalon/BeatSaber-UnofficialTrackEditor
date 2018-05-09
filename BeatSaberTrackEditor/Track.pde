@@ -162,6 +162,10 @@ class Track extends GUIElement{
     this.beatsPerBar = beatsPerBar;
   }
   
+  public int getBeatsPerBar(){
+    return beatsPerBar;
+  }
+  
   public void setSnapToGrid(boolean snap){
     this.snapToGrid = snap;
   }
@@ -174,6 +178,10 @@ class Track extends GUIElement{
   
   public float getGridResolution(){
     return gridResolution;
+  }
+  
+  public int getGridHeight(){
+    return gridHeight;
   }
   
   public void display(){

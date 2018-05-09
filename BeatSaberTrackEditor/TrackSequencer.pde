@@ -26,6 +26,9 @@ class TrackSequencer extends GUIElement{
   private int seqWindowBottom = 0;
   private boolean snapToggle = true;
   private String clickPath = "data\\noteClickSFX.wav";
+  private int clickPosX = 0;
+  private int clickPosY = 0;
+  private boolean drawSelectBox = false;
   
   private float bpm = 90;
   
@@ -106,85 +109,89 @@ class TrackSequencer extends GUIElement{
     //println("checkClickedTrack:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
       
-      if(m.getElementName().equals("Events")){
-        if(my < seqWindowBottom){
-          
-          //
-          //
-          // NOTE:
-          //      In this case "TYPE" refers to the track! "VALUE" refers to what is happening
-          //      Thus "type" is unused here, becuase we already are in the track we want!
-          //
-          //
-          
-          int lightEvent = 0;
-          //println("currentCutDirection: " + currentCutDirection);
-          if(type == -1){
-            lightEvent = -1;
-          }else if(type == Note.TYPE_MINE){
-            lightEvent = Event.VALUE_OFF;
-          }else{
-            switch(currentCutDirection){
-                  case(Note.DIR_BOTTOM):
-                    // Arrow points UP
-                    lightEvent = Event.VALUE_OFF;
-                    break;
-                  case(Note.DIR_RIGHT):
-                    // Arrow points RIGHT
-                    if(type == Note.TYPE_RED)
-                      lightEvent = Event.VALUE_RED_FLASH;
-                    else
-                      lightEvent = Event.VALUE_BLUE_FLASH;
-                    break;
-                  case(Note.DIR_LEFT):
-                    // Arrow points LEFT
-                    if(type == Note.TYPE_RED)
-                      lightEvent = Event.VALUE_RED_FADE;
-                    else
-                      lightEvent = Event.VALUE_BLUE_FADE;
-                    break;
-                  default:
-                    // Circle
-                    if(type == Note.TYPE_RED)
-                      lightEvent = Event.VALUE_RED_LIGHT;
-                    else
-                      lightEvent = Event.VALUE_BLUE_LIGHT;
-                    break;
+      if(!drawSelectBox){
+        if(m.getElementName().equals("Events")){
+          if(my < seqWindowBottom){
+            
+            //
+            //
+            // NOTE:
+            //      In this case "TYPE" refers to the track! "VALUE" refers to what is happening
+            //      Thus "type" is unused here, becuase we already are in the track we want!
+            //
+            //
+            
+            int lightEvent = 0;
+            //println("currentCutDirection: " + currentCutDirection);
+            if(type == -1){
+              lightEvent = -1;
+            }else if(type == Note.TYPE_MINE){
+              lightEvent = Event.VALUE_OFF;
+            }else{
+              switch(currentCutDirection){
+                    case(Note.DIR_BOTTOM):
+                      // Arrow points UP
+                      lightEvent = Event.VALUE_OFF;
+                      break;
+                    case(Note.DIR_RIGHT):
+                      // Arrow points RIGHT
+                      if(type == Note.TYPE_RED)
+                        lightEvent = Event.VALUE_RED_FLASH;
+                      else
+                        lightEvent = Event.VALUE_BLUE_FLASH;
+                      break;
+                    case(Note.DIR_LEFT):
+                      // Arrow points LEFT
+                      if(type == Note.TYPE_RED)
+                        lightEvent = Event.VALUE_RED_FADE;
+                      else
+                        lightEvent = Event.VALUE_BLUE_FADE;
+                      break;
+                    default:
+                      // Circle
+                      if(type == Note.TYPE_RED)
+                        lightEvent = Event.VALUE_RED_LIGHT;
+                      else
+                        lightEvent = Event.VALUE_BLUE_LIGHT;
+                      break;
+              }
             }
+            //println("Setting type based on events track!");
+            //println("Checking click at inside TrackSequencer:" + mx + " " + my);
+            //println("this.getY() - startYPosition:" + (this.getY() - startYPosition));
+            m.checkTrackClickedEvents(mx, my, this.getY() - startYPosition, lightEvent, 0);
+          }else{
+            println("Not clicking in sequencer!");
           }
-          //println("Setting type based on events track!");
-          //println("Checking click at inside TrackSequencer:" + mx + " " + my);
-          //println("this.getY() - startYPosition:" + (this.getY() - startYPosition));
-          m.checkTrackClickedEvents(mx, my, this.getY() - startYPosition, lightEvent, 0);
+        }else if(m.getElementName().equals("Obstacles")){
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          //       skipping obstacles for now!
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          // ------------------------------------------
+          //println("mx, my : " + mx + ", " + my);
+          //println("getX, getY      : " + m.getX() + ", " + m.getY());
+          //println("+width, +height : " + (m.getX() + m.getWidth()) + ", " + (m.getY() + m.getHeight()));
+          if(m.checkClicked(mx, my)){
+            startCreateSelection(mx, my);
+          }
         }else{
-          println("Not clicking in sequencer!");
+          if(my < seqWindowBottom){ //
+            m.checkTrackClicked(mx, my, this.getY() - startYPosition, type, currentCutDirection, 0);
+          }else{
+            println("Not clicking in sequencer!");
+          }
+          //println("checkTrackClicked(" + mx + ", " + (my - seqWindowBottom) + ", " + type);
+          //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
         }
-      }else if(m.getElementName().equals("Obstacles")){
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        //       skipping obstacles for now!
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        // ------------------------------------------
-        //println("mx, my : " + mx + ", " + my);
-        //println("getX, getY      : " + m.getX() + ", " + m.getY());
-        //println("+width, +height : " + (m.getX() + m.getWidth()) + ", " + (m.getY() + m.getHeight()));
-        //println("Check if multitrack clicked: " + m.checkClicked(mx, my));
-      }else{
-        if(my < seqWindowBottom){ //
-          m.checkTrackClicked(mx, my, this.getY() - startYPosition, type, currentCutDirection, 0);
-        }else{
-          println("Not clicking in sequencer!");
-        }
-        //println("checkTrackClicked(" + mx + ", " + (my - seqWindowBottom) + ", " + type);
-        //m.checkTrackClicked(mx, my, currentType, currentCutDirection, mb);
       }
     }
   }
@@ -315,6 +322,55 @@ class TrackSequencer extends GUIElement{
     return amountScrolled = (this.getY() - startYPosition) / defaultGridHeight;
   }
   
+  public void startCreateSelection(int mx, int my){
+    clickPosX = mx;
+    clickPosY = my;
+    drawSelectBox = true;
+  }
+  
+  public void stopCreateSelection(int mx, int my, int type){
+    if(drawSelectBox){
+      int minX = min(mx, clickPosX);
+      int minY = min(my, clickPosY);
+      
+      int maxX = max(mx, clickPosX);
+      int maxY = max(my, clickPosY);
+            
+      int selectionHeight = (minY - maxY);
+      int selectionWidth  = (minX - maxX);
+      
+      
+      for(MultiTrack m : multiTracks){
+        
+        // For now, only check for obstacle multitrack
+        
+        if(m.getElementName().equals("Obstacles")){
+        //println("Checking click inside MultiTrack:" + mx + " " + my);
+        //println("Multitrack xy: " + this.getX() + " " + this.getY());
+          for (Track t : m.tracks){
+            //println("TrackPosition: " + t.getX() + " " + t.getY());
+            if(t.checkClicked(mx, my)){
+              
+              println("my - clickPosY:" + selectionHeight);
+              float duration = t.mouseCordToTime((selectionHeight - this.getGridHeight()) - t.getY() + this.startYPosition);
+              println("Duration: " + duration);
+              
+              int w = (selectionWidth / this.getGridWidth()) + 1;
+              
+              println("Width of selection clamped to grid:" + w);
+              
+              if(type == -1)
+                t.removeGridBlockMouseClick(mx, my);
+              else
+                t.addGridBlockMouseClick(maxX, maxY, type, w, duration);
+            }
+          }
+        }
+      }
+      drawSelectBox = false;
+    }
+  }
+  
   public void display(){
     
     strokeWeight(2);
@@ -352,6 +408,10 @@ class TrackSequencer extends GUIElement{
       float heightHalf = gridHeight/2;
       line(0, mouseY+widthHalf, width, mouseY+heightHalf);
       line(0, mouseY-widthHalf, width, mouseY-heightHalf);
+    }
+    
+    if(drawSelectBox){
+      rect(clickPosX, clickPosY, mouseX - clickPosX, mouseY - clickPosY);
     }
   }
 }
