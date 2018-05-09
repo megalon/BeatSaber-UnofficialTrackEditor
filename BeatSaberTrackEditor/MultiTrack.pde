@@ -9,6 +9,9 @@ class MultiTrack extends GUIElement{
   MultiTrack(GUIElement parent, int numTracks, int gridWidth, int gridHeight, int beatsPerBar, String name){
     this.setParent(parent);
     this.setElementName(name);
+    this.setHeight(100);
+    this.setY(-this.getHeight());
+    
     
     tracks = new ArrayList<Track>();
     
@@ -24,6 +27,7 @@ class MultiTrack extends GUIElement{
       
       Track t = new Track(this, gridWidth, gridHeight, beatsPerBar, trackType);
       t.setX(gridWidth * i);
+      t.setHeight(this.getHeight());
       tracks.add(t);
     }
     
@@ -54,12 +58,12 @@ class MultiTrack extends GUIElement{
   }
   
   public void checkTrackClicked(int mx, int my, int seqYOffset, int type, int val0, float val1){
-    //println("Checking click at:" + mx + " " + my);
+    println("Checking click inside MultiTrack:" + mx + " " + my);
     //println("Multitrack xy: " + this.getX() + " " + this.getY());
     for (Track t : tracks){
-      //println("TrackPosition: " + t.getX() + " " + t.getY());
+      println("TrackPosition: " + t.getX() + " " + t.getY());
       if(t.checkClicked(mx, my)){
-        //println("Track clicked!");
+        println("++++++++++Track clicked!");
         if(type == -1)
           t.removeGridBlockMouseClick(mx, my - seqYOffset);
         else

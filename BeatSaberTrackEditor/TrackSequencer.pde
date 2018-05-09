@@ -103,7 +103,7 @@ class TrackSequencer extends GUIElement{
   }
   
   public void checkClickedTrack(int mx, int my, int type){
-    //println("Checking track click at:" + mx + " " + my);
+    println("checkClickedTrack:" + mx + " " + my);
     for (MultiTrack m : multiTracks){
       
       
@@ -154,7 +154,8 @@ class TrackSequencer extends GUIElement{
             }
           }
           //println("Setting type based on events track!");
-          m.checkTrackClickedEvents(mx, my - seqWindowBottom, (this.getY() - startYPosition), lightEvent, 0);
+          println("Checking click at inside TrackSequencer:" + mx + " " + my);
+          m.checkTrackClickedEvents(mx, my, (this.getY() - startYPosition), lightEvent, 0);
         }else{
           println("Not clicking in sequencer!");
         }
@@ -173,8 +174,8 @@ class TrackSequencer extends GUIElement{
         // ------------------------------------------
         // ------------------------------------------
       }else{
-        if(my < seqWindowBottom){
-          m.checkTrackClicked(mx, my - seqWindowBottom, (this.getY() - startYPosition), type, currentCutDirection, 0);
+        if(my < seqWindowBottom){ //
+          m.checkTrackClicked(mx, my, startYPosition, type, currentCutDirection, 0);
         }else{
           println("Not clicking in sequencer!");
         }

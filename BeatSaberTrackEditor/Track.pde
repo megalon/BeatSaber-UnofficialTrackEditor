@@ -12,7 +12,7 @@ class Track extends GUIElement{
   private float gridResolution = 1.0;
   private float bpm = 0;
   private boolean snapToGrid = true;
-  private boolean trackDebug = false;
+  private boolean trackDebug = true;
   private int trackType;
   
   int yStartingPosition = 0;
@@ -31,8 +31,6 @@ class Track extends GUIElement{
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));
     this.setWidth(gridWidth);
-    this.setHeight(Integer.MAX_VALUE);
-    this.setY(-this.getHeight());
     
     yStartingPosition = this.getY();
   }
@@ -77,7 +75,7 @@ class Track extends GUIElement{
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
     
-    float t = mouseCordToTime(-my - (yStartingPosition - this.getY()));
+    float t = mouseCordToTime(this.getY() - my);
     
     if(trackDebug) println("mouseCordToTime: " + t);
     
