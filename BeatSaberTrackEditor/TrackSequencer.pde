@@ -120,8 +120,9 @@ class TrackSequencer extends GUIElement{
           
           int lightEvent = 0;
           //println("currentCutDirection: " + currentCutDirection);
-          
-          if(type == Note.TYPE_MINE){
+          if(type == -1){
+            lightEvent = -1;
+          }else if(type == Note.TYPE_MINE){
             lightEvent = Event.VALUE_OFF;
           }else{
             switch(currentCutDirection){
@@ -231,11 +232,16 @@ class TrackSequencer extends GUIElement{
   }
   
   public void scrollY(float scroll){
+    //println("scrollY:" + scroll);
     if(scroll > 0){
       this.setY((int)(this.getY() + scroll * gridHeight));
-    }else{
-      if(this.getY() > startYPosition)
+    }else{ 
+      //println("startYPosition:" + startYPosition);
+      //println("this.getY() - (int)scroll - 1 :" + (this.getY() - (int)scroll - 1 ));
+      if(this.getY() + (int)(scroll * gridHeight) - 1 > startYPosition )
         this.setY((int)(this.getY() + scroll * gridHeight));
+      else
+        this.setY(startYPosition);
     } 
   }
   
@@ -319,10 +325,15 @@ class TrackSequencer extends GUIElement{
         playing = false;
     }
     
+    // Autoscroll
     // Scroll if the tracker is off screen
     if(playing){
       if(seqWindowBottom - waveform.getTrackerPosition() + (this.getY()+this.getHeight()) < 0){
+        println("seqWindowBottom: " + seqWindowBottom);
+        println("this.getY(): " + this.getY());
         this.setY(this.getY() + seqWindowBottom);
+        println("this.getY() + seqWindowBottom: " + this.getY());
+        println();
       }else if(waveform.getTrackerPosition() < (this.getY()+this.getHeight())){
         this.setY(this.getY() - seqWindowBottom);
       }

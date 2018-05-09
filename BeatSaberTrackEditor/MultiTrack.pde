@@ -44,7 +44,7 @@ class MultiTrack extends GUIElement{
         
         //println("type should be :" + trackCount);
         
-        if(type == -1)
+        if(val0 == -1)
           t.removeGridBlockMouseClick(mx, my - seqYOffset);
         else
           t.addGridBlockMouseClick(mx, my, trackCount, val0, val1);
