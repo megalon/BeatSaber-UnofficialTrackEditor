@@ -14,7 +14,7 @@ class TrackSequencer extends GUIElement{
   AudioPlayer soundbis;
   private int gridWidth = 24;
   private int gridHeight = 24;
-  private int defaultGridHeight = 30;
+  private int defaultGridHeight = 24;
   private int numtracksPerMulti = 4;
   private int numEventTracks = 9;
   private int trackGroupSpacing = gridWidth / 2;
