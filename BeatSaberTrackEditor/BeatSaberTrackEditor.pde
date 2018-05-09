@@ -14,7 +14,7 @@ Minim minim;
 TrackSequencer sequencer;
 JSONManager jsonManager;
 
-int sequencerYOffset = -100;
+int sequencerYOffset = -24*4;
 int previousMouseButton;
 
 // Keypresses
@@ -275,6 +275,7 @@ void mouseWheel(MouseEvent event) {
     //sequencer.
   }else{
     if(shiftPressed){
+      //println("shift scrolling");
       sequencer.scrollY(-e * 10);
     }else{
       sequencer.scrollY(-e);
@@ -443,7 +444,8 @@ public int getNewCutDirection(){
 }
 
 public void drawGrid(){
-  int amountScrolled = sequencer.getAmountScrolled();
+  int amountScrolled = sequencer.getAmountScrolled() + 1;
+  println("amountScrolled:" + amountScrolled);
   int gridYPos = 0;
   int colorTrackerNum = 0;
 
