@@ -120,8 +120,9 @@ class TrackSequencer extends GUIElement{
           
           int lightEvent = 0;
           //println("currentCutDirection: " + currentCutDirection);
-          
-          if(type == Note.TYPE_MINE){
+          if(type == -1){
+            lightEvent = -1;
+          }else if(type == Note.TYPE_MINE){
             lightEvent = Event.VALUE_OFF;
           }else{
             switch(currentCutDirection){
