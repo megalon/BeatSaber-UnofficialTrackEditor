@@ -255,7 +255,7 @@ class JSONManager{
           obstacle.setInt("_lineIndex", trackCount);
           obstacle.setInt("_type", block.getType());
           obstacle.setFloat("_duration", block.getDuration());
-          obstacle.setInt("_width", block.getWidth());
+          obstacle.setInt("_width", block.getWallWidth());
           
           obstacles.setJSONObject(obstacleCount, obstacle);
           ++obstacleCount;
