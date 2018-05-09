@@ -167,6 +167,9 @@ void draw(){
   textSize(12);
   fill(#ffffff);
   text(versionText, width - 100 , 148);
+  
+  
+  text("FPS: " + (int)frameRate,width - 45, height);
 }
 
 void mousePressed(){

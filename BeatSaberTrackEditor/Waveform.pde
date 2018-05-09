@@ -17,6 +17,7 @@ class Waveform extends GUIElement {
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
+  private int spectraWidthScale = 2;
 
   private float maxSize = 0;
 
@@ -250,38 +251,43 @@ class Waveform extends GUIElement {
       if(sound != null){
 
         //heres where the magic happens for spectra
+        // ------------- spectra --------------
         if (spectraDisp){
           int yPos = this.getY();
           int maxPix = soundPosition2Pixels(getLength());
-          for (int i =height; i>0;i--){
-            int scaleIndex =(yPos-i)*spectraBitmap.length/maxPix; // magic scaling factor
-            if (scaleIndex>=spectra.length){
-              scaleIndex = 0 ;
+          int borderScaled = border * spectraWidthScale; // Optimization
+          ///
+          for (int i = height; i > 0; --i){
+            int scaleIndex = ((yPos - i) * spectraBitmap.length / maxPix); // magic scaling factor
+            if (scaleIndex >= spectra.length){
+              scaleIndex = 0;
             }
-            for (int j =0; j< spectra[scaleIndex].length; j++){
+            for (int j = 0; j < spectra[scaleIndex].length; ++j){
               stroke(spectraBitmap[scaleIndex][j]);
-              point(j*2+border*2,i);//double the length of pixels
-              point(j*2+1+border*2,i);
+              line(j * spectraWidthScale + borderScaled, i, j * spectraWidthScale + 1 + borderScaled, i); // Optimized draw from two point calls
             }
           }
-        }
-        //return color to normal
-        fill(190);
-        stroke(#ffffff);
-        strokeCap(SQUARE);
-        //strokeWeight(beatsPerBar);
-        // Draw the waveform display and the time. Time is currently showing each second
-        float prevTime = -1;
-        for ( int i=0; i < sampleAverage.size(); i++) {
-          // Draw the sound file
-          line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
-
-          // Draw the text (time in seconds)
-          float time = floor((i * sizeOfAvg) / sampleRate);
-          if(prevTime != time){
-            prevTime = time;
-            //text(round(time), i + border, height-border/2);
-            text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
+          //return color to normal
+          fill(190);
+          stroke(#ffffff);
+          strokeCap(SQUARE);
+          // ------------- end spectra --------------
+        }else{
+          
+          //strokeWeight(beatsPerBar);
+          // Draw the waveform display and the time. Time is currently showing each second
+          float prevTime = -1;
+          for ( int i=0; i < sampleAverage.size(); i++) {
+            // Draw the sound file
+            line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
+  
+            // Draw the text (time in seconds)
+            float time = floor((i * sizeOfAvg) / sampleRate);
+            if(prevTime != time){
+              prevTime = time;
+              //text(round(time), i + border, height-border/2);
+              text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
+            }
           }
         }
 
