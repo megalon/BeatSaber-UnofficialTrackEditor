@@ -147,7 +147,13 @@ class Waveform extends GUIElement {
     return ((p * (sizeOfAvg / beatsPerBar)) / sampleRate) * 1000;
   }
   
-  public void setTrackerPosition(int pos){
+  // Set the tracker position in samples
+  public void setTrackerPositionSamples(int pos){
+    soundbis.rewind();
+    soundbis.skip(pos);
+  }
+  
+  public void setTrackerPositionPixels(int pos){
     soundbis.rewind();
     soundbis.skip((int)pixels2SoundPosition(pos));
   }
@@ -181,8 +187,9 @@ class Waveform extends GUIElement {
     
     if(sampleRate != 0){
       if(sound != null){
-        fill(190);
-        stroke(#ffffff);
+        fill(BeatSaberTrackEditor.THEME_COLOR_0);
+        stroke(BeatSaberTrackEditor.THEME_COLOR_0);
+        strokeWeight(4);
         strokeCap(SQUARE);
         //strokeWeight(beatsPerBar);
         
@@ -190,13 +197,14 @@ class Waveform extends GUIElement {
         float prevTime = -1;
         for ( int i=0; i < sampleAverage.size(); i++) {
           // Draw the sound file
-          line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
+          line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 16) / maxSize), -(i * beatsPerBar) + this.getY()+8);
           
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
           if(prevTime != time){
             prevTime = time;
             //text(round(time), i + border, height-border/2);
+            textSize(18);
             text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
           }
         }
@@ -208,6 +216,7 @@ class Waveform extends GUIElement {
         stroke(#ff0000);
         float ypos = soundPosition2Pixels(soundbis.position());
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
+        strokeWeight(1);
       }else{
         println("Error: Could not display waveform, sound is null!");
       }
