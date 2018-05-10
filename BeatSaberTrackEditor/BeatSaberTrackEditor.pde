@@ -308,6 +308,9 @@ void draw(){
   textSize(12);
   fill(BeatSaberTrackEditor.THEME_COLOR_0);
   text(versionText, width - 100 , 148);
+  
+  
+  text("FPS: " + (int)frameRate,width - 45, height);
 }
 
 void mousePressed(){
