@@ -66,7 +66,7 @@ String[] defaultControlsText = {
   "",
   "  CTRL + S : Quick save",
   "",
-  "  Currently program autosaves every 30 sec into the directory \n .\\data\\tmp\\",
+  "  Currently the program autosaves every 30 sec into the directory \n .\\data\\tmp\\",
 };
 
 String[] noteControlsText = {

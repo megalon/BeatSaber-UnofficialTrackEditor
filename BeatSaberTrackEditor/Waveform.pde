@@ -18,7 +18,7 @@ class Waveform extends GUIElement {
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
-  private int spectraWidthScale = 2;
+  private int spectraWidthScale = 1;
   private int seqOffset;
 
   private float maxSize = 0;
@@ -37,7 +37,7 @@ class Waveform extends GUIElement {
     this.gridSize = gridSize;
 
     this.minim = minim;
-    border = 10;
+    border = 20;
     this.seqOffset = yOffset;
   }
 
@@ -212,11 +212,6 @@ class Waveform extends GUIElement {
   }
 
   public int soundPosition2Pixels(int p){
-    println("p:" + p);
-    println("sampleRate:" + sampleRate);
-    println("sizeOfAvg:" + sizeOfAvg);
-    println("beatsPerBar:" + beatsPerBar);
-    println("(int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar):" + (int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar));
     return (int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar);
   }
 
@@ -267,11 +262,11 @@ class Waveform extends GUIElement {
         //heres where the magic happens for spectra
         // ------------- spectra --------------
         if (spectraDisp){
-          int yPos = this.getY() - seqOffset;//;
+          int yPos = this.getY();
           int maxPix = soundPosition2Pixels(getLength());
           int borderScaled = border * spectraWidthScale; // Optimization
           ///
-          for (int i = height; i > 0; --i){
+          for (int i = seqOffset; i > 0; --i){
             int scaleIndex = ((yPos - i) * spectraBitmap.length / maxPix); // magic scaling factor
             if (scaleIndex >= spectra.length){
               scaleIndex = 0;
@@ -287,21 +282,32 @@ class Waveform extends GUIElement {
           strokeCap(SQUARE);
           // ------------- end spectra --------------
         }else{
-          
+          fill(190);
+          stroke(#ffffff);
+          textSize(18);
           //strokeWeight(beatsPerBar);
           // Draw the waveform display and the time. Time is currently showing each second
           float prevTime = -1;
           for ( int i=0; i < sampleAverage.size(); i++) {
             // Draw the sound file
             line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
-  
-            // Draw the text (time in seconds)
-            float time = floor((i * sizeOfAvg) / sampleRate);
-            if(prevTime != time){
-              prevTime = time;
-              //text(round(time), i + border, height-border/2);
-              text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
-            }
+ 
+          }
+        }
+        
+        fill(190);
+        stroke(#ffffff);
+        textSize(18);
+        //strokeWeight(beatsPerBar);
+        float prevTime = -1;
+        // Draw the waveform display and the time. Time is currently showing each second
+        for ( int i = 0; i < sampleAverage.size(); i++) {
+          // Draw the text (time in seconds)
+          float time = floor((i * sizeOfAvg) / sampleRate);
+          if(prevTime != time){
+            prevTime = time;
+            //text(round(time), i + border, height-border/2);
+            text(round(time), 4, this.getY() - (i * beatsPerBar) - border);
           }
         }
 
@@ -312,9 +318,9 @@ class Waveform extends GUIElement {
         stroke(#ff0000);
         float ypos = soundPosition2Pixels(soundbis.position());
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
+      }
+    } else {
+      println("Error: Could not display waveform, sound is null!");
     }
-  } else {
-    println("Error: Could not display waveform, sound is null!");
-  }
   }
 }
