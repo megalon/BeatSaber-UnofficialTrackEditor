@@ -19,6 +19,7 @@ class Waveform extends GUIElement {
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
   private int spectraWidthScale = 2;
+  private int seqOffset;
 
   private float maxSize = 0;
 
@@ -30,13 +31,14 @@ class Waveform extends GUIElement {
 
   String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
 
-  Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim){
+  Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim, int yOffset){
     super(parent, x, y, gridSize, gridSize);
 
     this.gridSize = gridSize;
 
     this.minim = minim;
     border = 10;
+    this.seqOffset = yOffset;
   }
 
   // analyzes the spectrum and puts it in spectra and spectraBitmap
@@ -210,6 +212,11 @@ class Waveform extends GUIElement {
   }
 
   public int soundPosition2Pixels(int p){
+    println("p:" + p);
+    println("sampleRate:" + sampleRate);
+    println("sizeOfAvg:" + sizeOfAvg);
+    println("beatsPerBar:" + beatsPerBar);
+    println("(int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar):" + (int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar));
     return (int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar);
   }
 
@@ -260,7 +267,7 @@ class Waveform extends GUIElement {
         //heres where the magic happens for spectra
         // ------------- spectra --------------
         if (spectraDisp){
-          int yPos = this.getY();
+          int yPos = this.getY() - seqOffset;//;
           int maxPix = soundPosition2Pixels(getLength());
           int borderScaled = border * spectraWidthScale; // Optimization
           ///
