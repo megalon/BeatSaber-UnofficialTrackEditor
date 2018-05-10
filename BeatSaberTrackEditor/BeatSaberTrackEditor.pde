@@ -62,6 +62,8 @@ String[] defaultControlsText = {
   "  UP ARROW : Scroll up sequencer",
   "  DOWN ARROW : Scroll down sequencer",
   "",
+  "  SQUARE BRACKETS [ and ] : Adjust grid size",
+  "",
   "  CTRL + S : Quick save",
   "",
   "  Currently program autosaves every 30 sec into the directory \n .\\data\\tmp\\",
@@ -541,18 +543,22 @@ public void drawGrid(){
   fill(0);
   stroke(0x55000000);
   textSize(16);
+  
+  float thickLineSpacing = 0;
 
   for(int i = 0; i < 250; ++i){
+    
+    
   
     gridYPos = (int)(height - (i * gridSpacing) + sequencerYOffset);
     
-    colorTrackerNum = i + amountScrolled;
-
-    if(colorTrackerNum % 8 == 0){
+    colorTrackerNum = (i + amountScrolled);
+    thickLineSpacing = 8 / sequencer.getGridResolution();
+    if(colorTrackerNum % thickLineSpacing == 0){
       strokeWeight(4);
       fill(BeatSaberTrackEditor.THEME_COLOR_0);
       textSize(18);
-      text(colorTrackerNum / 8, sequencer.multiTracks.get(4).getX() + sequencer.multiTracks.get(4).tracks.size() * sequencer.getGridWidth() + 2, gridYPos - 4); 
+      text((int)(colorTrackerNum / thickLineSpacing), sequencer.multiTracks.get(4).getX() + sequencer.multiTracks.get(4).tracks.size() * sequencer.getGridWidth() + 2, gridYPos - 4); 
       fill(0);
     }else if(colorTrackerNum % 4 == 0)
       strokeWeight(2);
