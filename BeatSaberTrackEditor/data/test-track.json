@@ -1,30 +1,33 @@
-{"_noteJumpSpeed":10,"_shufflePeriod":0.25,"_beatsPerMinute":120,"_beatsPerBar":16,
-"_notes":[
-{"_lineLayer":2,"_lineIndex":0,"_type":0,"_time":0.75,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":0,"_type":0,"_time":0.625,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":0,"_type":0,"_time":0.5,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":0,"_type":1,"_time":1.375,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":0,"_type":1,"_time":1.5,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":0,"_type":1,"_time":1.625,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":0,"_type":1,"_time":1.75,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":1,"_type":0,"_time":0.875,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":1,"_type":1,"_time":1.75,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":2,"_type":0,"_time":0.875,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":2,"_type":1,"_time":1.75,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":3,"_type":0,"_time":0.875,"_cutDirection":8},
-{"_lineLayer":2,"_lineIndex":3,"_type":1,"_time":1.75,"_cutDirection":8}],
-"_obstacles":[
-{"_lineIndex":2,"_type":0,"_time":0.875,"_duration":1,"_width":2},
-{"_lineIndex":0,"_type":0,"_time":1,"_duration":4,"_width":2},
-{"_lineIndex":3,"_type":1,"_time":1,"_duration":1,"_width":3}],
-"_events":[
-{"_type":0,"_value":6,"_time":0},
-{"_type":1,"_value":6,"_time":0},
-{"_type":2,"_value":6,"_time":0},
-{"_type":3,"_value":6,"_time":0},
-{"_type":4,"_value":6,"_time":0},
-{"_type":8,"_value":6,"_time":0},
-{"_type":9,"_value":6,"_time":0},
-{"_type":12,"_value":6,"_time":0},
-{"_type":13, "_value":6,"_time":0}],
-"_version":"1.5.0","_shuffle":0}
+{
+  "_noteJumpSpeed": 10,
+  "_obstacles": [
+    {
+      "_lineIndex": 0,
+      "_type": 0,
+      "_duration": 0.5,
+      "_time": 1.5,
+      "_width": 1
+    },
+    {
+      "_lineIndex": 0,
+      "_type": 1,
+      "_duration": 0.25,
+      "_time": 2.25,
+      "_width": 4
+    },
+    {
+      "_lineIndex": 3,
+      "_type": 0,
+      "_duration": 0.5,
+      "_time": 1.5,
+      "_width": 1
+    }
+  ],
+  "_shufflePeriod": 0.25,
+  "_beatsPerMinute": 120,
+  "_beatsPerBar": 16,
+  "_notes": [],
+  "_version": "1.5.0",
+  "_shuffle": 0,
+  "_events": []
+}

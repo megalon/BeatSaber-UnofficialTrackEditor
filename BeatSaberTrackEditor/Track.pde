@@ -31,14 +31,13 @@ class Track extends GUIElement{
     this.setFillColor(color(#333333));
     this.setStrokeColor(color(#555555));
     this.setWidth(gridWidth);
-    this.setHeight(Integer.MAX_VALUE);
-    this.setY(-this.getHeight());
     
     yStartingPosition = this.getY();
   }
   
-  // Convert X, Y cordinates (such as mouse click) to grid cordinates
+  // Convert Y cordinates (such as mouse click) to grid cordinates
   public float mouseCordToTime(int cordY){
+    cordY = this.getHeight() - cordY;
     float gridScale           = (gridHeight * beatsPerBar);
     float beatsFloat = beatsPerBar;
     
@@ -60,15 +59,16 @@ class Track extends GUIElement{
     return val;
   }
   
+  // Convert time value to Y coordinate
   public int timeToCord(float time){
-    int val = (int)(time * gridHeight * beatsPerBar);
+    int val = this.getHeight() - (int)(time * gridHeight * beatsPerBar) - gridHeight;
     
     if(trackDebug) println("timeToCord. time: " + time + " = cord: " + val);
     return val;
   }
   
   public int calculateGridYPos(float time){
-    return this.getHeight() - timeToCord(time) - (int)gridHeight;
+    return timeToCord(time);
   }
   
   public void addGridBlockMouseClick(int mx, int my, int type, int val0, float val1){
@@ -76,15 +76,15 @@ class Track extends GUIElement{
     if(trackDebug) println();
     if(trackDebug) println("startingPosition: " + yStartingPosition);
     if(trackDebug) println("getY(): " + this.getY());
+    if(trackDebug) println("this.getY() - my: " + (this.getY() - my));
     
-    float t = mouseCordToTime(-my - (yStartingPosition - this.getY()));
+    float t = mouseCordToTime(my - this.getY());
     
     if(trackDebug) println("mouseCordToTime: " + t);
     
     // Add the correct GridBlock based on the track type
     this.addGridBlock(trackType, t, type, val0, val1);
   }
-  
   // Generic function to add a new gridblock depending on type of object to add
   public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
     
@@ -118,22 +118,26 @@ class Track extends GUIElement{
   
   public void removeGridBlockMouseClick(int mx, int my){
     // Shouldn't have to do this equation, but so be it!
-    if(trackDebug) println("removeGridBLockMouseClick(" + mx + ", " + (-my) + ", this.getY()+my: " + (this.getHeight() + this.getY()+my));
+    if(trackDebug) println("removeGridBLockMouseClick(" + mx + ", " + (my) + ", this.getY()+my: " + (this.getHeight() + this.getY()+my));
     // Loop through the notes in this track and check for mouseclicks
-    float key = Float.NaN;
+    float k = Float.NaN;
     for (Float f: gridBlocks.keySet()) {
       GridBlock block = gridBlocks.get(f);
-      if(trackDebug) println("Checking block " + block + " at position " + block.getX() + ", " + block.getY());
-      if(block.checkClicked(mx, (this.getHeight() + this.getY()+my))){
-        key = f;
+      if(trackDebug){ println("Checking block " + block + " at position " 
+        + block.getX() + ", " + block.getY() + 
+        " with dimensions: " + block.getWidth() + ", " + block.getHeight() +
+        " | Clicked? : " + block.checkClicked(mx, my));
+      }
+      if(block.checkClicked(mx, my)){
+        k = f;
         break;
       }
     }
     
     // Check if the key was found. If it was, delete the value at that key
-    if(trackDebug) println("Deleting key :" + key);
-    if(!Float.isNaN(key)){
-      this.removeGridBlock(key);
+    if(trackDebug) println("Deleting key :" + k);
+    if(!Float.isNaN(k)){
+      this.removeGridBlock(k);
     }
   }
   
@@ -162,6 +166,10 @@ class Track extends GUIElement{
     this.beatsPerBar = beatsPerBar;
   }
   
+  public int getBeatsPerBar(){
+    return beatsPerBar;
+  }
+  
   public void setSnapToGrid(boolean snap){
     this.snapToGrid = snap;
   }
@@ -176,8 +184,14 @@ class Track extends GUIElement{
     return gridResolution;
   }
   
+  public int getGridHeight(){
+    return gridHeight;
+  }
+  
   public void display(){
-    super.display();
+    
+    // Don't call super because it would cause the tracks to draw on top of boxes with width greater than 1
+    //super.display();
     
     for (Float f: gridBlocks.keySet()) {
       

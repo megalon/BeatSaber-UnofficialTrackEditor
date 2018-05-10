@@ -217,7 +217,13 @@ class Waveform extends GUIElement {
     return ((p * (sizeOfAvg / beatsPerBar)) / sampleRate) * 1000;
   }
 
-  public void setTrackerPosition(int pos){
+  // Set the tracker position in samples
+  public void setTrackerPositionSamples(int pos){
+    soundbis.rewind();
+    soundbis.skip(pos);
+  }
+  
+  public void setTrackerPositionPixels(int pos){
     soundbis.rewind();
     soundbis.skip((int)pixels2SoundPosition(pos));
   }

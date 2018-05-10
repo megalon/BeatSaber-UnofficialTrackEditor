@@ -13,11 +13,16 @@ class GridBlock extends ClickableBox{
   private int type;
   private float time;
   
+  private int gridWidth;
+  private int gridHeight;
+  
   GridBlock(GUIElement parent, int gridX, int gridY, int gridWidth, int gridHeight, int type, float time){
     super(parent, gridX, gridY, gridWidth, gridHeight); 
     
     this.setType(type);
     this.setTime(time);
+    this.setgridWidth(gridWidth);
+    this.setgridHeight(gridHeight);
   }
   
   public void setType(int type){
@@ -36,6 +41,22 @@ class GridBlock extends ClickableBox{
     return type;
   }
   
+  public void setgridWidth(int gw){
+    this.gridWidth = gw;
+  }
+  
+  public void setgridHeight(int gh){
+    this.gridHeight = gh;
+  }
+  
+  public int getGridWidth(){
+    return this.gridWidth;
+  }
+  
+  public int getGridHeight(){
+    return this.gridHeight;
+  }
+  
   public void display(){
     super.display();
   }
@@ -49,14 +70,15 @@ class Obstacle extends GridBlock {
   
   private float duration = 0;
   private int wallWidth = 0;
-  private color wallColor = color(#ff0000);
-  private color ceilingColor = color(#0000ff);
-
+  private color wallColor = color(0x55ff0000);
+  private color ceilingColor = color(0x550000ff);
+  
   Obstacle(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int wallWidth, float time, float duration){
     super(parent, 0, yPos, gridWidth, gridHeight, type, time);
     
     this.setY(this.getLocalY() + gridHeight);
     this.setWidth(this.getWidth() * wallWidth);
+    //this.setX(this.getLocalX() - this.getWidth() + gridWidth);
     
     println("This.getY(): " + this.getY());
     println("wallWidth: " + wallWidth);
@@ -95,6 +117,47 @@ class Obstacle extends GridBlock {
   
   public void display(){
     super.display();
+    
+    switch(this.getType()){
+      case(TYPE_WALL):
+        stroke(#ff3333);
+        break;
+      case(TYPE_CEILING):
+        stroke(#3333ff);
+        break;
+    }
+    strokeWeight(4);
+    strokeCap(SQUARE);
+    
+    // Draw X marks the spot
+    line(this.getX() + 2,
+         this.getY() + this.getHeight() + 2,
+         this.getX() + this.getGridWidth() - 2,
+         this.getY() + this.getHeight() + this.getGridHeight() - 2);
+         
+    line(this.getX() + 2,
+         this.getY() + this.getHeight() + this.getGridHeight() - 2,
+         this.getX() + this.getGridWidth() - 2,
+         this.getY() + this.getHeight() + 2);
+         /*
+    line(this.getX(),
+         this.getY() + (this.getGridWidth() / 2) + this.getHeight(),
+         this.getX() + this.getGridWidth(),
+         this.getY() + (this.getGridWidth() / 2) + this.getHeight());
+         
+    line(this.getX() + (this.getGridHeight() / 2),
+         this.getY() + this.getHeight(),
+         this.getX() + (this.getGridHeight() / 2),
+         this.getY() + this.getHeight() + this.getGridHeight());
+         */
+         /*
+    rect(this.getX() + (this.getGridWidth()/4),
+         this.getY() + this.getHeight() + (this.getGridHeight()/4),
+         this.getGridWidth() / 2,
+         this.getGridHeight() / 2);
+         */
+         
+    strokeWeight(1);
   }
   
 }
@@ -152,16 +215,14 @@ class Event extends GridBlock {
   int minColorFadeValue = 0;
   int maxColorFadeValue = 255;
   
-  int flashValue = 8;
-  int slowFadeValue = 1;
+  int flashValue = 10;
+  int slowFadeValue = 2;
   
   private int value = 0;
   
   //{"_type":4,"_value":6,"_time":0},
   Event(GUIElement parent, int yPos, int gridWidth, int gridHeight, int type, int value, float time){
     super(parent, 0, yPos, gridWidth, gridHeight, type, time);
-    
-    println("Type: " + type);
     
     //
     //

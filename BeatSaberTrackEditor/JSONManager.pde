@@ -16,13 +16,15 @@ class JSONManager{
   
   // Load a track from disk
   public void loadTrack(String filename){
-    
-    seq.clearSeq();
+    if(filename == null || filename.isEmpty()){
+      return;
+    }
 
     this.consoleOutLabel.setText("Opening track file: " + filename);
-
     
     json = loadJSONObject(filename);
+    
+    seq.clearSeq();
     
     float bpmIn = json.getFloat("_beatsPerMinute");
     notes = json.getJSONArray("_notes");
@@ -65,6 +67,10 @@ class JSONManager{
     }
     
     int gridY;
+    
+    //
+    // Load notes
+    //
     for(int n = 0; n < notes.size(); ++n){
       currentObject = notes.getJSONObject(n);
       currentTime = currentObject.getFloat("_time");
@@ -89,7 +95,9 @@ class JSONManager{
       t.addGridBlock(GridBlock.GB_TYPE_NOTE, currentTime, currentType, currentCutDirection, 0);
     }
     
-
+    //
+    // Load obstacles
+    //
     //{"_lineIndex":2,"_type":0,"_duration":1,"_time":76,"_width":2},
     for(int o = 0; o < obstacles.size(); ++o){
       currentObject       = obstacles.getJSONObject(o);
@@ -115,7 +123,9 @@ class JSONManager{
     }
     
     
-      println("---------EVENTS---------");
+    //
+    // Load events
+    //
     // Only events 0 - 4, 8, 9, 12, 13
     for(int e = 0; e < events.size(); ++e){
       currentObject = events.getJSONObject(e);
@@ -280,15 +290,22 @@ class JSONManager{
           JSONObject event = new JSONObject();
           
           event.setFloat("_time", block.getTime());
-          event.setInt("_lineIndex", trackCount);
-          event.setInt("_type", block.getType());
+          event.setInt("_type", trackCount);
           event.setInt("_value", block.getValue());
           
           events.setJSONObject(eventCount, event);
           ++eventCount;
         }
       }
+      
       ++trackCount;
+      if(trackCount == 5){
+        trackCount = 8;
+        //println("Changing trackcount to: " + trackCount);
+      }else if(trackCount == 10){
+        trackCount = 12;
+        //println("Changing trackcount to: " + trackCount);
+      }
     }
     
   }
