@@ -6,6 +6,11 @@ class MultiTrack extends GUIElement{
   
   public ArrayList<Track> tracks;
   
+  boolean highlighted = false;
+  
+  int highLightedColor = color(#444444);
+  int notHighLightedColor =  color(#333333);
+  
   MultiTrack(GUIElement parent, int numTracks, int gridWidth, int gridHeight, int beatsPerBar, String name){
     this.setParent(parent);
     this.setElementName(name);
@@ -13,7 +18,8 @@ class MultiTrack extends GUIElement{
     this.setWidth(gridWidth * numTracks);
     this.setY(-this.getHeight());
     
-    this.setFillColor(color(#333333));
+    this.setFillColor(notHighLightedColor);
+    
     
     
     tracks = new ArrayList<Track>();
@@ -96,6 +102,14 @@ class MultiTrack extends GUIElement{
         default:                     val0 = 0;
       } 
     return val0;
+  }
+  
+  public void setHighlighted(boolean hi){
+    this.highlighted = hi;
+  }
+  
+  public boolean getHighlighted(){
+    return this.highlighted;
   }
   
   public int getLightEvent(int keyInput, int type){
@@ -205,11 +219,11 @@ class MultiTrack extends GUIElement{
     super.display();
     Track t;
     
-    for (int i = 0; i < tracks.size(); ++i){tracks.get(i);
+    for (int i = 0; i < tracks.size(); ++i){
       t = tracks.get(i);
       if(i > 0){
-          stroke(color(#555555));
-          line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
+        stroke(color(#555555));
+        line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
       }
       t.display();
     }

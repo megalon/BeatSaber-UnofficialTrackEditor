@@ -57,6 +57,14 @@ String[] defaultControlsText = {
   "  SPACE         :        Play / Pause",
   "  SHIFT + SPACE :        Jump to start",
   "",
+  "  SCROLL WHEEL : Scroll sequencer",
+  "  SCROLL WHEEL + SHIFT : Speed scroll sequencer",
+  "  UP ARROW : Scroll up sequencer",
+  "  DOWN ARROW : Scroll down sequencer",
+  "",
+  "  CTRL + S : Quick save",
+  "",
+  "  Currently program autosaves every 30 sec into the directory \n .\\data\\tmp\\",
 };
 
 String[] noteControlsText = {
@@ -115,7 +123,10 @@ String[] obstacleControlsText = {
   "",
   "      Delete obstacle : Shift + Click the \"X\"",
   "",
-  "  Obstacles cannot be moved once placed in my editor.",
+  "  The obstacle sometimes lands a little offset at the moment.\n",
+  "  Try clicking near the edge of the grid boxes for better precision.",
+  "",
+  "  Obstacles cannot be moved once placed.",
   "  I'd like to implement this in the future!"
 };
 
@@ -197,6 +208,7 @@ void draw(){
   currentHelpText = defaultControlsText;
   for(int i = 0; i < sequencer.multiTracks.size(); ++i){
     if(sequencer.multiTracks.get(i).checkClicked(mouseX, mouseY)){
+      sequencer.multiTracks.get(i).setHighlighted(true);
       switch(i){
         case(0):
           currentHelpText = eventControlsText;
@@ -210,6 +222,8 @@ void draw(){
           currentHelpText = obstacleControlsText;
           break;
       }
+    }else{
+      sequencer.multiTracks.get(i).setHighlighted(false);
     }
   }
   
