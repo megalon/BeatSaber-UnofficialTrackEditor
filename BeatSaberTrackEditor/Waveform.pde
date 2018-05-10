@@ -14,7 +14,7 @@ class Waveform extends GUIElement {
   private float [][] spectra;
   private int [][] spectraBitmap;
   private boolean spectraDisp = true;
-  private boolean waveFormDisp = false;
+  private boolean waveFormDisp = true;
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
@@ -286,7 +286,8 @@ class Waveform extends GUIElement {
           stroke(#ffffff);
           strokeCap(SQUARE);
           // ------------- end spectra --------------
-        }else if (waveFormDisp){
+        }
+        if (waveFormDisp){
 
           //strokeWeight(beatsPerBar);
           // Draw the waveform display and the time. Time is currently showing each second
