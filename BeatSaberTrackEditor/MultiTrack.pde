@@ -13,6 +13,8 @@ class MultiTrack extends GUIElement{
     this.setWidth(gridWidth * numTracks);
     this.setY(-this.getHeight());
     
+    this.setFillColor(color(#333333));
+    
     
     tracks = new ArrayList<Track>();
     
@@ -42,20 +44,105 @@ class MultiTrack extends GUIElement{
   // Unlike not tracks where each track can have notes of any type or value
   // Events tracks can only have events of ONE type, but different values
   // Thus we need to use the track as the type
-  public void checkTrackClickedEvents(int mx, int my, int seqYOffset, int val0, float val1){
+  // val0 is 
+  // val1 is 
+  public void checkTrackClickedEvents(int mx, int my, int seqYOffset, int val0, float val1, int mouseButtonIndex){
+    
+    println("mouseButtonIndex: " + mouseButtonIndex);
+    
     int trackCount = 0;
+    int value = val0;
+    
     for (Track t : tracks){
       if(t.checkClicked(mx, my)){
-        
-        //println("type should be :" + trackCount);
-        
-        if(val0 == -1)
+        if(value == -1){
           t.removeGridBlockMouseClick(mx, my);
-        else
-          t.addGridBlockMouseClick(mx, my, trackCount, val0, val1);
+        }else{
+          if(trackCount <= 4){
+            value = getLightEvent(val0, mouseButtonIndex);
+          }else if(trackCount == 5 || trackCount == 6){
+            // if this is one of the rotation only tracks
+            
+            // If you right click or middle click
+            if(mouseButtonIndex == 3 || mouseButtonIndex == 2){
+              value = 0;
+            }else if(value > 0){
+              value = 1;
+            }
+          }else{
+            value = getRotationSpeedEvent(val0);
+          }
+          t.addGridBlockMouseClick(mx, my, trackCount, value, val1);
+        }
       }
       ++trackCount;
     }
+  }
+  
+  public int getRotationSpeedEvent(int val0){
+  
+      println("val0:" + val0);
+  
+      // Clockwise
+      switch(val0){
+        case(Note.DIR_BOTTOM):       val0 = 1; break;
+        case(Note.DIR_BOTTOMLEFT):   val0 = 2; break;
+        case(Note.DIR_LEFT):         val0 = 3; break;
+        case(Note.DIR_TOPLEFT):      val0 = 4; break;
+        case(Note.DIR_TOP):          val0 = 5; break;
+        case(Note.DIR_TOPRIGHT):     val0 = 6; break;
+        case(Note.DIR_RIGHT):        val0 = 7; break;
+        case(Note.DIR_BOTTOMRIGHT):  val0 = 8; break;
+        default:                     val0 = 0;
+      } 
+    return val0;
+  }
+  
+  public int getLightEvent(int keyInput, int type){
+      //
+      //
+      // NOTE:
+      //      In this case "TYPE" refers to the track! "VALUE" refers to what is happening
+      //      Thus "type" is unused here, becuase we already are in the track we want!
+      //
+      //
+      
+      int lightEvent = 0;
+      //println("currentCutDirection: " + currentCutDirection);
+      if(type == -1){
+        lightEvent = -1;
+      }else if(type == Note.TYPE_MINE){
+        lightEvent = Event.VALUE_OFF;
+      }else{
+        switch(keyInput){
+              case(Note.DIR_BOTTOM):
+                // Arrow points UP
+                lightEvent = Event.VALUE_OFF;
+                break;
+              case(Note.DIR_RIGHT):
+                // Arrow points RIGHT
+                if(type == Note.TYPE_RED)
+                  lightEvent = Event.VALUE_RED_FLASH;
+                else
+                  lightEvent = Event.VALUE_BLUE_FLASH;
+                break;
+              case(Note.DIR_LEFT):
+                // Arrow points LEFT
+                if(type == Note.TYPE_RED)
+                  lightEvent = Event.VALUE_RED_FADE;
+                else
+                  lightEvent = Event.VALUE_BLUE_FADE;
+                break;
+              default:
+                // Circle
+                if(type == Note.TYPE_RED)
+                  lightEvent = Event.VALUE_RED_LIGHT;
+                else
+                  lightEvent = Event.VALUE_BLUE_LIGHT;
+                break;
+        } 
+    }
+    return lightEvent;
   }
   
   public void checkTrackClicked(int mx, int my, int seqYOffset, int type, int val0, float val1){
@@ -73,6 +160,27 @@ class MultiTrack extends GUIElement{
           t.addGridBlockMouseClick(mx, my, type, val0, val1);
       }
     }
+  }
+  
+  public void checkTrackCLickedObstacle(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
+   for (Track t : tracks){
+      
+     //println("TrackPosition: " + t.getX() + " " + t.getY());
+      if(t.checkClicked(mx, my)){
+        
+        float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset);
+        //println("Duration: " + duration);
+        
+        int w = (selectionWidth / t.getWidth()) + 1;
+        
+        if(type == -1){
+          println("Attempting to remove obstacle a: " + mx + ", " + my);
+          t.removeGridBlockMouseClick(mx, my);
+        }else{
+          t.addGridBlockMouseClick(mx, my, type, w, duration);
+        }
+      }
+    } 
   }
   
   public void setBeatsPerBar(int beats){
@@ -95,9 +203,15 @@ class MultiTrack extends GUIElement{
   
   public void display(){
     super.display();
+    Track t;
     
-    for (Track t : tracks){
-       t.display();
+    for (int i = 0; i < tracks.size(); ++i){tracks.get(i);
+      t = tracks.get(i);
+      if(i > 0){
+          stroke(color(#555555));
+          line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
+      }
+      t.display();
     }
   }
 }

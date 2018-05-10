@@ -1,5 +1,6 @@
 class GUIElement{
   private int x, y, w, h = 0;
+  private float halfWidth, halfHeight = 0;
   private GUIElement parent;
   private color fillColor   = #555555;
   private color strokeColor = #000000;
@@ -12,23 +13,36 @@ class GUIElement{
   
   GUIElement(int x, int y, int w, int h){
     this.parent = new GUIElement();
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
+    this.setX(x);
+    this.setY(y);
+    this.setWidth(w);
+    this.setHeight(h);
   }
   
   GUIElement(GUIElement parent, int x, int y, int w, int h){
     this.parent = parent;
-    this.x = x;
-    this.y = y;
-    this.w = w;
-    this.h = h;
+    this.setX(x);
+    this.setY(y);
+    this.setWidth(w);
+    this.setHeight(h);
   }
   
   public boolean checkClicked(int mx, int my){
-    if((this.getX() <= mx && this.getX() + this.getWidth() >= mx) &&
-    (this.getY() <= my && this.getY() + this.getHeight() >= my))
+    /*
+    println("this.getX() " + this.getX());
+    println("this.getX() + this.getWidth() " + (this.getX() + this.getWidth()));
+    println("this.getY() " + this.getY());
+    println("this.getY() + this.getHeight() " + (this.getY() + this.getHeight()));
+    println("");
+    */
+    // Need to take min and max to account for possible negative height or width
+    int minX = min(this.getX(), this.getX() + this.getWidth());
+    int maxX = max(this.getX(), this.getX() + this.getWidth());
+    
+    int minY = min(this.getY(), this.getY() + this.getHeight());
+    int maxY = max(this.getY(), this.getY() + this.getHeight());
+    
+    if((minX <= mx && maxX  >= mx) && (minY <= my && maxY >= my))
       return true; 
     return false;
   }
@@ -62,6 +76,14 @@ class GUIElement{
     return h; 
   }
   
+  public float getHalfWidth(){
+    return halfWidth;
+  }
+  
+  public float getHalfHeight(){
+    return halfHeight;
+  }
+  
   public color getFillColor(){
     return fillColor;
   }
@@ -85,10 +107,12 @@ class GUIElement{
   
   public void setWidth(int w){
     this.w = w;
+    this.halfWidth = w/2;
   }
   
   public void setHeight(int h){
     this.h = h;
+    this.halfHeight = h/2;
   }
   
   public void setParent(GUIElement parent){

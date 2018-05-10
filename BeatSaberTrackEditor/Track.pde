@@ -35,7 +35,7 @@ class Track extends GUIElement{
     yStartingPosition = this.getY();
   }
   
-  // Convert X, Y cordinates (such as mouse click) to grid cordinates
+  // Convert Y cordinates (such as mouse click) to grid cordinates
   public float mouseCordToTime(int cordY){
     cordY = this.getHeight() - cordY;
     float gridScale           = (gridHeight * beatsPerBar);
@@ -59,6 +59,7 @@ class Track extends GUIElement{
     return val;
   }
   
+  // Convert time value to Y coordinate
   public int timeToCord(float time){
     int val = this.getHeight() - (int)(time * gridHeight * beatsPerBar) - gridHeight;
     
@@ -84,7 +85,6 @@ class Track extends GUIElement{
     // Add the correct GridBlock based on the track type
     this.addGridBlock(trackType, t, type, val0, val1);
   }
-  
   // Generic function to add a new gridblock depending on type of object to add
   public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
     
@@ -118,12 +118,16 @@ class Track extends GUIElement{
   
   public void removeGridBlockMouseClick(int mx, int my){
     // Shouldn't have to do this equation, but so be it!
-    if(trackDebug) println("removeGridBLockMouseClick(" + mx + ", " + (-my) + ", this.getY()+my: " + (this.getHeight() + this.getY()+my));
+    if(trackDebug) println("removeGridBLockMouseClick(" + mx + ", " + (my) + ", this.getY()+my: " + (this.getHeight() + this.getY()+my));
     // Loop through the notes in this track and check for mouseclicks
     float k = Float.NaN;
     for (Float f: gridBlocks.keySet()) {
       GridBlock block = gridBlocks.get(f);
-      if(trackDebug) println("Checking block " + block + " at position " + block.getX() + ", " + block.getY());
+      if(trackDebug){ println("Checking block " + block + " at position " 
+        + block.getX() + ", " + block.getY() + 
+        " with dimensions: " + block.getWidth() + ", " + block.getHeight() +
+        " | Clicked? : " + block.checkClicked(mx, my));
+      }
       if(block.checkClicked(mx, my)){
         k = f;
         break;
@@ -185,7 +189,9 @@ class Track extends GUIElement{
   }
   
   public void display(){
-    super.display();
+    
+    // Don't call super because it would cause the tracks to draw on top of boxes with width greater than 1
+    //super.display();
     
     for (Float f: gridBlocks.keySet()) {
       

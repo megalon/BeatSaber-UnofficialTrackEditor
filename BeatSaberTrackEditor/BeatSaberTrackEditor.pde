@@ -6,9 +6,11 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.16";
+String versionText = "Megalon v0.0.17";
 
 boolean debug = false;
+
+private static final int THEME_COLOR_0 = #ffffff; 
 
 Minim minim;
 TrackSequencer sequencer;
@@ -51,10 +53,13 @@ String[] instructionsText = {
   "",
 };
 
-String[] controlsText = {
-  "  SPACE:                 Play / Pause",
-  "  SHIFT+SPACE:  Jump to start",
+String[] defaultControlsText = {
+  "  SPACE         :        Play / Pause",
+  "  SHIFT + SPACE :        Jump to start",
   "",
+};
+
+String[] noteControlsText = {
   "  Notes:",
   "      Place RED note : Left click",
   "      Place BLUE note: Right click     or     Control + Left Click",
@@ -77,6 +82,44 @@ String[] controlsText = {
   "      Hold SHIFT to scroll faster",
   ""
 };
+
+String[] eventControlsText = {
+  "  Lights :",
+  "  Click while holding down a key:",
+  "      Turn light OFF : Middle click    or    W + left click",
+  "      RED  light ON    : Left click",
+  "      RED  light FLASH : A + Left click",
+  "      RED  light FADE  : D + Left click",
+  "      BLUE light ON    : Right click",
+  "      BLUE light FLASH : A + Right click",
+  "      BLUE light FADE  : D + Right click",
+  "      Light OFF        : W + Left click",
+  "",
+  "  Rotatable objects : ",
+  "          Only supports ON or OFF events",
+  "          ON  : Left click",
+  "          OFF : Right click    or   Middle Click",
+  "",
+  "  Rotating Lasers : ",
+  "          Rotation value as a number. Higher = faster",
+  "          WASD + Left click",
+  "          OFF : Right Click",
+  "",
+  "  Remove any block : Shift + Left click"
+};
+
+String[] obstacleControlsText = {
+  "  Obstacles :",
+  "      Place WALL : Left click and drag",
+  "      Place CEILING : Right click and drag",
+  "",
+  "      Delete obstacle : Shift + Click the \"X\"",
+  "",
+  "  Obstacles cannot be moved once placed in my editor.",
+  "  I'd like to implement this in the future!"
+};
+
+String[] currentHelpText = defaultControlsText;
 
 String eventNames[] = {
     "X_LIGHTS",
@@ -119,13 +162,17 @@ void setup(){
 
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
+  
+  helpboxSize = 400;
+  helpboxX = width - helpboxSize;
+  helpboxY = 120;
 
-  createFileSystemGUI(width - 350, 0, 350, 130, 6);
+  // To set the global colour scheme use 
+  G4P.setGlobalColorScheme(6);
+
+  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, 6);
   jsonManager = new JSONManager(sequencer, lblConsole);
 
-  helpboxSize = 350;
-  helpboxX = width - 350;
-  helpboxY = 120;
 }
 
 void resetKeys(){
@@ -144,6 +191,26 @@ void resetKeys(){
 void draw(){
   if (!focused){
     resetKeys();
+  }
+  
+  // Check if any of the multitracks are hovered over
+  currentHelpText = defaultControlsText;
+  for(int i = 0; i < sequencer.multiTracks.size(); ++i){
+    if(sequencer.multiTracks.get(i).checkClicked(mouseX, mouseY)){
+      switch(i){
+        case(0):
+          currentHelpText = eventControlsText;
+          break;
+        case(1):
+        case(2):
+        case(3):
+          currentHelpText = noteControlsText;
+          break;
+        case(4):
+          currentHelpText = obstacleControlsText;
+          break;
+      }
+    }
   }
   
   timeCounter++;
@@ -173,19 +240,20 @@ void draw(){
   // Draw box below sequencer
   rect(0, height + sequencerYOffset, width, -sequencerYOffset);
   
-  fill(#FFFFFF);
+  // sick toothpaste blue #a7dbdb
+  fill(BeatSaberTrackEditor.THEME_COLOR_0);
   int seqTextY = height + sequencerYOffset + 25;
   textSize(18);
   //text("Events",        sequencer.multiTracks.get(0).getX(), height - 10);
   text("Bottom\nNotes", sequencer.multiTracks.get(1).getX(), seqTextY);
   text("Middle\nNotes", sequencer.multiTracks.get(2).getX(), seqTextY);
   text("Top\nNotes",    sequencer.multiTracks.get(3).getX(), seqTextY);
-  text("Obstacles\n(Edit WIP)",    sequencer.multiTracks.get(4).getX(), seqTextY);
+  text("Obstacles",    sequencer.multiTracks.get(4).getX(), seqTextY);
   
   //text("---------------------\n---------------------\n-----EVENTS WIP------\n---------------------\n---------------------\n", sequencer.multiTracks.get(0).getX(), 400 + (sequencer.getY() - sequencer.startYPosition));
   
   textSize(12);
-  image(eventLabels, sequencer.multiTracks.get(0).getX() - 80, height + sequencerYOffset);
+  image(eventLabels, sequencer.multiTracks.get(0).getX() - 65, height + sequencerYOffset);
   
   text("FPS: " + (int)frameRate,0, height);
   
@@ -195,7 +263,7 @@ void draw(){
     fill(#000000);
     rect(helpboxX, 0, helpboxSize, height);
 
-    fill(#ffffff);
+    fill(BeatSaberTrackEditor.THEME_COLOR_0);
     textSize(18);
     text("INSTRUCTIONS", helpboxX + 10, helpboxY + 28);
 
@@ -211,7 +279,7 @@ void draw(){
     textSize(18);
     text("CONTROLS", helpboxX + 10, helpboxY + 28 + textIndex * helpIndexSpacing);
     textSize(12);
-    for(String s : controlsText){
+    for(String s : currentHelpText){
       ++textIndex;
       text(s, helpboxX + 10, helpboxY + 30 + textIndex * helpIndexSpacing);
     }
@@ -222,7 +290,7 @@ void draw(){
     }
   }
   textSize(12);
-  fill(#ffffff);
+  fill(BeatSaberTrackEditor.THEME_COLOR_0);
   text(versionText, width - 100 , 148);
 }
 
@@ -271,7 +339,7 @@ void checkClick(){
   previousMouseButton = mouseButton;
 
   if(!sequencer.getPlaying()){
-    sequencer.setTrackerPosition(mouseY);
+    sequencer.setTrackerPositionPixels(mouseY);
   }
 }
 
@@ -458,6 +526,7 @@ public void drawGrid(){
 
   fill(0);
   stroke(0x55000000);
+  textSize(16);
 
   for(int i = 0; i < 250; ++i){
   
@@ -465,9 +534,13 @@ public void drawGrid(){
     
     colorTrackerNum = i + amountScrolled;
 
-    if(colorTrackerNum % 8 == 0)
+    if(colorTrackerNum % 8 == 0){
       strokeWeight(4);
-    else if(colorTrackerNum % 4 == 0)
+      fill(BeatSaberTrackEditor.THEME_COLOR_0);
+      textSize(18);
+      text(colorTrackerNum / 8, sequencer.multiTracks.get(4).getX() + sequencer.multiTracks.get(4).tracks.size() * sequencer.getGridWidth() + 2, gridYPos - 4); 
+      fill(0);
+    }else if(colorTrackerNum % 4 == 0)
       strokeWeight(2);
     else
       strokeWeight(1);
@@ -554,6 +627,7 @@ public void handleFileDialog(GButton button) {
   else if (button == btnInput) {
     inputTrackPath = G4P.selectInput("Input Dialog");
     jsonManager.loadTrack(inputTrackPath);
+    bpmTextField.setPromptText("" + sequencer.getBPM());
   }
   // File output selection
   else if (button == btnOutput) {
@@ -590,7 +664,6 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   lblConsole = new GLabel(this, x, y+70, w, 50);
   lblConsole.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
   lblConsole.setOpaque(true);
-  lblConsole.setLocalColorScheme(G4P.BLUE_SCHEME);
   lblConsole.setText("Loaded default audio file: " + soundfilePath);
 }
 
