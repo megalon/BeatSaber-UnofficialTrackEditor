@@ -54,14 +54,14 @@ class MultiTrack extends GUIElement{
   // val1 is 
   public void checkTrackClickedEvents(int mx, int my, int seqYOffset, int val0, float val1, int mouseButtonIndex){
     
-    println("mouseButtonIndex: " + mouseButtonIndex);
+    //println("mouseButtonIndex: " + mouseButtonIndex);
     
     int trackCount = 0;
     int value = val0;
     
     for (Track t : tracks){
       if(t.checkClicked(mx, my)){
-        if(value == -1){
+        if(mouseButtonIndex == -1){
           t.removeGridBlockMouseClick(mx, my);
         }else{
           if(trackCount <= 4){
@@ -87,7 +87,7 @@ class MultiTrack extends GUIElement{
   
   public int getRotationSpeedEvent(int val0){
   
-      println("val0:" + val0);
+      //println("val0:" + val0);
   
       // Clockwise
       switch(val0){
