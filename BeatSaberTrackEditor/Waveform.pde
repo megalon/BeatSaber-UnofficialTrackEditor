@@ -2,10 +2,10 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 
 class Waveform extends GUIElement {
-  
-    
-  Minim minim; 
-  AudioSample sound; 
+
+
+  Minim minim;
+  AudioSample sound;
   AudioPlayer soundbis;
   private FloatList sampleAverage;
   private int border, leftLength, rightLength;
@@ -51,7 +51,7 @@ class Waveform extends GUIElement {
     float[] leftChannel = sample.getChannel(AudioSample.LEFT);
     float[] rightChannel = sample.getChannel(AudioSample.RIGHT);
 
-    int fftSize = 256;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
+    int fftSize = 128;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
 
     float[] fftSamples = new float[fftSize];
 
@@ -137,7 +137,7 @@ class Waveform extends GUIElement {
     calculateSizeOfAVG();
     float[] leftSamples = sound.getChannel(AudioSample.LEFT);
     float[] rightSamples = sound.getChannel(AudioSample.RIGHT);
-    float[] samplesVal = new float[rightSamples.length];    
+    float[] samplesVal = new float[rightSamples.length];
     for (int i = 0; i < rightSamples.length; ++i) {
       samplesVal[i] = leftSamples[i] + rightSamples[i];
     }
@@ -268,7 +268,7 @@ class Waveform extends GUIElement {
           ///
           for (int i = seqOffset; i > 0; --i){
             int scaleIndex = ((yPos - i) * spectraBitmap.length / maxPix); // magic scaling factor
-            if (scaleIndex >= spectra.length){
+            if (scaleIndex >= spectra.length || scaleIndex <0){
               scaleIndex = 0;
             }
             for (int j = 0; j < spectra[scaleIndex].length; ++j){
@@ -282,16 +282,21 @@ class Waveform extends GUIElement {
           strokeCap(SQUARE);
           // ------------- end spectra --------------
         }else{
-          fill(190);
-          stroke(#ffffff);
-          textSize(18);
+
           //strokeWeight(beatsPerBar);
           // Draw the waveform display and the time. Time is currently showing each second
           float prevTime = -1;
           for ( int i=0; i < sampleAverage.size(); i++) {
             // Draw the sound file
             line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
- 
+
+            // Draw the text (time in seconds)
+            float time = floor((i * sizeOfAvg) / sampleRate);
+            if(prevTime != time){
+              prevTime = time;
+              //text(round(time), i + border, height-border/2);
+              text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
+            }
           }
         }
         
