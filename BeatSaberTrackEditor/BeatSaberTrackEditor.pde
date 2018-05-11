@@ -6,7 +6,7 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.18.1";
+String versionText = "Megalon v0.0.19";
 
 boolean debug = false;
 
