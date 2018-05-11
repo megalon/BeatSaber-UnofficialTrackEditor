@@ -33,15 +33,23 @@ Tools -> Add Tool... -> Libraries tab -> Search for "Minim" -> Select it then cl
 
 **Install the G4P library**
 
+Download the latest build of G4P. Click the sourceforge link on this page:
 http://www.lagers.org.uk/g4p/download.html
 
+Extract the zip, and place extracted G4P folder in Processing's library directory 
+C:\Users\(username)\Documents\Processing\libraries\
+
+
+**Open the project in Processing**
 Open BeatSaberTrackEditor.pde
 
 Run the project by clicking the triangular play button. Press the square stop button to end.
 
 ## Currently working on:
 
-Grid snapping, GUI updates, Events, Obstacles
+Adding .ogg support.
+
+GUI updates.
 
 ## Next steps:
 
