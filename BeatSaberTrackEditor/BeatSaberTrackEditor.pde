@@ -6,7 +6,7 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.19";
+String versionText = "Megalon v0.0.18-3";
 
 boolean debug = false;
 
@@ -75,7 +75,7 @@ void setup(){
   int gridSize = 0;
   if(fullScreen){
     // Calculate grid size. Initially get multiple of 24, then make sure it's divisble evenly by 4
-    gridSize = floor((displayHeight / 720) * 24 / 4) * 4;
+    gridSize = 24;//floor((displayHeight / 720) * 24 / 4) * 4;
   }else{
     gridSize = 24;
   }
