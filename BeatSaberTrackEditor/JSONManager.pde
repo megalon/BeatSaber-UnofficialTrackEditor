@@ -85,7 +85,7 @@ class JSONManager{
       currentObject = notes.getJSONObject(n);
       currentTime = currentObject.getFloat("_time");
       println(currentTime);
-      currentTime += beatOffset;
+      //currentTime += beatOffset;
 
       currentLineIndex = currentObject.getInt("_lineIndex");
       currentLineLayer = currentObject.getInt("_lineLayer");
@@ -114,7 +114,7 @@ class JSONManager{
     //{"_lineIndex":2,"_type":0,"_duration":1,"_time":76,"_width":2},
     for(int o = 0; o < obstacles.size(); ++o){
       currentObject       = obstacles.getJSONObject(o);
-      currentTime         = currentObject.getFloat("_time") + beatOffset;
+      currentTime         = currentObject.getFloat("_time");// + beatOffset;
       currentLineIndex    = currentObject.getInt("_lineIndex");
       currentType         = currentObject.getInt("_type");
       currentDuration     = currentObject.getFloat("_duration");
@@ -142,7 +142,7 @@ class JSONManager{
     // Only events 0 - 4, 8, 9, 12, 13
     for(int e = 0; e < events.size(); ++e){
       currentObject = events.getJSONObject(e);
-      currentTime = currentObject.getFloat("_time") + beatOffset;
+      currentTime = currentObject.getFloat("_time");// + beatOffset;
       currentType = currentObject.getInt("_type");
       currentValue = currentObject.getInt("_value");
 
