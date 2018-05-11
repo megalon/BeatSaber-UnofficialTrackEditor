@@ -31,7 +31,7 @@ class JSONManager{
     events = json.getJSONArray("_events");
     obstacles = json.getJSONArray("_obstacles");
 
-    offset = json.getFloat("_offset");
+    //offset = json.getFloat("_offset");
 
     //If events was empty, create some temp events
     if(events == null){

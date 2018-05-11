@@ -6,7 +6,7 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.17";
+String versionText = "Megalon v0.0.18.1";
 
 boolean debug = false;
 
@@ -214,7 +214,7 @@ void draw(){
   }
   textSize(12);
   fill(BeatSaberTrackEditor.THEME_COLOR_0);
-  text(versionText, width - 100 , 148);
+  text(versionText, width - 115 , 148);
   
   
   text("FPS: " + (int)frameRate,width - 45, height);
