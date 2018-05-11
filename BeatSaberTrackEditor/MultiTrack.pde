@@ -176,14 +176,15 @@ class MultiTrack extends GUIElement{
     }
   }
   
-  public void checkTrackCLickedObstacle(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
+  public void checkTrackClickedObstacle(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
    for (Track t : tracks){
+     
+     println("(-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset: " + ((-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset));
       
-     //println("TrackPosition: " + t.getX() + " " + t.getY());
+     println("TrackPosition: " + t.getX() + " " + t.getY());
       if(t.checkClicked(mx, my)){
-        
-        float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset);
-        //println("Duration: " + duration);
+        float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) + t.getHeight());
+        println("Duration: " + duration);
         
         int w = (selectionWidth / t.getWidth()) + 1;
         

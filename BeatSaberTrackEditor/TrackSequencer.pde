@@ -45,11 +45,14 @@ class TrackSequencer extends GUIElement{
   
   public ArrayList<MultiTrack> multiTracks;
   
-  TrackSequencer(int x, int y, int w, int h, Minim minim){
+  TrackSequencer(int x, int y, int w, int h, Minim minim, int gridSize){
     super(x, y, w, h);
     startYPosition = y;
     this.seqWindowBottom = -h;
     this.setFillColor(color(#111111));
+    
+    this.setGridWidth(gridSize);
+    this.setGridHeight(gridSize);
     
     waveform = new Waveform(this, 0, 0, gridHeight, minim, startYPosition);
     
@@ -174,6 +177,14 @@ class TrackSequencer extends GUIElement{
     return gridWidth;
   }
   
+  public void setGridWidth(int gridWidth){
+    this.gridWidth = gridWidth;
+  }
+  
+  public void setGridHeight(int gridHeight){
+    this.gridHeight = gridHeight;
+  }
+  
   public int timeToGrid(float time){
     return (int)(time * (gridHeight / (beatsPerBar/2)));
   }
@@ -282,10 +293,19 @@ class TrackSequencer extends GUIElement{
       int selectionHeight = (maxY - minY);
       int selectionWidth  = (maxX - minX);
       
+      println("minX:" + minX);
+      println("maxX:" + maxX);
+      
+      println("minY:" + minY);
+      println("maxY:" + maxY);
+      
+      println("selectionHeight:" + selectionHeight);
+      println("selectionWidth:" + selectionWidth);
+      
       for(MultiTrack m : multiTracks){
         // For now, only check for obstacle multitrack
         if(m.getElementName().equals("Obstacles")){
-          m.checkTrackCLickedObstacle(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type);
+          m.checkTrackClickedObstacle(minX, maxY, 0, selectionWidth, selectionHeight, type);
         }
       }
       drawSelectBox = false;

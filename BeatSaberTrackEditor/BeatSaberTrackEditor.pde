@@ -55,6 +55,8 @@ String[] currentHelpText = TextArrays.defaultControlsText;
 GButton btnOpenSong, btnInput, btnOutput;
 GLabel lblConsole;
 
+boolean fullScreen = true;
+
 void setup(){
   size(1280, 720);
   noSmooth();
@@ -70,8 +72,15 @@ void setup(){
   minim = new Minim(this);
   
   eventLabels = loadImage(eventLabelsImagePath);
+  int gridSize = 0;
+  if(fullScreen){
+    // Calculate grid size. Initially get multiple of 24, then make sure it's divisble evenly by 4
+    gridSize = floor((displayHeight / 720) * 24 / 4) * 4;
+  }else{
+    gridSize = 24;
+  }
   
-  sequencer = new TrackSequencer(0, height + sequencerYOffset, width, -(height + sequencerYOffset), minim);
+  sequencer = new TrackSequencer(0, height + sequencerYOffset, width, -(height + sequencerYOffset), minim, gridSize);
 
   sequencer.loadSoundFile(soundfilePath);
   sequencer.setBPM(bpm);
@@ -318,7 +327,11 @@ void keyPressed(){
         sequencer.setPlaying(true);
     }
   }
-
+  
+  if(key == ESC){
+    key = 0;
+  }
+  
   if(key == 'g'){
     if(!snapToggle){
       if(sequencer.getSnapToggle()){
@@ -448,8 +461,6 @@ public void drawGrid(){
   float thickLineSpacing = 0;
 
   for(int i = 0; i < 250; ++i){
-    
-    
   
     gridYPos = (int)(height - (i * gridSpacing) + sequencerYOffset);
     
