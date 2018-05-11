@@ -20,7 +20,11 @@ To run:
 
 https://github.com/megalon/BeatSaber-UnofficialTrackEditor/releases
 
-or 
+If you are using the Mac OS app, you will need to manually allow it in gatekeeper since it's unsigned. 
+
+Here is a screenshot with more information:
+
+![MacOS info](https://cdn.discordapp.com/attachments/444407770402521088/444470171524923394/Screen_Shot_2018-05-11_at_8.05.19_AM.jpg)
 
 ## Build it yourself:
 
