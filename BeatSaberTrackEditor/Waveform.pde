@@ -2,10 +2,10 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 
 class Waveform extends GUIElement {
-  
-    
-  Minim minim; 
-  AudioSample sound; 
+
+
+  Minim minim;
+  AudioSample sound;
   AudioPlayer soundbis;
   private FloatList sampleAverage;
   private int border, leftLength, rightLength;
@@ -14,11 +14,11 @@ class Waveform extends GUIElement {
   private float [][] spectra;
   private int [][] spectraBitmap;
   private boolean spectraDisp = true;
-
+  private boolean waveFormDisp = false;
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
-  private int spectraWidthScale = 1;
+  private float spectraWidthScale = 1.75;
   private int seqOffset;
 
   private float maxSize = 0;
@@ -51,7 +51,7 @@ class Waveform extends GUIElement {
     float[] leftChannel = sample.getChannel(AudioSample.LEFT);
     float[] rightChannel = sample.getChannel(AudioSample.RIGHT);
 
-    int fftSize = 256;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
+    int fftSize = 128;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
 
     float[] fftSamples = new float[fftSize];
 
@@ -137,7 +137,7 @@ class Waveform extends GUIElement {
     calculateSizeOfAVG();
     float[] leftSamples = sound.getChannel(AudioSample.LEFT);
     float[] rightSamples = sound.getChannel(AudioSample.RIGHT);
-    float[] samplesVal = new float[rightSamples.length];    
+    float[] samplesVal = new float[rightSamples.length];
     for (int i = 0; i < rightSamples.length; ++i) {
       samplesVal[i] = leftSamples[i] + rightSamples[i];
     }
@@ -224,7 +224,7 @@ class Waveform extends GUIElement {
     soundbis.rewind();
     soundbis.skip(pos);
   }
-  
+
   public void setTrackerPositionPixels(int pos){
     soundbis.rewind();
     soundbis.skip((int)pixels2SoundPosition(pos));
@@ -238,6 +238,13 @@ class Waveform extends GUIElement {
   // Returns position of the tracker bar in pixels
   public int getTrackerPosition(){
     return soundPosition2Pixels(soundbis.position());
+  }
+
+  public boolean indexOutOfSpecta(int index){
+    if (index < spectra.length && index >0){
+    return false;
+    }
+    return true;
   }
 
   public void display(){
@@ -264,16 +271,14 @@ class Waveform extends GUIElement {
         if (spectraDisp){
           int yPos = this.getY();
           int maxPix = soundPosition2Pixels(getLength());
-          int borderScaled = border * spectraWidthScale; // Optimization
+          int borderScaled = border *2; // Optimization
           ///
           for (int i = seqOffset; i > 0; --i){
             int scaleIndex = ((yPos - i) * spectraBitmap.length / maxPix); // magic scaling factor
-            if (scaleIndex >= spectra.length){
-              scaleIndex = 0;
-            }
+            if (!indexOutOfSpecta(scaleIndex))
             for (int j = 0; j < spectra[scaleIndex].length; ++j){
               stroke(spectraBitmap[scaleIndex][j]);
-              line(j * spectraWidthScale + borderScaled, i, j * spectraWidthScale + 1 + borderScaled, i); // Optimized draw from two point calls
+              line(j + borderScaled, i, round(j * spectraWidthScale) + 1 + borderScaled, i); // Optimized draw from two point calls
             }
           }
           //return color to normal
@@ -281,26 +286,24 @@ class Waveform extends GUIElement {
           stroke(#ffffff);
           strokeCap(SQUARE);
           // ------------- end spectra --------------
-        }else{
-          fill(190);
-          stroke(#ffffff);
-          textSize(18);
+        }
+        if (waveFormDisp){
+
+          strokeWeight(1);
           //strokeWeight(beatsPerBar);
-          // Draw the waveform display and the time. Time is currently showing each second
+          // Draw the waveform display
           float prevTime = -1;
           for ( int i=0; i < sampleAverage.size(); i++) {
             // Draw the sound file
             line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
- 
           }
         }
-        
         fill(190);
         stroke(#ffffff);
         textSize(18);
         //strokeWeight(beatsPerBar);
+        // Draw the time in seconds
         float prevTime = -1;
-        // Draw the waveform display and the time. Time is currently showing each second
         for ( int i = 0; i < sampleAverage.size(); i++) {
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
@@ -315,7 +318,7 @@ class Waveform extends GUIElement {
         line(border*2, this.getY(), border*2, -(sampleAverage.size() * beatsPerBar) + this.getY());
         // Draw the play head (red line moving across)
         strokeWeight(2);
-        stroke(#ff0000);
+        stroke(#990000);
         float ypos = soundPosition2Pixels(soundbis.position());
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
       }
