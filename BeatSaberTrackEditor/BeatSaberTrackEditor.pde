@@ -64,7 +64,6 @@ Tab tabHelp;
 Tab tabInfo;
 
 
-
 // Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
 GLabel lblConsole;
@@ -272,15 +271,18 @@ int getType(){
 }
 
 void checkClick(){
-  sequencer.checkClickedTrack(mouseX, mouseY, getType());
+  
+  if(mouseX < helpboxX){
+    sequencer.checkClickedTrack(mouseX, mouseY, getType());
+
+    if(!sequencer.getPlaying()){
+      sequencer.setTrackerPositionPixels(mouseY);
+    }
+  }
 
   // Processing doesn't store what button was released,
   // so I have to do this
   previousMouseButton = mouseButton;
-
-  if(!sequencer.getPlaying()){
-    sequencer.setTrackerPositionPixels(mouseY);
-  }
 }
 
 void mouseWheel(MouseEvent event) {
