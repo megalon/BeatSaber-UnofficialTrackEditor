@@ -107,7 +107,7 @@ class Waveform extends GUIElement {
     sound = minim.loadSample(soundfilePath, 1024);
 
     spectraAnalyze(sound);
-
+    println("Spectra Length:" + spectra.length);
     soundbis = minim.loadFile(soundfilePath);
 
     setSampleRate((int)sound.sampleRate());
@@ -242,7 +242,7 @@ class Waveform extends GUIElement {
 
   public boolean indexOutOfSpecta(int index){
     if (index < spectra.length && index >0){
-    return false;
+      return false;
     }
     return true;
   }
@@ -263,6 +263,7 @@ class Waveform extends GUIElement {
       println("");
     }
     */
+
     if(sampleRate != 0){
       if(sound != null){
 
@@ -274,7 +275,15 @@ class Waveform extends GUIElement {
           int borderScaled = border *2; // Optimization
           ///
           for (int i = seqOffset; i > 0; --i){
-            int scaleIndex = ((yPos - i) * spectraBitmap.length / maxPix); // magic scaling factor
+            int scaleIndex = round(float(yPos - i) * (float(spectraBitmap.length) / float(maxPix))); // magic scaling factor
+/*            print("Scale Index:"+scaleIndex);
+            print("    i: " +i);
+            print("    yPos: "+yPos);
+            print("    spectraBitmap.length: "+spectraBitmap.length);
+            print("    maxPix: "+maxPix);
+            println();
+
+*/
             if (!indexOutOfSpecta(scaleIndex))
             for (int j = 0; j < spectra[scaleIndex].length; ++j){
               stroke(spectraBitmap[scaleIndex][j]);
