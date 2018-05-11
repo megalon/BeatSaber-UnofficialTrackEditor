@@ -4,13 +4,13 @@
 
 Currently supports:
 
-+ Loading an audio file into the editor
++ Loading a WAV or MP3 file into the editor. (No OGG yet!)
 
 + Loading / Saving track .json files
  
-+ Placing / deleting notes and mines
++ Placing / deleting notes, mines, events, and obstacles
 
-+ Locking notes to a grid of 8th notes, or placing at arbitrary positions
++ Locking the grid to 8th / 16th / 32nd notes, or placing at arbitrary positions
 
 ![Example image](https://i.imgur.com/XZVS8Bc.png)
 
