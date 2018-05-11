@@ -18,8 +18,10 @@ class Waveform extends GUIElement {
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
-  private int spectraWidthScale = 1;
+  private int spectraWidthScale = 2;
   private int seqOffset;
+  
+  private int alphaAmount = 90;
 
   private float maxSize = 0;
 
@@ -42,7 +44,6 @@ class Waveform extends GUIElement {
   }
 
   // analyzes the spectrum and puts it in spectra and spectraBitmap
-
   // this function shamelessly stolen from tutorial on web
   private void spectraAnalyze(AudioSample sample){
     println("ANALYZING");
@@ -51,7 +52,7 @@ class Waveform extends GUIElement {
     float[] leftChannel = sample.getChannel(AudioSample.LEFT);
     float[] rightChannel = sample.getChannel(AudioSample.RIGHT);
 
-    int fftSize = 256;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
+    int fftSize = 128;// 256 seems good size (must be power of two, but play around and see the changes, though there might be a bug somewhere, when i set it above 1024 i get an array error)
 
     float[] fftSamples = new float[fftSize];
 
@@ -96,8 +97,8 @@ class Waveform extends GUIElement {
     int spectraItemLength = spectra[1].length;
     for (int i =0; i<spectra.length; i++){
       for (int j = 0; j<spectraItemLength;j++){
-        spectraBitmap[i][j]=Color.HSBtoRGB(spectra[i][j]/20,1,1);
-      }
+        spectraBitmap[i][j] = Color.HSBtoRGB(spectra[i][j]/20,1,1);
+      } 
     }
   }
 
@@ -266,6 +267,7 @@ class Waveform extends GUIElement {
           int maxPix = soundPosition2Pixels(getLength());
           int borderScaled = border * spectraWidthScale; // Optimization
           ///
+          
           for (int i = seqOffset; i > 0; --i){
             int scaleIndex = ((yPos - i) * spectraBitmap.length / maxPix); // magic scaling factor
             if (scaleIndex >= spectra.length){
@@ -273,7 +275,7 @@ class Waveform extends GUIElement {
             }
             for (int j = 0; j < spectra[scaleIndex].length; ++j){
               stroke(spectraBitmap[scaleIndex][j]);
-              line(j * spectraWidthScale + borderScaled, i, j * spectraWidthScale + 1 + borderScaled, i); // Optimized draw from two point calls
+              line(j * spectraWidthScale + spectraWidthScale + border, i, j * spectraWidthScale + spectraWidthScale + borderScaled, i); // Optimized draw from two point calls
             }
           }
           //return color to normal

@@ -17,3 +17,22 @@ class ClickableBox extends GUIElement{
     super.display();
   }
 }
+
+class Tab extends ClickableBox{
+  
+  String text;
+  
+  Tab(GUIElement parent, int x, int y, int w, int h, String text){
+    super(parent, x, y, w, h);
+    
+    this.text = text;
+  }
+  
+  public void display(){
+    super.display();
+    
+    fill(#000000);
+    text(text, this.getX() + 5, this.getY() + 18);
+  }
+  
+}

@@ -18,7 +18,7 @@ class TrackSequencer extends GUIElement{
   private int numtracksPerMulti = 4;
   private int numEventTracks = 9;
   private int trackGroupSpacing = gridWidth / 2;
-  private int tracksXOffset = 150;
+  private int tracksXOffset = 170;
   private Waveform waveform;
   private MultiTrack bottomTracks, middleTracks, topTracks, obstaclesTracks, eventsTracks;
   private int startYPosition = 0;
@@ -32,16 +32,12 @@ class TrackSequencer extends GUIElement{
   private int mouseButtonIndex = LEFT;
   
   private int trackSamplesOffset = 0;
-  
   private float bpm = 90;
-  
   private boolean playing = false;
-  
-  private int currentCutDirection = 8;
-  
   private int defaultBeatsPerBar = 8;
   private int beatsPerBar = 8;
   private float gridResolution = 1.0;
+  private int currentCutDirection = 8;
   
   public ArrayList<MultiTrack> multiTracks;
   
@@ -135,8 +131,12 @@ class TrackSequencer extends GUIElement{
     }
   }
   
+  public void loadSoundFile(String path){
+    waveform.loadSoundFile(path);
+    setBPM(this.bpm);
+  }
+  
   public void setPlaying(boolean playing){
-    
     if(this.playing == playing)
       return;
      
@@ -235,11 +235,6 @@ class TrackSequencer extends GUIElement{
     return gridResolution;
   }
   
-  public void loadSoundFile(String path){
-    waveform.loadSoundFile(path);
-    setBPM(this.bpm);
-  }
-  
   public void setTrackerPositionSamples(int pos){
     waveform.setTrackerPositionSamples(pos); 
   }
@@ -292,6 +287,17 @@ class TrackSequencer extends GUIElement{
     }
   }
   
+  public void addNote(long startMillis, long millis, long delay, int lineIndex, int lineLayer){
+    
+    // public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
+    
+    float t = ((0.06)*(float)(millis-startMillis-delay)/(this.getBPM())) * this.getBeatsPerBar() / 2 - 0.1;
+    println("ms: " + (millis-startMillis-delay) + " to time: " + t);
+      
+    multiTracks.get(lineLayer + 1).tracks.get(lineIndex).addGridBlock(GridBlock.GB_TYPE_NOTE, t, Note.TYPE_RED, this.getCutDirection(), 0);
+    
+  }
+    
   public void display(){
     
     strokeWeight(2);

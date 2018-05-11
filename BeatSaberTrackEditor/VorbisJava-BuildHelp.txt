@@ -1,0 +1,17 @@
+https://github.com/Gagravarr/VorbisJava
+
+Create a new project in eclipse.
+In the "src" directory of this new eclipse project, copy the folder "org" from 
+VorbisJava-master\tools\src\main\java\
+
+Project might have warnings, but there should be no errors 
+
+Export as jar
+Put jar file in 
+C:\Users\username\Documents\Processing\libraries\VorbisJava\library\VorbisJava.jar
+The folder name in \libraries\ must match the name of the jar file
+
+import into Processing using
+
+import org.gagravarr.ogg.tools.*;
+

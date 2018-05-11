@@ -5,6 +5,8 @@
 import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
+//import org.apache.commons.collections4.*;
+//import org.gagravarr.*;
 
 String versionText = "Megalon v0.0.17";
 
@@ -27,6 +29,8 @@ boolean right = false;
 boolean shiftPressed, controlPressed, altPressed, snapToggle;
 boolean showHelpText;
 
+boolean keyboardRecordMode = true;
+
 boolean playing = false;
 
 PImage eventLabels;
@@ -45,11 +49,21 @@ int type = 0;
 
 int helpboxX, helpboxY, helpboxSize;
 
+// Keyboard keys to notes
+long startMillis=0;
+long delay=0;
+long pausedAt=0;
+int nextTypedNoteIndex = 0;
+int nextTypedNoteLayer = 0;
 
 String[] currentHelpText = TextArrays.defaultControlsText;
+int currentTab = 1;
+int previousTab = -1;
 
-GTextField bpmTextField;
-GTextField audioOffsetTextField;
+Tab tabHelp;
+Tab tabInfo;
+
+
 
 // Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
@@ -79,11 +93,19 @@ void setup(){
   helpboxSize = 400;
   helpboxX = width - helpboxSize;
   helpboxY = 120;
+  
+  int helpBoxBorder = 6;
+  int tabSpacing = helpBoxBorder;
 
   // To set the global colour scheme use 
   G4P.setGlobalColorScheme(6);
-
-  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, 6);
+  
+  tabHelp = new Tab(null, width - helpboxSize + helpBoxBorder, helpboxY + helpBoxBorder*2, 50, 25, "HELP");
+  tabInfo = new Tab(null, tabHelp.getX() + tabHelp.getWidth() + tabSpacing, helpboxY + helpBoxBorder*2, 70, 25, "Song Info");
+  //Tab tabInfo = new Tab(null, );
+  
+  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
+  createInfoGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
   jsonManager = new JSONManager(sequencer, lblConsole);
 
 }
@@ -106,29 +128,6 @@ void draw(){
     resetKeys();
   }
   
-  // Check if any of the multitracks are hovered over
-  currentHelpText = TextArrays.defaultControlsText;
-  for(int i = 0; i < sequencer.multiTracks.size(); ++i){
-    if(sequencer.multiTracks.get(i).checkClicked(mouseX, mouseY)){
-      sequencer.multiTracks.get(i).setHighlighted(true);
-      switch(i){
-        case(0):
-          currentHelpText = TextArrays.eventControlsText;
-          break;
-        case(1):
-        case(2):
-        case(3):
-          currentHelpText = TextArrays.noteControlsText;
-          break;
-        case(4):
-          currentHelpText = TextArrays.obstacleControlsText;
-          break;
-      }
-    }else{
-      sequencer.multiTracks.get(i).setHighlighted(false);
-    }
-  }
-  
   timeCounter++;
   // Autosave
   // Save every 30 seconds at 60fps
@@ -143,8 +142,6 @@ void draw(){
   
   // Redraw background
   background(#111111);
-
-  sequencer.setCutDirection(getNewCutDirection());
 
   sequencer.display();
   drawGrid();
@@ -203,6 +200,24 @@ void draw(){
       text("mouseY: " + mouseY, 0, 20);
     }
   }
+  
+  
+  
+  
+  if(currentTab != previousTab){
+    hideInfoPanel();
+    switch(currentTab){
+      case(1):
+        showInfoPanel();
+        break;
+      default:
+        drawHelpText();
+    }
+  }
+  
+  tabHelp.display();
+  tabInfo.display();
+  
   textSize(12);
   fill(BeatSaberTrackEditor.THEME_COLOR_0);
   text(versionText, width - 100 , 148);
@@ -275,6 +290,13 @@ void mouseWheel(MouseEvent event) {
 }
 
 void keyPressed(){
+  
+  if(key == '1'){
+    currentTab = 1;
+  }else if(key == '2'){
+    currentTab = 2;
+  }
+  
   if (key == CODED) {
     if (keyCode == SHIFT) {
       shiftPressed = true;
@@ -306,16 +328,22 @@ void keyPressed(){
       }
     }
   }
-
-  if(key == ' '){
+  
+  if (key == ' '){
     if(shiftPressed){
       sequencer.stop();
       sequencer.resetView();
+      startMillis = 0;
+    }else if(sequencer.getPlaying()){
+      pausedAt = System.currentTimeMillis();
+      sequencer.setPlaying(false);
     }else{
-      if(sequencer.getPlaying())
-        sequencer.setPlaying(false);
-      else
-        sequencer.setPlaying(true);
+      sequencer.setPlaying(true);
+      if(startMillis == 0){
+        startMillis = System.currentTimeMillis();
+      }else{
+        delay += System.currentTimeMillis() - pausedAt;
+      }
     }
   }
 
@@ -343,8 +371,7 @@ void keyPressed(){
         }
       }
     }
-}
-
+  }
 
   if(key == 'w'){
     up = true;
@@ -355,6 +382,29 @@ void keyPressed(){
   }if(key == 'd'){
     right = true;
   }
+
+  sequencer.setCutDirection(getNewCutDirection());
+  
+  if(keyboardRecordMode && sequencer.getPlaying()){
+    if(key == 'm'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,0);}
+    if(key == ','){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,0);}
+    if(key == '.'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,0);}
+    if(key == '/'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,0);}
+    if(key == 'j'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,1);}
+    if(key == 'k'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,1);}
+    if(key == 'l'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,1);}
+    if(key == ';'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,1);}
+    if(key == 'u'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,2);}
+    if(key == 'i'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,2);}
+    if(key == 'o'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,2);}
+    if(key == 'p'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,2);}
+  }
+  
+}
+
+public void addNote(int lineIndex, int lineLayer){
+  nextTypedNoteIndex = lineIndex;
+  nextTypedNoteLayer = lineLayer;
 }
 
 void keyReleased(){
@@ -469,149 +519,27 @@ public void drawGrid(){
   }
 }
 
-public void displayEvent(String name, GEvent event) {
-  String extra = " event fired at " + millis() / 1000.0 + "s";
-  print(name + "   ");
-  switch(event) {
-  case CHANGED:
-    println("CHANGED " + extra);
-    break;
-  case SELECTION_CHANGED:
-    println("SELECTION_CHANGED " + extra);
-    break;
-  case LOST_FOCUS:
-    println("LOST_FOCUS " + extra);
-    break;
-  case GETS_FOCUS:
-    println("GETS_FOCUS " + extra);
-    break;
-  case ENTERED:
-    println("ENTERED " + extra);
-    break;
-  default:
-    println("UNKNOWN " + extra);
-  }
-}
-
-public void handleTextEvents(GEditableTextControl textControl, GEvent event) {
-  displayEvent(textControl.tag, event);
-
-  if (textControl.tag.equals(bpmTextField.tag)){
-  switch(event) {
-    case ENTERED:
-      // Check for invalid input
-      if(!Float.isNaN(float(bpmTextField.getText()))){
-        sequencer.setBPM(float(bpmTextField.getText()));
+public void drawHelpText(){
+  // Check if any of the multitracks are hovered over
+  currentHelpText = TextArrays.defaultControlsText;
+  for(int i = 0; i < sequencer.multiTracks.size(); ++i){
+    if(sequencer.multiTracks.get(i).checkClicked(mouseX, mouseY)){
+      sequencer.multiTracks.get(i).setHighlighted(true);
+      switch(i){
+        case(0):
+          currentHelpText = TextArrays.eventControlsText;
+          break;
+        case(1):
+        case(2):
+        case(3):
+          currentHelpText = TextArrays.noteControlsText;
+          break;
+        case(4):
+          currentHelpText = TextArrays.obstacleControlsText;
+          break;
       }
-      break;
-    }
-  }else if(textControl.tag.equals(audioOffsetTextField.tag)){
-    switch(event) {
-      case ENTERED:
-        // Check for invalid input
-        if(!Float.isNaN(float(audioOffsetTextField.getText()))){
-          println("Audio offset entered!");
-        }
-        break;
-      }
-  }
-}
-
-public void handleButtonEvents(GButton button, GEvent event) {
-  // Folder selection
-  if (button == btnOpenSong || button == btnInput || button == btnOutput)
-    handleFileDialog(button);
-}
-
-// G4P code for folder and file dialogs
-public void handleFileDialog(GButton button) {
-  String fname;
-  // File input selection
-  if (button == btnOpenSong) {
-    // Use file filter if possible
-    soundfilePath = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
-    switch(validSoundFile(soundfilePath)){
-      case(TrackSequencer.SOUND_FILE_VALID):
-        lblConsole.setText("Opening audio file: " + soundfilePath);
-        sequencer.loadSoundFile(soundfilePath);
-        lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
-        break;
-      case(TrackSequencer.SOUND_FILE_OGG):
-        lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported!");
-        showErrorMessage(".ogg files not supported!\nTry a stereo WAV file");
-        break;
-      default:
-        showErrorMessage("Filetype not supported!\nPlease select a stereo WAV, AIFF, or MP3");
+    }else{
+      sequencer.multiTracks.get(i).setHighlighted(false);
     }
   }
-  // File output selection
-  else if (button == btnInput) {
-    inputTrackPath = G4P.selectInput("Input Dialog");
-    jsonManager.loadTrack(inputTrackPath);
-    bpmTextField.setPromptText("" + sequencer.getBPM());
-  }
-  // File output selection
-  else if (button == btnOutput) {
-    outputTrackPath = G4P.selectOutput("Output Dialog");
-    jsonManager.saveTrack(outputTrackPath);
-  }
-}
-
-
-public void createFileSystemGUI(int x, int y, int w, int h, int border) {
-  // Set inner frame position
-  x += border;
-  y += border;
-  w -= 2*border;
-  h -= 2*border;
-  GLabel title = new GLabel(this, x, y, w, 20);
-  title.setText("Beat Saber Unofficial Track Editor", GAlign.LEFT, GAlign.MIDDLE);
-  title.setOpaque(true);
-  title.setTextBold();
-  // Create buttons
-  int bgap = 8;
-  int bw = round((w - 3 * bgap) / 4.0f);
-  int bh = 30;
-  int bs = bgap + bw;
-  btnOpenSong = new GButton(this, x, y+30, bw, bh, "Load Audio");
-  btnInput = new GButton(this, x+2*bs, y+30, bw, bh, "Load Track");
-  btnOutput = new GButton(this, x+3*bs, y+30, bw, bh, "Save Track");
-
-  bpmTextField = new GTextField(this, x+bs, y+30, bw, 30);
-  bpmTextField.tag = "bpmText";
-  bpmTextField.setPromptText("BPM");
-  bpmTextField.setFont(new Font("Arial", Font.PLAIN, 25));
-
-  lblConsole = new GLabel(this, x, y+70, w, 50);
-  lblConsole.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-  lblConsole.setOpaque(true);
-  lblConsole.setText("Loaded default audio file: " + soundfilePath);
-}
-
-
-// G4P code for message dialogs
-public void showErrorMessage(String message) {
-  String title = "Error";
-  G4P.showMessage(this, message, title, G4P.ERROR);
-}
-
-
-// Format a date string for the temp file
-public String getDateFormatted(){
-  return "" + (year() + "-" + month() + "-" + day() + "--" + hour() + "-" + minute() + "-" + second() + "-" + millis());
-}
-
-public int validSoundFile(String soundfilePath){
-  if(soundfilePath.length() > 4){
-    String soundfileFileExtension = soundfilePath.substring(soundfilePath.length()-4, soundfilePath.length());
-    
-    println("soundfileFileExtension", soundfileFileExtension);
-    
-    if(soundfileFileExtension.equals(".wav") || soundfileFileExtension.equals(".mp3") || soundfileFileExtension.equals("aiff")){
-      return TrackSequencer.SOUND_FILE_VALID;
-    }else if(soundfileFileExtension.equals(".ogg")){
-      return TrackSequencer.SOUND_FILE_OGG;
-    }
-  }
-  return TrackSequencer.SOUND_FILE_INVALID;
 }
