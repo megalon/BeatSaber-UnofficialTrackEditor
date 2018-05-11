@@ -12,7 +12,7 @@ Currently supports:
 
 + Locking notes to a grid of 8th notes, or placing at arbitrary positions
 
-![Example image](https://i.imgur.com/a4Y5owE.png)
+![Example image](https://i.imgur.com/XZVS8Bc.png)
 
 To run:
 
@@ -41,6 +41,7 @@ C:\Users\(username)\Documents\Processing\libraries\
 
 
 **Open the project in Processing**
+
 Open BeatSaberTrackEditor.pde
 
 Run the project by clicking the triangular play button. Press the square stop button to end.
