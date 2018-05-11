@@ -14,7 +14,7 @@ class Waveform extends GUIElement {
   private float [][] spectra;
   private int [][] spectraBitmap;
   private boolean spectraDisp = true;
-  private boolean waveFormDisp = true;
+  private boolean waveFormDisp = false;
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
@@ -298,30 +298,21 @@ class Waveform extends GUIElement {
         }
         if (waveFormDisp){
 
+          strokeWeight(1);
           //strokeWeight(beatsPerBar);
-          // Draw the waveform display and the time. Time is currently showing each second
+          // Draw the waveform display
           float prevTime = -1;
           for ( int i=0; i < sampleAverage.size(); i++) {
             // Draw the sound file
             line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
-
-            // Draw the text (time in seconds)
-            /* Commenting out drawing time a second time
-            float time = floor((i * sizeOfAvg) / sampleRate);
-            if(prevTime != time){
-              prevTime = time;
-              //text(round(time), i + border, height-border/2);
-              text(round(time), border/2, this.getY() - (i * beatsPerBar) - border);
-
-            }*/
           }
         }
         fill(190);
         stroke(#ffffff);
         textSize(18);
         //strokeWeight(beatsPerBar);
+        // Draw the time in seconds
         float prevTime = -1;
-        // Draw the waveform display and the time. Time is currently showing each second
         for ( int i = 0; i < sampleAverage.size(); i++) {
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
@@ -336,7 +327,7 @@ class Waveform extends GUIElement {
         line(border*2, this.getY(), border*2, -(sampleAverage.size() * beatsPerBar) + this.getY());
         // Draw the play head (red line moving across)
         strokeWeight(2);
-        stroke(#ff0000);
+        stroke(#990000);
         float ypos = soundPosition2Pixels(soundbis.position());
         line(0, -ypos + this.getY(), width, -ypos + this.getY());
       }
