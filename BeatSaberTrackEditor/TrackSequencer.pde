@@ -134,7 +134,7 @@ class TrackSequencer extends GUIElement{
   public void loadSoundFile(String path){
     waveform.loadSoundFile(path);
     setBPM(this.bpm);
-  }
+  }  
   
   public void setPlaying(boolean playing){
     if(this.playing == playing)
@@ -146,7 +146,7 @@ class TrackSequencer extends GUIElement{
       waveform.play();
     else
       waveform.pause();
-  }
+  }    
   
   public void stop(){
     this.playing = false;

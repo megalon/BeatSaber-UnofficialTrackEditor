@@ -19,9 +19,28 @@ GDropList difficulty;
 GTextField audioPathTextField;
 GTextField jsonPathTextField;
 
+//Labels
+GLabel audioOffsetTextLabel;
+GLabel songNameLabel;
+GLabel songSubNameLabel;
+GLabel authorNameLabel;
+GLabel previewStartTimeLabel;
+GLabel previewDurationLabel;
+GLabel coverImagePathLabel;
+GLabel difficultyRankLabel;
+
+GLabel environmentNameLabel;
+GLabel difficultyLabel;
+
+GLabel audioPathTextLabel;
+GLabel jsonPathTextLabel;
+
+
 ArrayList<GAbstractControl> infoFields;
+ArrayList<GAbstractControl> infoLabels;
 float infoPanelX;
 float xInfoFieldOffset = 150;
+float xInfoLabelOffset = 25;
 
 public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   // Set inner frame position
@@ -75,9 +94,11 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   int bs = bgap + bw;
   
   int xInfoFieldWidth = (int)(w - xInfoFieldOffset) - border;
+  int xInfoLabelWidth = xInfoFieldWidth / 2;
   int fieldHeight = 25;
   
   infoFields = new ArrayList<GAbstractControl>();
+  infoLabels = new ArrayList<GAbstractControl>();
   
   songNameField          = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
   songSubNameField       = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
@@ -89,8 +110,8 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   jsonPathTextField      = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
   difficultyRankField    = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
   
-  environmentName        = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight);
-  difficulty             = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight);
+  environmentName        = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight*5);
+  difficulty             = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight*5);
   
   infoFields.add(songNameField);
   infoFields.add(songSubNameField);
@@ -104,8 +125,40 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   infoFields.add(environmentName);
   infoFields.add(difficulty);
   
+  songNameLabel          = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  songSubNameLabel       = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  authorNameLabel        = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  previewStartTimeLabel  = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  previewDurationLabel   = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  coverImagePathLabel    = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  audioPathTextLabel     = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  jsonPathTextLabel      = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  difficultyRankLabel    = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  
+  environmentNameLabel   = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  difficultyLabel        = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  
+  infoLabels.add(songNameLabel);
+  infoLabels.add(songSubNameLabel);
+  infoLabels.add(authorNameLabel);
+  infoLabels.add(previewStartTimeLabel);
+  infoLabels.add(previewDurationLabel);
+  infoLabels.add(coverImagePathLabel);
+  infoLabels.add(audioPathTextLabel);
+  infoLabels.add(jsonPathTextLabel);
+  infoLabels.add(difficultyRankLabel);
+  infoLabels.add(environmentNameLabel);
+  infoLabels.add(difficultyLabel);
+  
+  
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(x + xInfoFieldOffset, y + ySpacing * (i + 1) + yOffset);
+  }
+  
+  for(int i = 0; i < infoLabels.size(); ++i){
+    infoLabels.get(i).moveTo(xInfoLabelOffset, y + ySpacing * (i + 1) + yOffset);
+    infoLabels.get(i).setOpaque(false);
+    infoLabels.get(i).setLocalColorScheme(14);
   }
   
   Font font = new Font("Arial", Font.PLAIN, 18);
@@ -156,6 +209,18 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   difficultyRankField.setPromptText("4");
   difficultyRankField.setFont(font);
   
+  songNameLabel.setText("Song name", GAlign.RIGHT, GAlign.MIDDLE);
+  songSubNameLabel.setText("Subname", GAlign.RIGHT, GAlign.MIDDLE);
+  authorNameLabel.setText("Artist", GAlign.RIGHT, GAlign.MIDDLE);
+  previewStartTimeLabel.setText("Preview start time", GAlign.RIGHT, GAlign.MIDDLE);
+  previewDurationLabel.setText("Preview duration", GAlign.RIGHT, GAlign.MIDDLE);
+  coverImagePathLabel.setText("Cover image", GAlign.RIGHT, GAlign.MIDDLE);
+  audioPathTextLabel.setText("Audio file", GAlign.RIGHT, GAlign.MIDDLE);
+  jsonPathTextLabel.setText("JSON output file", GAlign.RIGHT, GAlign.MIDDLE);
+  environmentNameLabel.setText("Environment name", GAlign.RIGHT, GAlign.MIDDLE);
+  difficultyLabel.setText("Difficulty", GAlign.RIGHT, GAlign.MIDDLE);
+  difficultyRankLabel.setText("Difficulty rank", GAlign.RIGHT, GAlign.MIDDLE);
+
 }
 
 public void showInfoPanel(){
@@ -163,12 +228,20 @@ public void showInfoPanel(){
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(infoPanelX + xInfoFieldOffset, infoFields.get(i).getY());
   }
+  for(int i = 0; i < infoLabels.size(); ++i){
+    infoLabels.get(i).moveTo(infoPanelX + xInfoLabelOffset, infoLabels.get(i).getY());
+  }
+  
+  //infoLabels
 }
 
 public void hideInfoPanel(){
   infoTitle.moveTo(width, infoTitle.getY());
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(width, infoFields.get(i).getY());
+  }
+  for(int i = 0; i < infoLabels.size(); ++i){
+    infoLabels.get(i).moveTo(width, infoLabels.get(i).getY());
   }
 }
 

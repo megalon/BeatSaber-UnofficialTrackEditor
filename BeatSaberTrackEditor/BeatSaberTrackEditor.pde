@@ -8,7 +8,7 @@ import java.awt.*;
 //import org.apache.commons.collections4.*;
 //import org.gagravarr.*;
 
-String versionText = "Megalon v0.0.17";
+String versionText = "Megalon v0.0.19";
 
 boolean debug = false;
 
@@ -92,7 +92,7 @@ void setup(){
   
   helpboxSize = 400;
   helpboxX = width - helpboxSize;
-  helpboxY = 120;
+  helpboxY = 150;
   
   int helpBoxBorder = 6;
   int tabSpacing = helpBoxBorder;
@@ -100,8 +100,8 @@ void setup(){
   // To set the global colour scheme use 
   G4P.setGlobalColorScheme(6);
   
-  tabHelp = new Tab(null, width - helpboxSize + helpBoxBorder, helpboxY + helpBoxBorder*2, 50, 25, "HELP");
-  tabInfo = new Tab(null, tabHelp.getX() + tabHelp.getWidth() + tabSpacing, helpboxY + helpBoxBorder*2, 70, 25, "Song Info");
+  tabHelp = new Tab(null, width - helpboxSize + helpBoxBorder, helpboxY - helpBoxBorder*3, 50, 25, "HELP");
+  tabInfo = new Tab(null, tabHelp.getX() + tabHelp.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Song Info");
   //Tab tabInfo = new Tab(null, );
   
   createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
@@ -168,12 +168,12 @@ void draw(){
   
   text("FPS: " + (int)frameRate,0, height);
   
-  // Draw help text
-  if(showHelpText){
 
     fill(#000000);
     rect(helpboxX, 0, helpboxSize, height);
 
+  // Draw help text
+  if(showHelpText){
     fill(BeatSaberTrackEditor.THEME_COLOR_0);
     textSize(18);
     text("INSTRUCTIONS", helpboxX + 10, helpboxY + 28);
@@ -206,12 +206,14 @@ void draw(){
   
   if(currentTab != previousTab){
     hideInfoPanel();
+    showHelpText = false;
     switch(currentTab){
       case(1):
-        showInfoPanel();
+        drawHelpText();
+        showHelpText = true;
         break;
       default:
-        drawHelpText();
+        showInfoPanel();
     }
   }
   
@@ -228,6 +230,12 @@ void draw(){
 
 void mousePressed(){
   checkClick();
+  
+  if(tabHelp.checkClicked(mouseX, mouseY)){
+    currentTab = 1;
+  }else if(tabInfo.checkClicked(mouseX, mouseY)){
+    currentTab = 2;
+  }
 }
 
 void mouseDragged(){
@@ -290,12 +298,6 @@ void mouseWheel(MouseEvent event) {
 }
 
 void keyPressed(){
-  
-  if(key == '1'){
-    currentTab = 1;
-  }else if(key == '2'){
-    currentTab = 2;
-  }
   
   if (key == CODED) {
     if (keyCode == SHIFT) {
@@ -447,18 +449,6 @@ void keyReleased(){
       altPressed = false;
     }
   }
-  /*
-  switch(key){
-    case TAB:
-      if(showHelpText)
-        showHelpText = false;
-      else
-        showHelpText = true;
-      break;
-    default:
-      break;
-  }
-  */
 }
 
 public int getNewCutDirection(){
