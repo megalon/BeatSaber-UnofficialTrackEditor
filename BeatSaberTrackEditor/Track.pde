@@ -5,6 +5,7 @@ class Track extends GUIElement{
   private static final int TRACK_TYPE_OBSTACLES = 3;
   
   HashMap<Float, GridBlock> gridBlocks;
+  HashMap<Float, GridBlock> gridBlocksCopy; // Used for copy buffer
   private int gridWidth = 0;
   private int gridHeight = 0;
   private int defaultGridHeight = 0;
@@ -22,6 +23,7 @@ class Track extends GUIElement{
     println("track gridWidth: " + gridWidth);
     
     gridBlocks = new HashMap<Float, GridBlock>();
+    gridBlocksCopy = new HashMap<Float, GridBlock>();
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.defaultGridHeight = gridHeight;

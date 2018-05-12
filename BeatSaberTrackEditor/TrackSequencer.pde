@@ -121,23 +121,12 @@ class TrackSequencer extends GUIElement{
     for (MultiTrack m : multiTracks){
       
       if(!drawSelectBox){
-        if(my < seqWindowBottom){
-          switch(currentTool){
-            case TOOL_SELECT:
-              if(m.getElementName().equals("Events")){
-                
-              }else if(m.getElementName().equals("Obstacles")){
-                /*if(m.checkClicked(mx, my)){
-                  // TODO! Reneable selection!
-                  startCreateSelection(mx, my);
-                }*/
-              }else{
-                if(m.checkClicked(mx, my)){
-                  startCreateSelection(mx, my);
-                }
-              }
-              break;
-            default:
+        switch(currentTool){
+          case TOOL_SELECT:
+                startCreateSelection(mx, my);
+            break;
+          default:
+            if(my < seqWindowBottom){
               if(m.getElementName().equals("Events")){
                   //println("Setting type based on events track!");
                   //println("Checking click at inside TrackSequencer:" + mx + " " + my);
@@ -145,14 +134,14 @@ class TrackSequencer extends GUIElement{
                   m.checkTrackClickedEvents(mx, my, this.getY() - startYPosition, currentCutDirection, 0, this.mouseButtonIndex);
               }else if(m.getElementName().equals("Obstacles")){
                 if(m.checkClicked(mx, my)){
-                  // TODO! Reneable selection!
+                  
                   startCreateSelection(mx, my);
                 }
               }else{
                 m.checkTrackClicked(mx, my, this.getY() - startYPosition, type, currentCutDirection, 0);
               }
+            }
           }
-        }
       }
     }
   }
@@ -294,6 +283,22 @@ class TrackSequencer extends GUIElement{
     return amountScrolled = (this.getY() - startYPosition) / defaultGridHeight;
   }
   
+  public void setTool(int tool){
+    this.currentTool = tool;
+  }
+  
+  public int getTool(){
+    return this.currentTool;
+  }
+  
+  public void pasteAll(int my){
+    for(MultiTrack m : multiTracks){
+      m.selectPaste(my);
+    }
+    
+    println("Size of track in trackseq: " + multiTracks.get(1).tracks.get(1).gridBlocks.size());
+  }
+  
   public void startCreateSelection(int mx, int my){
     clickPosX = mx;
     clickPosY = my;
@@ -311,6 +316,7 @@ class TrackSequencer extends GUIElement{
       int selectionHeight = (maxY - minY);
       int selectionWidth  = (maxX - minX);
       
+      /*
       println("minX:" + minX);
       println("maxX:" + maxX);
       
@@ -319,15 +325,23 @@ class TrackSequencer extends GUIElement{
       
       println("selectionHeight:" + selectionHeight);
       println("selectionWidth:" + selectionWidth);
+      */
       
-      for(MultiTrack m : multiTracks){
-        // For now, only check for obstacle multitrack
-        if(m.getElementName().equals("Events")){
-          
-        }else if(m.getElementName().equals("Obstacles")){
-          m.checkTrackClickedObstacle(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type);
-        }else{
-          m.checkTrackClickedNotes(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type); 
+      if(this.getTool() == TOOL_SELECT){
+        for(MultiTrack m : multiTracks){
+          // For now, only check for obstacle multitrack
+          m.selectCopy(maxY, selectionHeight);
+        }
+      }else if(this.getTool() == TOOL_DRAW){
+        for(MultiTrack m : multiTracks){
+          // For now, only check for obstacle multitrack
+          if(m.getElementName().equals("Events")){
+            
+          }else if(m.getElementName().equals("Obstacles")){
+            m.checkTrackClickedObstacle(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type);
+          }else{
+            m.checkTrackClickedNotes(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type); 
+          }
         }
       }
       drawSelectBox = false;
@@ -404,7 +418,12 @@ class TrackSequencer extends GUIElement{
           fill(0x55ff0000);
           stroke(#ff0000);
       }
-      rect(clickPosX, clickPosY, mouseX - clickPosX, mouseY - clickPosY);
+      
+      if(this.getTool() == TOOL_SELECT){
+        rect(0, clickPosY, width, mouseY - clickPosY);
+      }else{
+        rect(clickPosX, clickPosY, mouseX - clickPosX, mouseY - clickPosY); 
+      }
     }
   }
 }

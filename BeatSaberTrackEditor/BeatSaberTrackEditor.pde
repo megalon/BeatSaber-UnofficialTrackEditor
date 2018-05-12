@@ -216,6 +216,8 @@ void draw(){
       text("mouseX: " + mouseX, 0, 10);
       text("mouseY: " + mouseY, 0, 20);
     }
+    
+    text("Current tool : " + sequencer.getTool(), 0, 30);
   }
   
   
@@ -448,6 +450,22 @@ void keyReleased(){
   
   if(key == TAB){
     sequencer.setStretchSpectrogram(!sequencer.getStretchSpectrogram());
+  }
+  
+  // Select mode
+  if(key == 'b'){
+    if(sequencer.getTool() != TrackSequencer.TOOL_SELECT)
+      sequencer.setTool(TrackSequencer.TOOL_SELECT);
+    else
+      sequencer.setTool(TrackSequencer.TOOL_DRAW);
+  }
+  
+  // Paste
+  if(key == 'v'){
+    if(sequencer.getTool() == TrackSequencer.TOOL_SELECT){
+      println("Trying to paste");
+      sequencer.pasteAll(mouseY);
+    }
   }
 
   if(key == '[' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
