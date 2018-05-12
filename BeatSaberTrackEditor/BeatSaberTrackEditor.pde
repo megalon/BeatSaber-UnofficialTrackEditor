@@ -544,6 +544,8 @@ public void drawGrid(){
       strokeWeight(1);
     line(0, gridYPos, width, gridYPos);
   }
+}
+
 public void drawHelpText(){
   // Check if any of the multitracks are hovered over
   currentHelpText = TextArrays.defaultControlsText;
