@@ -151,7 +151,7 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   infoLabels.add(environmentNameLabel);
   infoLabels.add(difficultyLabel);
   
-  
+ 
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(x + xInfoFieldOffset, y + ySpacing * (i + 1) + yOffset);
   }
@@ -322,6 +322,7 @@ public void handleFileDialog(GButton button) {
         break;
       case(TrackSequencer.SOUND_FILE_OGG):
         lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported by this editor!\nProcessing doesn't have a way to load .ogg files!");
+
         showErrorMessage(".ogg files not supported!\nTry a stereo WAV file");
         break;
       default:
