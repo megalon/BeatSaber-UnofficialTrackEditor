@@ -7,9 +7,10 @@ class MultiTrack extends GUIElement{
   public ArrayList<Track> tracks;
   
   boolean highlighted = false;
+  boolean translucent = false;
   
   int highLightedColor = color(#444444);
-  int notHighLightedColor =  color(#333333);
+  int notHighLightedColor =  color(0x33333333);
   
   MultiTrack(GUIElement parent, int numTracks, int gridWidth, int gridHeight, int beatsPerBar, String name){
     this.setParent(parent);
@@ -176,13 +177,34 @@ class MultiTrack extends GUIElement{
     }
   }
   
-  public void checkTrackCLickedObstacle(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
+  public void checkTrackClickedObstacle(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
    for (Track t : tracks){
       
      //println("TrackPosition: " + t.getX() + " " + t.getY());
       if(t.checkClicked(mx, my)){
         
-        float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset);
+        float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) - t.getY());
+        //println("Duration: " + duration);
+        
+        int w = (selectionWidth / t.getWidth()) + 1;
+        
+        if(type == -1){
+          println("Attempting to remove obstacle a: " + mx + ", " + my);
+          t.removeGridBlockMouseClick(mx, my);
+        }else{
+          t.addGridBlockMouseClick(mx, my, type, w, duration);
+        }
+      }
+    } 
+  }
+  
+  public void checkTrackClickedNotes(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
+   for (Track t : tracks){
+      
+     //println("TrackPosition: " + t.getX() + " " + t.getY());
+      if(t.checkClicked(mx, my)){
+        
+        float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) - t.getY());
         //println("Duration: " + duration);
         
         int w = (selectionWidth / t.getWidth()) + 1;
@@ -215,17 +237,30 @@ class MultiTrack extends GUIElement{
     }
   }
   
+  public void setTranslucent(boolean t){
+    this.translucent = t;
+  }
+  
   public void display(){
     super.display();
     Track t;
+    /*fill(this.getFillColor());
+    stroke(#333333);
+    rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    */
+    
     
     for (int i = 0; i < tracks.size(); ++i){
       t = tracks.get(i);
-      if(i > 0){
-        stroke(color(#555555));
-        line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
+      
+      if(!translucent){
+        if(i > 0){
+          stroke(color(#333333));
+          line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
+        }
       }
-      t.display();
+        t.display();
     }
+    
   }
 }

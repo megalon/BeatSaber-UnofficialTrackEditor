@@ -1,3 +1,4 @@
+
 //
 // G4P GUI objects
 //
@@ -155,6 +156,7 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
     infoFields.get(i).moveTo(x + xInfoFieldOffset, y + ySpacing * (i + 1) + yOffset);
   }
   
+  Font labelFont = new Font("Arial", Font.PLAIN, 25);
   for(int i = 0; i < infoLabels.size(); ++i){
     infoLabels.get(i).moveTo(xInfoLabelOffset, y + ySpacing * (i + 1) + yOffset);
     infoLabels.get(i).setOpaque(false);
@@ -304,6 +306,12 @@ public void handleFileDialog(GButton button) {
   String fname;
   // File input selection
   if (button == btnOpenSong) {
+    
+    /*
+    String infopath = G4P.selectInput("Select info.json", "json", "Info files");
+    jsonManager.loadInfo(infopath);
+    */
+    
     // Use file filter if possible
     soundfilePath = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
     switch(validSoundFile(soundfilePath)){
@@ -313,7 +321,7 @@ public void handleFileDialog(GButton button) {
         lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
         break;
       case(TrackSequencer.SOUND_FILE_OGG):
-        lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported!");
+        lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported by this editor!\nProcessing doesn't have a way to load .ogg files!");
         showErrorMessage(".ogg files not supported!\nTry a stereo WAV file");
         break;
       default:

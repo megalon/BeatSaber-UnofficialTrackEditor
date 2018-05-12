@@ -1,7 +1,7 @@
 class JSONManager{
   TrackSequencer seq;
-  String outputFile, inputFile;
-  JSONObject json;
+  String outputTrackFile, inputTrackFile, inputInfoFile, outputInfoFile;
+  JSONObject jsonTrack, jsonInfo;
   JSONArray events, notes, obstacles;
   GLabel consoleOutLabel;
   
@@ -14,6 +14,31 @@ class JSONManager{
     this.consoleOutLabel = consoleOutLabel;
   }
   
+  public void loadInfo(String filename){
+    if(filename == null || filename.isEmpty()){
+      return;
+    }
+    
+    this.consoleOutLabel.setText("Opening info file: " + filename);
+    
+    
+    jsonInfo = loadJSONObject(filename);
+    
+    bpmTextField.setPromptText("" + jsonInfo.getFloat("beatsPerMinute"));
+    songNameField.setPromptText("" + jsonInfo.getString("songName"));
+    songSubNameField.setPromptText("" + jsonInfo.getString("songSubName"));
+    authorNameField.setPromptText("" + jsonInfo.getString("authorName"));
+    previewStartTimeField.setPromptText("" + jsonInfo.getInt("previewStartTime"));
+    previewDurationField.setPromptText("" + jsonInfo.getInt("previewDuration"));
+    coverImagePathField.setPromptText("" + jsonInfo.getString("coverImagePath"));
+    
+    JSONObject difficultyLevels = jsonInfo.getJSONObject("difficultyLevels");
+    
+    difficultyRankField.setPromptText("" + difficultyLevels.getString("difficultyRank"));
+    
+    
+  }
+  
   // Load a track from disk
   public void loadTrack(String filename){
     if(filename == null || filename.isEmpty()){
@@ -22,14 +47,14 @@ class JSONManager{
 
     this.consoleOutLabel.setText("Opening track file: " + filename);
     
-    json = loadJSONObject(filename);
+    jsonTrack = loadJSONObject(filename);
     
     seq.clearSeq();
     
-    float bpmIn = json.getFloat("_beatsPerMinute");
-    notes = json.getJSONArray("_notes");
-    events = json.getJSONArray("_events");
-    obstacles = json.getJSONArray("_obstacles");
+    float bpmIn = jsonTrack.getFloat("_beatsPerMinute");
+    notes = jsonTrack.getJSONArray("_notes");
+    events = jsonTrack.getJSONArray("_events");
+    obstacles = jsonTrack.getJSONArray("_obstacles");
     
     //If events was empty, create some temp events
     if(events == null){
@@ -175,9 +200,9 @@ class JSONManager{
     this.consoleOutLabel.setText("Saving track file: " + filename);
     println("Saving track to file: " + filename);
     
-    this.outputFile = filename;
+    this.outputTrackFile = filename;
     
-    json = new JSONObject();
+    jsonTrack = new JSONObject();
     notes = new JSONArray();
     
     // Currently skipping over events and obstacles!
@@ -188,23 +213,23 @@ class JSONManager{
     setNotesArray();
     setObstaclesArray();
     
-    json.setString("_version", versionString);
-    json.setFloat("_beatsPerMinute", seq.getBPM());
-    json.setInt("_beatsPerBar", beatsPerBar);
-    json.setFloat("_noteJumpSpeed", 10.0);
-    json.setFloat("_shuffle", 0.0);
-    json.setFloat("_shufflePeriod", 0.25);
-    json.setJSONArray("_events", events);
-    json.setJSONArray("_notes", notes);
-    json.setJSONArray("_obstacles", obstacles);
+    jsonTrack.setString("_version", versionString);
+    jsonTrack.setFloat("_beatsPerMinute", seq.getBPM());
+    jsonTrack.setInt("_beatsPerBar", beatsPerBar);
+    jsonTrack.setFloat("_noteJumpSpeed", 10.0);
+    jsonTrack.setFloat("_shuffle", 0.0);
+    jsonTrack.setFloat("_shufflePeriod", 0.25);
+    jsonTrack.setJSONArray("_events", events);
+    jsonTrack.setJSONArray("_notes", notes);
+    jsonTrack.setJSONArray("_obstacles", obstacles);
     
     
-    int outFileLen = outputFile.length();
-    if(outFileLen < 5 || !this.outputFile.substring(outFileLen - 5, outFileLen).equals(".json")){
-      this.outputFile = this.outputFile + ".json";
+    int outFileLen = outputTrackFile.length();
+    if(outFileLen < 5 || !this.outputTrackFile.substring(outFileLen - 5, outFileLen).equals(".json")){
+      this.outputTrackFile = this.outputTrackFile + ".json";
     }
     
-    saveJSONObject(json, filename);
+    saveJSONObject(jsonTrack, filename);
     
     this.consoleOutLabel.setText("++++ Track file saved! ++++ " + hour() + ":" + minute() + ":" + second() + "\n" + filename);
   }

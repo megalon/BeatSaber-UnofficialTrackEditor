@@ -5,8 +5,6 @@
 import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
-//import org.apache.commons.collections4.*;
-//import org.gagravarr.*;
 
 String versionText = "Megalon v0.0.19";
 
@@ -29,7 +27,7 @@ boolean right = false;
 boolean shiftPressed, controlPressed, altPressed, snapToggle;
 boolean showHelpText;
 
-boolean keyboardRecordMode = true;
+boolean keyboardRecordMode = false;
 
 boolean playing = false;
 
@@ -57,11 +55,14 @@ int nextTypedNoteIndex = 0;
 int nextTypedNoteLayer = 0;
 
 String[] currentHelpText = TextArrays.defaultControlsText;
-int currentTab = 1;
+
+ArrayList<Tab> tabs;
+int currentTab = Tab.TAB_HELP;
 int previousTab = -1;
 
-Tab tabHelp;
 Tab tabInfo;
+Tab tabDifficulty;
+Tab tabHelp;
 
 
 // Controls used for file dialog GUI
@@ -77,7 +78,7 @@ void setup(){
   shiftPressed = false;
   controlPressed = false;
   altPressed = false;
-  showHelpText = true;
+  showHelpText = false;
 
   // Minim must be declared in the main class!
   minim = new Minim(this);
@@ -99,8 +100,18 @@ void setup(){
   // To set the global colour scheme use 
   G4P.setGlobalColorScheme(6);
   
-  tabHelp = new Tab(null, width - helpboxSize + helpBoxBorder, helpboxY - helpBoxBorder*3, 50, 25, "HELP");
-  tabInfo = new Tab(null, tabHelp.getX() + tabHelp.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Song Info");
+  
+  // Create tabs
+  tabs = new ArrayList<Tab>();
+  
+  tabInfo       = new Tab(null, width - helpboxSize + helpBoxBorder,                                   helpboxY - helpBoxBorder*3, 70, 25, "Song Info");
+  tabDifficulty = new Tab(null, width - helpboxSize + helpBoxBorder + tabInfo.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Difficulty");
+  tabHelp       = new Tab(null, width - helpboxSize + helpBoxBorder + tabInfo.getWidth() + tabDifficulty.getWidth() + tabSpacing * 2, helpboxY - helpBoxBorder*3, 50, 25, "HELP");
+  
+  tabs.add(tabInfo);
+  tabs.add(tabDifficulty);
+  tabs.add(tabHelp);
+  
   //Tab tabInfo = new Tab(null, );
   
   createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
@@ -138,7 +149,6 @@ void draw(){
       tempTrackIndex++;
   }
   
-  
   // Redraw background
   background(#111111);
 
@@ -164,8 +174,6 @@ void draw(){
   
   textSize(12);
   image(eventLabels, sequencer.multiTracks.get(0).getX() - 65, height + sequencerYOffset);
-  
-  text("FPS: " + (int)frameRate,0, height);
   
 
     fill(#000000);
@@ -207,7 +215,12 @@ void draw(){
     hideInfoPanel();
     showHelpText = false;
     switch(currentTab){
-      case(1):
+      case(Tab.TAB_INFO):
+        showInfoPanel();
+        break;
+      case(Tab.TAB_DIFFICULTY):
+        break;
+      case(Tab.TAB_HELP):
         drawHelpText();
         showHelpText = true;
         break;
@@ -216,8 +229,11 @@ void draw(){
     }
   }
   
-  tabHelp.display();
-  tabInfo.display();
+  /* Disabled tabs for now
+  for(Tab t : tabs){
+    t.display();
+  }
+  */
   
   textSize(12);
   fill(BeatSaberTrackEditor.THEME_COLOR_0);
@@ -229,12 +245,15 @@ void draw(){
 
 void mousePressed(){
   checkClick();
-  
-  if(tabHelp.checkClicked(mouseX, mouseY)){
-    currentTab = 1;
-  }else if(tabInfo.checkClicked(mouseX, mouseY)){
-    currentTab = 2;
+  /* Disabled tabs
+   if(tabInfo.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_INFO;
+  }else if(tabDifficulty.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_DIFFICULTY;
+  }else if(tabHelp.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_HELP;
   }
+  */
 }
 
 void mouseDragged(){
@@ -412,6 +431,10 @@ public void addNote(int lineIndex, int lineLayer){
 }
 
 void keyReleased(){
+  
+  if(key == TAB){
+    sequencer.setStretchSpectrogram(!sequencer.getStretchSpectrogram());
+  }
 
   if(key == '[' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);

@@ -9,9 +9,13 @@ class TrackSequencer extends GUIElement{
   private static final float MAX_GRID_RESOLUTION = 0.25;
   private static final float MIN_GRID_RESOLUTION = 1;
   
+  private static final int TOOL_DRAW = 0;      // Default tool
+  private static final int TOOL_SELECT = 1;    // Selection tool for copy / paste 
+  
   Minim minim; 
   AudioSample sound; 
   AudioPlayer soundbis;
+  
   private int gridWidth = 24;
   private int gridHeight = 24;
   private int defaultGridHeight = 24;
@@ -26,8 +30,10 @@ class TrackSequencer extends GUIElement{
   private int seqWindowBottom = 0;
   private boolean snapToggle = true;
   private String clickPath = "data\\noteClickSFX.wav";
+  
   private int clickPosX = 0;
   private int clickPosY = 0;
+  private int currentTool = TOOL_DRAW;
   private boolean drawSelectBox = false;
   private int mouseButtonIndex = LEFT;
   
@@ -113,18 +119,35 @@ class TrackSequencer extends GUIElement{
       
       if(!drawSelectBox){
         if(my < seqWindowBottom){
-          if(m.getElementName().equals("Events")){
-                //println("Setting type based on events track!");
-                //println("Checking click at inside TrackSequencer:" + mx + " " + my);
-                //println("this.getY() - startYPosition:" + (this.getY() - startYPosition));
-                m.checkTrackClickedEvents(mx, my, this.getY() - startYPosition, currentCutDirection, 0, this.mouseButtonIndex);
-          }else if(m.getElementName().equals("Obstacles")){
-            if(m.checkClicked(mx, my)){
-              // TODO! Reneable selection!
-              startCreateSelection(mx, my);
-            }
-          }else{
-            m.checkTrackClicked(mx, my, this.getY() - startYPosition, type, currentCutDirection, 0);
+          switch(currentTool){
+            case TOOL_SELECT:
+              if(m.getElementName().equals("Events")){
+                
+              }else if(m.getElementName().equals("Obstacles")){
+                /*if(m.checkClicked(mx, my)){
+                  // TODO! Reneable selection!
+                  startCreateSelection(mx, my);
+                }*/
+              }else{
+                if(m.checkClicked(mx, my)){
+                  startCreateSelection(mx, my);
+                }
+              }
+              break;
+            default:
+              if(m.getElementName().equals("Events")){
+                  //println("Setting type based on events track!");
+                  //println("Checking click at inside TrackSequencer:" + mx + " " + my);
+                  //println("this.getY() - startYPosition:" + (this.getY() - startYPosition));
+                  m.checkTrackClickedEvents(mx, my, this.getY() - startYPosition, currentCutDirection, 0, this.mouseButtonIndex);
+              }else if(m.getElementName().equals("Obstacles")){
+                if(m.checkClicked(mx, my)){
+                  // TODO! Reneable selection!
+                  startCreateSelection(mx, my);
+                }
+              }else{
+                m.checkTrackClicked(mx, my, this.getY() - startYPosition, type, currentCutDirection, 0);
+              }
           }
         }
       }
@@ -279,8 +302,12 @@ class TrackSequencer extends GUIElement{
       
       for(MultiTrack m : multiTracks){
         // For now, only check for obstacle multitrack
-        if(m.getElementName().equals("Obstacles")){
-          m.checkTrackCLickedObstacle(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type);
+        if(m.getElementName().equals("Events")){
+          
+        }else if(m.getElementName().equals("Obstacles")){
+          m.checkTrackClickedObstacle(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type);
+        }else{
+          m.checkTrackClickedNotes(minX, maxY, this.startYPosition, selectionWidth, selectionHeight, type); 
         }
       }
       drawSelectBox = false;
@@ -297,17 +324,25 @@ class TrackSequencer extends GUIElement{
     multiTracks.get(lineLayer + 1).tracks.get(lineIndex).addGridBlock(GridBlock.GB_TYPE_NOTE, t, Note.TYPE_RED, this.getCutDirection(), 0);
     
   }
+  
+  public void setStretchSpectrogram(boolean stretch){
+    this.waveform.setStretchSpectrogram(stretch);
+  }
+  
+  public boolean getStretchSpectrogram(){
+    return this.waveform.getStretchSpectrogram();
+  }
     
   public void display(){
     
     strokeWeight(2);
     
-    for(MultiTrack mt : multiTracks){
-      mt.display();
-    }
-    
     waveform.display();
     
+    for(MultiTrack mt : multiTracks){
+      mt.setTranslucent(this.getStretchSpectrogram());
+      mt.display();
+    }
     if(playing){
       if(!waveform.getPlaying())
         playing = false;
