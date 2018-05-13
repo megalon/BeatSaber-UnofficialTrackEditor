@@ -36,6 +36,8 @@ GLabel difficultyLabel;
 GLabel audioPathTextLabel;
 GLabel jsonPathTextLabel;
 
+GTextField playbackSpeedField;
+
 
 ArrayList<GAbstractControl> infoFields;
 ArrayList<GAbstractControl> infoLabels;
@@ -223,6 +225,10 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   difficultyLabel.setText("Difficulty", GAlign.RIGHT, GAlign.MIDDLE);
   difficultyRankLabel.setText("Difficulty rank", GAlign.RIGHT, GAlign.MIDDLE);
 
+}
+
+public void createWaveSettingsGUI(int x, int y){
+  playbackSpeedField = new GTextField(this, x, y, 100, 25);
 }
 
 public void showInfoPanel(){

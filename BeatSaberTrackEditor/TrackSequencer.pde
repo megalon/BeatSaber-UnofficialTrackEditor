@@ -13,8 +13,8 @@ class TrackSequencer extends GUIElement{
   private static final int TOOL_SELECT = 1;    // Selection tool for copy / paste 
   
   Minim minim; 
-  AudioSample sound; 
-  AudioPlayer soundbis;
+  AudioSample soundClick; 
+  AudioPlayer soundPlayer;
   
   private int gridWidth = 24;
   private int gridHeight = 24;
@@ -39,6 +39,9 @@ class TrackSequencer extends GUIElement{
   
   private int trackSamplesOffset = 0;
   private float bpm = 90;
+  private float beatsPerMS = bpm / 60 / 1000;
+  private float prevBeat = 0;      // Used for checking to play click sound
+  private float currentBeat = 0;   // Used for checking to play click sound
   private boolean playing = false;
   private int defaultBeatsPerBar = 8;
   private int beatsPerBar = 8;
@@ -80,8 +83,8 @@ class TrackSequencer extends GUIElement{
     multiTracks.add(obstaclesTracks);
     
   
-    sound = minim.loadSample(clickPath, 1024);
-    soundbis = minim.loadFile(clickPath);
+    soundClick = minim.loadSample(clickPath, 1024);
+    soundPlayer = minim.loadFile(clickPath);
     
   }
   
@@ -225,6 +228,7 @@ class TrackSequencer extends GUIElement{
   
   public void setBPM(float bpm){
     this.bpm = bpm;
+    this.beatsPerMS = this.bpm / 60 / 1000;
     waveform.setBPM(bpm);
     
     for(MultiTrack mt : multiTracks){
@@ -299,6 +303,12 @@ class TrackSequencer extends GUIElement{
     println("Size of track in trackseq: " + multiTracks.get(1).tracks.get(1).gridBlocks.size());
   }
   
+  public void updateSelection(int mx, int my){
+    for(MultiTrack m : multiTracks){
+      m.updateCopyDrawing(mx, my, clickPosX, clickPosY);
+    }
+  }
+  
   public void startCreateSelection(int mx, int my){
     clickPosX = mx;
     clickPosY = my;
@@ -365,6 +375,47 @@ class TrackSequencer extends GUIElement{
   
   public boolean getStretchSpectrogram(){
     return this.waveform.getStretchSpectrogram();
+  }
+  
+  // Used in separate thread called from main class BeatSaberTrackEditor
+  public void checkPlaySoundWrapper(){
+    while(true){
+      checkPlaySoundClick();
+    }
+  }
+  
+  private void checkPlaySoundClick(){
+    // Formula:
+    // (time in ms) * (beats per ms) = current beat
+    
+    // Current Beat
+    currentBeat = this.waveform.getSongPosition() * beatsPerMS;
+    
+    boolean hit = false;
+    
+    //println("prevBeat: " + prevBeat + " currentBeat: " + currentBeat);
+    
+    // Loop through all notes to check for clicks
+    for(MultiTrack m : multiTracks){
+      // Check only for notes tracks
+      if(!(m.getElementName().equals("Events") || m.getElementName().equals("Obstacles"))){
+        for(Track t : m.tracks){
+          if(t.checkBlockInTimePeriod(prevBeat, currentBeat))
+            hit = true;
+        }
+      }
+    }
+    
+    if(hit && playing){
+      playClickSound();
+    }
+    
+    prevBeat = currentBeat;
+  }
+  
+  private void playClickSound(){
+      soundPlayer.rewind();
+      soundPlayer.play();
   }
     
   public void display(){

@@ -363,6 +363,15 @@ class Note extends GridBlock {
     return cutDirection;
   }
   
+  public void printString(){
+    println("note " + this + " .getX():" + this.getX());
+    println("note " + this + " .getY():" + this.getY());
+    println("note " + this + " .getWidth():" + this.getWidth());
+    println("note " + this + " .getHeight():" + this.getHeight());
+    println("note " + this + " .getCutDirection():" + this.getCutDirection());
+    println("note " + this + " .getTime():" + this.getTime());
+  }
+  
   public void display(){
     super.display();
     

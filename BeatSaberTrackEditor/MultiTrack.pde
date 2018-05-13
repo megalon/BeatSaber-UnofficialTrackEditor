@@ -248,45 +248,78 @@ class MultiTrack extends GUIElement{
     float endTime = t.mouseCordToTime(my - t.getY() - selectionHeight);
 
     for (Float f: t.gridBlocks.keySet()) {
-      
-      GridBlock block = t.gridBlocks.get(f);
         
       if(this.getElementName().equals("Events")){
-        if(block.getTime() >= startTime && block.getTime() <= endTime)
-          t.gridBlocksCopy.put(block.getTime() - startTime, new Note(block.getParent(), block.getX(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getTime() - startTime));
+        
       }else if(this.getElementName().equals("Obstacles")){
-        if(block.getTime() >= startTime && block.getTime() <= endTime)
-          t.gridBlocksCopy.put(block.getTime() - startTime, new Note(block.getParent(), block.getX(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getTime() - startTime));
+        
       }else{
-        if(block.getTime() >= startTime && block.getTime() <= endTime)
-          t.gridBlocksCopy.put(block.getTime() - startTime, new Note(block.getParent(), block.getX(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getTime() - startTime));
+        Note block = (Note)t.gridBlocks.get(f);
+        if(block.getTime() >= startTime && block.getTime() <= endTime){
+          Note note = new Note(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getCutDirection(), block.getTime() - startTime);
+          t.gridBlocksCopy.put(note.getTime(), note);
+          
+          note.printString();
+        }
       }
     }
-    
-    //println(t.gridBlocksCopy.toString());
    }
+  }
+  
+  public void updateCopyDrawing(int mx, int my, int oldX, int oldY){
+    for(Track t : tracks){
+      if(t.gridBlocksCopy.size() > 0){
+        println("t.gridBlocksCopy " + t + " size: " + t.gridBlocksCopy.size());
+      }
+      
+      /*
+      for (Float f: t.gridBlocksCopy.keySet()) {
+        GridBlock block = t.gridBlocksCopy.get(f);
+        float pasteTime = t.mouseCordToTime(my - t.getY());
+        
+        n.setTime(n.getTime() + pasteTime);
+        n.setY(t.calculateGridYPos(n.getTime()));
+        
+        t.gridBlocks.put(n.getTime(), n);
+      }
+      */
+      /*
+      float pasteTime = t.mouseCordToTime(my - t.getY());
+      // Put the copied blocks back in the normal hashmap
+      for (Float f: t.gridBlocksCopy.keySet()) {
+        GridBlock block = t.gridBlocksCopy.get(f);
+      
+        float newTime = t.mouseCordToTime(t.calculateGridYPos(block.getTime()) + my - oldY);
+        
+        block.setY(t.calculateGridYPos(block.getTime()) + my - oldY - t.getY() + t.yStartingPosition);
+        
+      }*/
+    }
   }
   
   public void selectPaste(int my){
     println();
     for(Track t : tracks){
-      println("before paste t.gridBlocks.length: " + t.gridBlocks.size());
+
+      if(t.gridBlocksCopy.size() > 0){
+        println("t.gridBlocksCopy " + t + " size: " + t.gridBlocksCopy.size());
+      }
       
       float pasteTime = t.mouseCordToTime(my - t.getY());
-        
+      
       // Put the copied blocks back in the normal hashmap
       for (Float f: t.gridBlocksCopy.keySet()) {
-        GridBlock block = t.gridBlocksCopy.get(f);
         
-        println("Block before offset: " + block.getY());
-        println("Time before offset: " + block.getTime());
-        block.setTime(block.getTime() + pasteTime);
-        block.setY(t.calculateGridYPos(pasteTime));
-        t.gridBlocks.put(block.getTime(), block);
-      
-        println("Time after offset: " + block.getTime());
-        println("Block after offset: " + block.getY());
-        
+        if(t.getTrackType() == Track.TRACK_TYPE_NOTES){
+          Note block = (Note)t.gridBlocksCopy.get(f);
+          
+          Note n = new Note(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getCutDirection(), block.getTime());
+          
+          n.setTime(n.getTime() + pasteTime);
+          n.setY(t.calculateGridYPos(n.getTime()));
+          
+          t.gridBlocks.put(n.getTime(), n);
+        }
       }
     }
   }
@@ -321,7 +354,6 @@ class MultiTrack extends GUIElement{
     rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     */
     
-    
     for (int i = 0; i < tracks.size(); ++i){
       t = tracks.get(i);
       
@@ -331,7 +363,7 @@ class MultiTrack extends GUIElement{
           line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
         }
       }
-        t.display();
+      t.display();
     }
     
   }

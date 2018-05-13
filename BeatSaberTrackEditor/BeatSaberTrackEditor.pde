@@ -126,8 +126,16 @@ void setup(){
   
   createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
   createInfoGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
+  createWaveSettingsGUI(20, height + sequencerYOffset + 10);
   jsonManager = new JSONManager(sequencer, lblConsole);
 
+
+  // Create thread to check if the click sound should be played
+  thread("checkPlaySoundWrapper");
+}
+
+public void checkPlaySoundWrapper(){
+  sequencer.checkPlaySoundWrapper();
 }
 
 void resetKeys(){
@@ -162,6 +170,11 @@ void draw(){
   // Redraw background
   background(#111111);
 
+  // Check to play the click sound effect when a note is hit
+  /*if(sequencer.getPlaying()){
+    sequencer.checkPlaySoundClick();
+  }*/
+  
   sequencer.display();
   drawGrid();
 
@@ -215,9 +228,8 @@ void draw(){
     if(debug){
       text("mouseX: " + mouseX, 0, 10);
       text("mouseY: " + mouseY, 0, 20);
+      text("Current tool : " + sequencer.getTool(), 0, 30);
     }
-    
-    text("Current tool : " + sequencer.getTool(), 0, 30);
   }
   
   
@@ -274,6 +286,10 @@ void mouseDragged(){
   if(sequencer.getSnapToggle()){
     checkClick();
   }
+}
+
+void mouseMoved() {
+  sequencer.updateSelection(mouseX, mouseY);
 }
 
 void mouseReleased(){
@@ -452,6 +468,7 @@ void keyReleased(){
     sequencer.setStretchSpectrogram(!sequencer.getStretchSpectrogram());
   }
   
+  /*
   // Select mode
   if(key == 'b'){
     if(sequencer.getTool() != TrackSequencer.TOOL_SELECT)
@@ -467,6 +484,7 @@ void keyReleased(){
       sequencer.pasteAll(mouseY);
     }
   }
+  */
 
   if(key == '[' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);

@@ -23,7 +23,7 @@ class Waveform extends GUIElement {
   private int spectraWidthScale = spectraWidthScaleDefault;
   private int seqOffset;
   
-  private int blackRectColor = 0x88000000;
+  private int blackRectColor = 0x44000000;
 
   private float maxSize = 0;
 
@@ -33,6 +33,7 @@ class Waveform extends GUIElement {
   // width adjustment for audio display
   private int widthScale = 50;
 
+  
   String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
 
   Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim, int yOffset){
@@ -221,11 +222,6 @@ class Waveform extends GUIElement {
 
   public boolean getPlaying(){
     return soundbis.isPlaying();
-  }
-
-  public void setPosition(int gridPos){
-    //float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg * beatsPerBar;
-    //soundbis.skip();
   }
 
   public int soundPosition2Pixels(int p){
