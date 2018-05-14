@@ -178,6 +178,13 @@ void draw(){
   sequencer.display();
   drawGrid();
   
+  // Change cursor type if in selection mode
+  if(sequencer.getTool() == TrackSequencer.TOOL_SELECT){
+    cursor(CROSS);
+  }else{
+    cursor(ARROW);
+  }
+  
   if(sequencer.getKeyboardRecordMode()){
     
     fill(255);
@@ -308,6 +315,13 @@ void mouseMoved() {
 
 void mouseReleased(){
   sequencer.stopCreateSelection(mouseX, mouseY, getType());
+  if(mouseX < helpboxX && mouseButton == RIGHT){
+    if(sequencer.getTool() == TrackSequencer.TOOL_SELECT){
+      // Paste
+      println("Pasting at: " + mouseY);
+      sequencer.pasteAll(mouseY);
+    }
+  }
 }
 
 int getType(){
@@ -334,6 +348,7 @@ int getType(){
 void checkClick(){
   
   if(mouseX < helpboxX){
+    
     sequencer.checkClickedTrack(mouseX, mouseY, getType());
 
     if(!sequencer.getPlaying()){
@@ -484,7 +499,6 @@ void keyReleased(){
     sequencer.setStretchSpectrogram(!sequencer.getStretchSpectrogram());
   }
   
-  /*
   // Select mode
   if(key == 'b'){
     if(sequencer.getTool() != TrackSequencer.TOOL_SELECT)
@@ -492,15 +506,6 @@ void keyReleased(){
     else
       sequencer.setTool(TrackSequencer.TOOL_DRAW);
   }
-  
-  // Paste
-  if(key == 'v'){
-    if(sequencer.getTool() == TrackSequencer.TOOL_SELECT){
-      println("Trying to paste");
-      sequencer.pasteAll(mouseY);
-    }
-  }
-  */
 
   if(key == '[' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);

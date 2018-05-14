@@ -21,6 +21,10 @@ static final class TextArrays{
     "",
     "  CTRL + S : Quick save",
     "",
+    "  B : EXPERIMENTAL! Toggle selection mode",
+    "      LEFT CLICK : Select",
+    "      RIGHT CLICK : Paste at mouse cursor",
+    "",
     "  Currently the program autosaves every 30 sec into the directory \n .\\data\\tmp\\",
   };
   

@@ -250,16 +250,22 @@ class MultiTrack extends GUIElement{
     for (Float f: t.gridBlocks.keySet()) {
         
       if(this.getElementName().equals("Events")){
-        
+        Event block = (Event)t.gridBlocks.get(f);
+        if(block.getTime() >= startTime && block.getTime() <= endTime){
+          Event event = new Event(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getValue(), block.getTime() - startTime);
+          t.gridBlocksCopy.put(event.getTime(), event);
+        }
       }else if(this.getElementName().equals("Obstacles")){
-        
+        Obstacle block = (Obstacle)t.gridBlocks.get(f);
+        if(block.getTime() >= startTime && block.getTime() <= endTime){
+          Obstacle obstacle = new Obstacle(block.getParent(), block.getY(), block.getWidth() / block.getWallWidth(), (int)(block.getHeight() / block.getDuration() / 8), block.getType(), block.getWallWidth(), block.getTime() - startTime, block.getDuration());
+          t.gridBlocksCopy.put(obstacle.getTime(), obstacle);
+        }
       }else{
         Note block = (Note)t.gridBlocks.get(f);
         if(block.getTime() >= startTime && block.getTime() <= endTime){
           Note note = new Note(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getCutDirection(), block.getTime() - startTime);
           t.gridBlocksCopy.put(note.getTime(), note);
-          
-          note.printString();
         }
       }
     }
@@ -307,18 +313,31 @@ class MultiTrack extends GUIElement{
       
       float pasteTime = t.mouseCordToTime(my - t.getY());
       
+      GridBlock b = null;
+      
       // Put the copied blocks back in the normal hashmap
+      // Each different object type needs to be cast to the matching object
+      // The object is then cast back to a generic griblock to be put back into the hashmap
       for (Float f: t.gridBlocksCopy.keySet()) {
-        
         if(t.getTrackType() == Track.TRACK_TYPE_NOTES){
           Note block = (Note)t.gridBlocksCopy.get(f);
-          
           Note n = new Note(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getCutDirection(), block.getTime());
-          
-          n.setTime(n.getTime() + pasteTime);
-          n.setY(t.calculateGridYPos(n.getTime()));
-          
-          t.gridBlocks.put(n.getTime(), n);
+          b = (GridBlock)n;
+        }else if(t.getTrackType() == Track.TRACK_TYPE_EVENTS){
+          Event block = (Event)t.gridBlocksCopy.get(f);
+          Event e = new Event(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getValue(), block.getTime());
+          b = (GridBlock)e;
+        }else if(t.getTrackType() == Track.TRACK_TYPE_OBSTACLES){
+          Obstacle block = (Obstacle)t.gridBlocksCopy.get(f);
+          Obstacle o = new Obstacle(block.getParent(), block.getY(), block.getWidth() / block.getWallWidth(), (int)(block.getHeight() / block.getDuration() / 8), block.getType(), block.getWallWidth(), block.getTime(), block.getDuration());
+          b = (GridBlock)o;
+        }
+        
+        // Add gridblock back into the hashmap
+        if(b != null){
+          b.setTime(b.getTime() + pasteTime);
+          b.setY(t.calculateGridYPos(b.getTime()));
+          t.gridBlocks.put(b.getTime(), b);
         }
       }
     }

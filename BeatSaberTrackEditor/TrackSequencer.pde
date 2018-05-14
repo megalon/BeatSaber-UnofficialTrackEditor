@@ -352,13 +352,16 @@ class TrackSequencer extends GUIElement{
       */
       
       if(this.getTool() == TOOL_SELECT){
-        for(MultiTrack m : multiTracks){
-          // For now, only check for obstacle multitrack
-          m.selectCopy(maxY, selectionHeight);
+        
+        // Only check for left click to select
+        if(type == Note.TYPE_RED){
+          for(MultiTrack m : multiTracks){
+            // For now, only check for obstacle multitrack
+            m.selectCopy(maxY, selectionHeight);
+          }
         }
       }else if(this.getTool() == TOOL_DRAW){
         for(MultiTrack m : multiTracks){
-          // For now, only check for obstacle multitrack
           if(m.getElementName().equals("Events")){
             
           }else if(m.getElementName().equals("Obstacles")){
@@ -497,7 +500,9 @@ class TrackSequencer extends GUIElement{
       }
       
       if(this.getTool() == TOOL_SELECT){
-        rect(0, clickPosY, width, mouseY - clickPosY);
+        // If we are selecting, only draw the selection box when left click is pressed
+        if(this.mouseButtonIndex == 0)
+          rect(0, clickPosY, width, mouseY - clickPosY);
       }else{
         rect(clickPosX, clickPosY, mouseX - clickPosX, mouseY - clickPosY); 
       }

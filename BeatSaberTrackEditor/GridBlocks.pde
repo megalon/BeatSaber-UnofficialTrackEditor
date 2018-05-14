@@ -83,6 +83,8 @@ class Obstacle extends GridBlock {
     println("This.getY(): " + this.getY());
     println("wallWidth: " + wallWidth);
     println();
+    
+    // Note the magic number 8 is due to the grid size being 1/8th of a beat
     this.setHeight((int)(this.getHeight() * -duration * 8));
     
     this.setDuration(duration);
