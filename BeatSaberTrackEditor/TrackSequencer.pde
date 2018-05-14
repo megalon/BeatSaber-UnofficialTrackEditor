@@ -31,7 +31,7 @@ class TrackSequencer extends GUIElement{
   private boolean snapToggle = true;
   private String clickPath = "data\\noteClickSFX.wav";
   private boolean playNoteHitSound = true;
-  private boolean keyboardRecordMode = false;
+  private boolean keyboardRecordMode = true;
   
   private int clickPosX = 0;
   private int clickPosY = 0;

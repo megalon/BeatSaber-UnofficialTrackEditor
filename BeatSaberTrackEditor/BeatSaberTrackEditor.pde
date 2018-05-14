@@ -28,8 +28,6 @@ boolean right = false;
 boolean shiftPressed, controlPressed, altPressed, snapToggle;
 boolean showHelpText;
 
-boolean keyboardRecordMode = false;
-
 boolean playing = false;
 
 PImage eventLabels;
