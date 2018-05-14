@@ -21,7 +21,8 @@ class ClickableBox extends GUIElement{
 class Tab extends ClickableBox{
   public static final int TAB_INFO = 0;
   public static final int TAB_DIFFICULTY = 1;
-  public static final int TAB_HELP = 2;
+  public static final int TAB_SETTINGS = 2;
+  public static final int TAB_HELP = 3;
 
   String text;
   

@@ -30,6 +30,8 @@ class TrackSequencer extends GUIElement{
   private int seqWindowBottom = 0;
   private boolean snapToggle = true;
   private String clickPath = "data\\noteClickSFX.wav";
+  private boolean playNoteHitSound = true;
+  private boolean keyboardRecordMode = false;
   
   private int clickPosX = 0;
   private int clickPosY = 0;
@@ -38,7 +40,7 @@ class TrackSequencer extends GUIElement{
   private int mouseButtonIndex = LEFT;
   
   private int trackSamplesOffset = 0;
-  private float bpm = 90;
+  private float bpm = 120;
   private float beatsPerMS = bpm / 60 / 1000;
   private float prevBeat = 0;      // Used for checking to play click sound
   private float currentBeat = 0;   // Used for checking to play click sound
@@ -110,6 +112,14 @@ class TrackSequencer extends GUIElement{
         type = Note.TYPE_RED;
     }
     return type;
+  }
+  
+  public boolean getKeyboardRecordMode(){
+    return keyboardRecordMode;
+  }
+  
+  public void setKeyboardRecordMode(boolean rec){
+    this.keyboardRecordMode = rec;
   }
   
   public void checkRemoveNote(int mx, int my){
@@ -360,13 +370,17 @@ class TrackSequencer extends GUIElement{
   
   public void addNote(long startMillis, long millis, long delay, int lineIndex, int lineLayer){
     
-    // public void addGridBlock(int gridBlockType, float time, int type, int val0, float val1){
+    //float time = ((0.06)*(float)(millis-startMillis-delay)/(this.getBPM())) * this.getBeatsPerBar() / 2 - 0.1;
+    float time = ((float)(millis - startMillis - delay) * (this.getBPM() / 60000)) - 0.1;
+    println("ms: " + (millis-startMillis-delay) + " to time: " + time);
     
-    float t = ((0.06)*(float)(millis-startMillis-delay)/(this.getBPM())) * this.getBeatsPerBar() / 2 - 0.1;
-    println("ms: " + (millis-startMillis-delay) + " to time: " + t);
-      
-    multiTracks.get(lineLayer + 1).tracks.get(lineIndex).addGridBlock(GridBlock.GB_TYPE_NOTE, t, Note.TYPE_RED, this.getCutDirection(), 0);
+    Track t = multiTracks.get(lineLayer + 1).tracks.get(lineIndex);
     
+    if(snapToggle){
+      t.addGridBlock(GridBlock.GB_TYPE_NOTE, t.mouseCordToTime(t.calculateGridYPos(time)), Note.TYPE_RED, this.getCutDirection(), 0);
+    }else{
+      t.addGridBlock(GridBlock.GB_TYPE_NOTE, time, Note.TYPE_RED, this.getCutDirection(), 0);
+    }
   }
   
   public void setStretchSpectrogram(boolean stretch){
@@ -380,11 +394,11 @@ class TrackSequencer extends GUIElement{
   // Used in separate thread called from main class BeatSaberTrackEditor
   public void checkPlaySoundWrapper(){
     while(true){
-      checkPlaySoundClick();
+      checkPlaySoundHit();
     }
   }
   
-  private void checkPlaySoundClick(){
+  private void checkPlaySoundHit(){
     // Formula:
     // (time in ms) * (beats per ms) = current beat
     
@@ -406,16 +420,24 @@ class TrackSequencer extends GUIElement{
       }
     }
     
-    if(hit && playing){
-      playClickSound();
+    if(hit && playing && playNoteHitSound){
+      playHitSound();
     }
     
     prevBeat = currentBeat;
   }
   
-  private void playClickSound(){
+  private void playHitSound(){
       soundPlayer.rewind();
       soundPlayer.play();
+  }
+  
+  public void setPlayHitSound(boolean hit){
+    playNoteHitSound = hit;
+  }
+  
+  public boolean getPlayHitSound(){
+    return this.playNoteHitSound;
   }
     
   public void display(){

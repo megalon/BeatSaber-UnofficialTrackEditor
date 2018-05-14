@@ -36,16 +36,34 @@ GLabel difficultyLabel;
 GLabel audioPathTextLabel;
 GLabel jsonPathTextLabel;
 
+// Settings tab
+GLabel settingsTitle;
+GCheckbox noteClickToggle;
+GCheckbox keyboardRecordToggle;
+GLabel noteClickToggleLabel;
+GLabel keyboardRecordToggleLabel;
+
+// Underneath waveform
 GTextField playbackSpeedField;
 
 
 ArrayList<GAbstractControl> infoFields;
 ArrayList<GAbstractControl> infoLabels;
+ArrayList<GAbstractControl> settingsFields;
+ArrayList<GAbstractControl> settingsLabels;
 float infoPanelX;
 float xInfoFieldOffset = 150;
 float xInfoLabelOffset = 25;
+int fieldHeight = 25;
 
-public void createFileSystemGUI(int x, int y, int w, int h, int border) {
+int yOffset = 150;
+int ySpacing = 30;
+
+TrackSequencer seq;
+
+public void createFileSystemGUI(int x, int y, int w, int h, int border, TrackSequencer seq) {
+  
+  this.seq = seq;
   // Set inner frame position
   x += border;
   y += border;
@@ -82,8 +100,6 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   w -= 2*border;
   h -= 2*border;
   
-  int yOffset = 150;
-  int ySpacing = 30;
   infoPanelX = x;
   
   infoTitle = new GLabel(this, x, y + yOffset, w, 20);
@@ -98,7 +114,6 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   
   int xInfoFieldWidth = (int)(w - xInfoFieldOffset) - border;
   int xInfoLabelWidth = xInfoFieldWidth / 2;
-  int fieldHeight = 25;
   
   infoFields = new ArrayList<GAbstractControl>();
   infoLabels = new ArrayList<GAbstractControl>();
@@ -227,8 +242,73 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
 
 }
 
+public void createSettingsGUI(int x, int y, int w, int border){
+  
+  settingsTitle = new GLabel(this, x, y + yOffset, w, 20);
+  settingsTitle.setText("Settings", GAlign.LEFT, GAlign.MIDDLE);
+  settingsTitle.setOpaque(true);
+  settingsTitle.setTextBold();
+  
+  noteClickToggle      = new GCheckbox(this, x, y + yOffset, fieldHeight, fieldHeight);
+  keyboardRecordToggle = new GCheckbox(this, x, y + yOffset, fieldHeight, fieldHeight);
+  
+  noteClickToggleLabel      = new GLabel(this, x, y + yOffset, 100, fieldHeight);
+  keyboardRecordToggleLabel = new GLabel(this, x, y + yOffset, 100, fieldHeight);
+  
+  // Set default value
+  noteClickToggle.setSelected(seq.getPlayHitSound());
+  keyboardRecordToggle.setSelected(seq.getKeyboardRecordMode());
+  
+  // Set text
+  noteClickToggleLabel.setText("Note Click Sound", GAlign.RIGHT, GAlign.MIDDLE);
+  keyboardRecordToggleLabel.setText("Keyboard note record", GAlign.RIGHT, GAlign.MIDDLE);
+  
+  
+  settingsFields = new ArrayList<GAbstractControl>();
+  settingsLabels = new ArrayList<GAbstractControl>();
+  
+  
+  settingsFields.add(noteClickToggle);
+  settingsFields.add(keyboardRecordToggle);
+  
+  settingsLabels.add(noteClickToggleLabel);
+  settingsLabels.add(keyboardRecordToggleLabel);
+  
+  // Move the buttons / fields 
+  for(int i = 0; i < settingsFields.size(); ++i){
+    settingsFields.get(i).moveTo(x + xInfoFieldOffset, y + ySpacing * (i + 1) + yOffset);
+  }
+  
+  // Move the labels and set their color
+  for(int i = 0; i < settingsLabels.size(); ++i){
+    settingsLabels.get(i).moveTo(xInfoLabelOffset, y + ySpacing * (i + 1) + yOffset);
+    settingsLabels.get(i).setOpaque(false);
+    settingsLabels.get(i).setLocalColorScheme(14);
+  }
+}
+
 public void createWaveSettingsGUI(int x, int y){
   playbackSpeedField = new GTextField(this, x, y, 100, 25);
+}
+
+public void showSettingsPanel(){
+  settingsTitle.moveTo(infoPanelX, infoTitle.getY());
+  for(int i = 0; i < settingsFields.size(); ++i){
+    settingsFields.get(i).moveTo(infoPanelX + xInfoFieldOffset, settingsFields.get(i).getY());
+  }
+  for(int i = 0; i < settingsLabels.size(); ++i){
+    settingsLabels.get(i).moveTo(infoPanelX + xInfoLabelOffset, settingsLabels.get(i).getY());
+  }
+}
+
+public void hideSettingsPanel(){
+  settingsTitle.moveTo(width, infoTitle.getY());
+  for(int i = 0; i < settingsFields.size(); ++i){
+    settingsFields.get(i).moveTo(width, settingsFields.get(i).getY());
+  }
+  for(int i = 0; i < settingsLabels.size(); ++i){
+    settingsLabels.get(i).moveTo(width, settingsLabels.get(i).getY());
+  }
 }
 
 public void showInfoPanel(){
@@ -239,8 +319,6 @@ public void showInfoPanel(){
   for(int i = 0; i < infoLabels.size(); ++i){
     infoLabels.get(i).moveTo(infoPanelX + xInfoLabelOffset, infoLabels.get(i).getY());
   }
-  
-  //infoLabels
 }
 
 public void hideInfoPanel(){
@@ -250,6 +328,24 @@ public void hideInfoPanel(){
   }
   for(int i = 0; i < infoLabels.size(); ++i){
     infoLabels.get(i).moveTo(width, infoLabels.get(i).getY());
+  }
+}
+
+
+
+public void handleToggleControlEvents(GToggleControl option, GEvent event) {
+  if (option == noteClickToggle) {
+    if(seq.getPlayHitSound()){
+      seq.setPlayHitSound(false);
+    }else{
+      seq.setPlayHitSound(true);
+    }
+  }else if(option == keyboardRecordToggle){
+    if(seq.getKeyboardRecordMode()){
+      seq.setKeyboardRecordMode(false);
+    }else{
+      seq.setKeyboardRecordMode(true);
+    }
   }
 }
 

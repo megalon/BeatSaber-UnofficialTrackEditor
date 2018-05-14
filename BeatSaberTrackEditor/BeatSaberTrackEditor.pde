@@ -65,6 +65,7 @@ int previousTab = -1;
 Tab tabInfo;
 Tab tabDifficulty;
 Tab tabHelp;
+Tab tabSettings;
 
 // Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
@@ -114,19 +115,22 @@ void setup(){
   // Create tabs
   tabs = new ArrayList<Tab>();
   
+  tabHelp       = new Tab(null, width - helpboxSize + helpBoxBorder, helpboxY - helpBoxBorder*3, 50, 25, "HELP");
+  tabSettings   = new Tab(null, width - helpboxSize + helpBoxBorder + tabHelp.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Settings");
   tabInfo       = new Tab(null, width - helpboxSize + helpBoxBorder,                                   helpboxY - helpBoxBorder*3, 70, 25, "Song Info");
   tabDifficulty = new Tab(null, width - helpboxSize + helpBoxBorder + tabInfo.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Difficulty");
-  tabHelp       = new Tab(null, width - helpboxSize + helpBoxBorder + tabInfo.getWidth() + tabDifficulty.getWidth() + tabSpacing * 2, helpboxY - helpBoxBorder*3, 50, 25, "HELP");
   
-  tabs.add(tabInfo);
-  tabs.add(tabDifficulty);
+  //tabs.add(tabInfo);
+  //tabs.add(tabDifficulty);
   tabs.add(tabHelp);
+  tabs.add(tabSettings);
   
   //Tab tabInfo = new Tab(null, );
   
-  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
+  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder, sequencer);
   createInfoGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
-  createWaveSettingsGUI(20, height + sequencerYOffset + 10);
+  //createWaveSettingsGUI(20, height + sequencerYOffset + 10);
+  createSettingsGUI(width - helpboxSize, 0, 130, helpBoxBorder);
   jsonManager = new JSONManager(sequencer, lblConsole);
 
 
@@ -177,6 +181,14 @@ void draw(){
   
   sequencer.display();
   drawGrid();
+  
+  if(sequencer.getKeyboardRecordMode()){
+    
+    fill(255);
+    text("M  <  >  ?", sequencer.multiTracks.get(1).getX() + 5, height+sequencerYOffset - 10);
+    text("J   K   L  :", sequencer.multiTracks.get(2).getX() + 5, height+sequencerYOffset - 10);
+    text("U   I   O  P",   sequencer.multiTracks.get(3).getX() + 5, height+sequencerYOffset - 10);
+  }
 
 
   fill(0);
@@ -237,8 +249,13 @@ void draw(){
   
   if(currentTab != previousTab){
     hideInfoPanel();
+    hideSettingsPanel();
     showHelpText = false;
     switch(currentTab){
+      case(Tab.TAB_SETTINGS):
+        println("Settings tab visible");
+        showSettingsPanel();
+        break;
       case(Tab.TAB_INFO):
         showInfoPanel();
         break;
@@ -253,11 +270,9 @@ void draw(){
     }
   }
   
-  /* Disabled tabs for now
   for(Tab t : tabs){
     t.display();
   }
-  */
   
   textSize(12);
   fill(BeatSaberTrackEditor.THEME_COLOR_0);
@@ -269,14 +284,18 @@ void draw(){
 
 void mousePressed(){
   checkClick();
-  /* Disabled tabs
-   if(tabInfo.checkClicked(mouseX, mouseY)){
+  
+  if(tabHelp.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_HELP;
+  }else if(tabSettings.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_SETTINGS;
+  }
+  /*
+  if(tabInfo.checkClicked(mouseX, mouseY)){
     currentTab = Tab.TAB_INFO;
   }else if(tabDifficulty.checkClicked(mouseX, mouseY)){
     currentTab = Tab.TAB_DIFFICULTY;
-  }else if(tabHelp.checkClicked(mouseX, mouseY)){
-    currentTab = Tab.TAB_HELP;
-  }
+  }else
   */
 }
 
@@ -385,6 +404,7 @@ void keyPressed(){
       sequencer.stop();
       sequencer.resetView();
       startMillis = 0;
+      delay = 0;
     }else if(sequencer.getPlaying()){
       pausedAt = System.currentTimeMillis();
       sequencer.setPlaying(false);
@@ -440,7 +460,7 @@ void keyPressed(){
 
   sequencer.setCutDirection(getNewCutDirection());
   
-  if(keyboardRecordMode && sequencer.getPlaying()){
+  if(sequencer.getKeyboardRecordMode() && sequencer.getPlaying()){
     if(key == 'm'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,0);}
     if(key == ','){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,0);}
     if(key == '.'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,0);}
@@ -454,14 +474,7 @@ void keyPressed(){
     if(key == 'o'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,2);}
     if(key == 'p'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,2);}
   }
-  
 }
-
-public void addNote(int lineIndex, int lineLayer){
-  nextTypedNoteIndex = lineIndex;
-  nextTypedNoteLayer = lineLayer;
-}
-
 void keyReleased(){
   
   if(key == TAB){
