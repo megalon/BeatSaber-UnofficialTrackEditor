@@ -43,6 +43,9 @@ GCheckbox keyboardRecordToggle;
 GLabel noteClickToggleLabel;
 GLabel keyboardRecordToggleLabel;
 
+PImage gridLayoutImage;
+String gridLayoutImagePath = "gridlayouthelp.png";
+
 // Underneath waveform
 GTextField playbackSpeedField;
 
@@ -93,6 +96,8 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border, TrackSeq
   lblConsole.setText("Loaded default audio file: " + soundfilePath);
 }
 
+
+// This function sets up the info GUI. I did not implement this GUI
 public void createInfoGUI(int x, int y, int w, int h, int border){
     // Set inner frame position
   x += border;
@@ -261,7 +266,7 @@ public void createSettingsGUI(int x, int y, int w, int border){
   
   // Set text
   noteClickToggleLabel.setText("Note Click Sound", GAlign.RIGHT, GAlign.MIDDLE);
-  keyboardRecordToggleLabel.setText("Keyboard note record", GAlign.RIGHT, GAlign.MIDDLE);
+  keyboardRecordToggleLabel.setText("Keyboard grid note record", GAlign.RIGHT, GAlign.MIDDLE);
   
   
   settingsFields = new ArrayList<GAbstractControl>();
@@ -285,6 +290,8 @@ public void createSettingsGUI(int x, int y, int w, int border){
     settingsLabels.get(i).setOpaque(false);
     settingsLabels.get(i).setLocalColorScheme(14);
   }
+  
+  gridLayoutImage = loadImage(gridLayoutImagePath);
 }
 
 public void createWaveSettingsGUI(int x, int y){
@@ -299,6 +306,8 @@ public void showSettingsPanel(){
   for(int i = 0; i < settingsLabels.size(); ++i){
     settingsLabels.get(i).moveTo(infoPanelX + xInfoLabelOffset, settingsLabels.get(i).getY());
   }
+  
+  image(gridLayoutImage, infoPanelX + xInfoLabelOffset, settingsLabels.get(settingsLabels.size() - 1).getY() + 100);
 }
 
 public void hideSettingsPanel(){

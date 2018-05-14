@@ -1,3 +1,6 @@
+import java.util.Collections;
+import java.util.Comparator;
+
 class JSONManager{
   TrackSequencer seq;
   String outputTrackFile, inputTrackFile, inputInfoFile, outputInfoFile;
@@ -216,15 +219,8 @@ class JSONManager{
     jsonTrack = new JSONObject();
 
     notes = new JSONArray();
-
-    // Currently skipping over events and obstacles!
     events = new JSONArray();
     obstacles = new JSONArray();
-
-    setEventsArray();
-    setNotesArray();
-    setObstaclesArray();
-
     
     jsonTrack.setString("_version", versionString);
     jsonTrack.setFloat("_beatsPerMinute", seq.getBPM());
@@ -232,6 +228,11 @@ class JSONManager{
     jsonTrack.setFloat("_noteJumpSpeed", 10.0);
     jsonTrack.setFloat("_shuffle", 0.0);
     jsonTrack.setFloat("_shufflePeriod", 0.25);
+
+    setEventsArray();
+    setNotesArray();
+    setObstaclesArray();
+    
     jsonTrack.setJSONArray("_events", events);
     jsonTrack.setJSONArray("_notes", notes);
     jsonTrack.setJSONArray("_obstacles", obstacles);
@@ -281,6 +282,8 @@ class JSONManager{
       }
       ++multiCount;
     }
+    
+    sortByTime(notes);
   }
 
   // Create the notes JSON array
@@ -311,6 +314,8 @@ class JSONManager{
       }
       ++trackCount;
     }
+    
+    sortByTime(obstacles);
   }
 
   private void setEventsArray(){
@@ -320,6 +325,7 @@ class JSONManager{
     int eventCount = 0;
     MultiTrack m = seq.multiTracks.get(0);
     trackCount = 0;
+    
     for(Track t : m.tracks){
       // Iterate through all gridblocks in hashmap
       for (Float f: t.gridBlocks.keySet()) {
@@ -345,7 +351,53 @@ class JSONManager{
         //println("Changing trackcount to: " + trackCount);
       }
     }
+    
+    //
+    // Sort the events array. If it is not sorted, events can be skipped
+    //
+    sortByTime(events);
 
+  }
+  
+  // Sort the JSONArray by the _time float value
+  private void sortByTime(JSONArray array){
+    
+    // Copy the jsonArray into an arraylist
+    ArrayList<JSONObject> jsonValues = new ArrayList<JSONObject>();
+    for (int i = 0; i < array.size(); ++i) {
+        jsonValues.add(array.getJSONObject(i));
+    }
+    
+    // Sort the arraylist 
+    Collections.sort( jsonValues, new Comparator<JSONObject>() {
+        //You can change "Name" with "ID" if you want to sort by ID
+        private static final String KEY_NAME = "_time";
+
+        @Override
+        public int compare(JSONObject a, JSONObject b) {
+            Float valA = 0.0;
+            Float valB = 0.0;
+
+            try {
+                valA = (float) a.getFloat(KEY_NAME);
+                valB = (float) b.getFloat(KEY_NAME);
+            } 
+            catch (Exception e) {
+                println("Error: Exception in sorting JSON array!");
+            }
+
+            if(valA < valB)
+              return -1;
+            else if(valA > valB)
+              return 1;
+            return 0;
+        }
+    });
+
+    // Copy the sorted ArrayList into the JSONArray
+    for (int i = 0; i < array.size(); ++i) {
+        array.setJSONObject(i, jsonValues.get(i));
+    }
   }
 
   private void createPlaceholderEvents(){

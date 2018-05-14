@@ -7,7 +7,7 @@ import ddf.minim.*;
 import java.awt.*;
 
 
-String versionText = "Megalon v0.0.19";
+String versionText = "Megalon v0.1.0";
 
 boolean debug = false;
 
@@ -49,14 +49,15 @@ int type = 0;
 int helpboxX, helpboxY, helpboxSize;
 
 // Keyboard keys to notes
-long startMillis=0;
-long delay=0;
-long pausedAt=0;
+long startMillis = 0;          // Time that the seq started playing from beginning
+long delay = 0;                // Delay time in ms between pause and playing again
+long pausedAt = 0;             // Time in ms where the system clock was when the seq was paused
+long playHeadPaused = 0;       // Time in ms where the playhead stops when paused
+long playHeadNewPosition = 0;  // Time in ms where the playhead moves to when moved with mouse
 int nextTypedNoteIndex = 0;
 int nextTypedNoteLayer = 0;
 
 String[] currentHelpText = TextArrays.defaultControlsText;
-
 
 ArrayList<Tab> tabs;
 int currentTab = Tab.TAB_HELP;
@@ -173,11 +174,6 @@ void draw(){
   
   // Redraw background
   background(#111111);
-
-  // Check to play the click sound effect when a note is hit
-  /*if(sequencer.getPlaying()){
-    sequencer.checkPlaySoundClick();
-  }*/
   
   sequencer.display();
   drawGrid();
@@ -253,7 +249,6 @@ void draw(){
     showHelpText = false;
     switch(currentTab){
       case(Tab.TAB_SETTINGS):
-        println("Settings tab visible");
         showSettingsPanel();
         break;
       case(Tab.TAB_INFO):
@@ -343,6 +338,8 @@ void checkClick(){
 
     if(!sequencer.getPlaying()){
       sequencer.setTrackerPositionPixels(mouseY);
+      playHeadNewPosition = sequencer.getTrackerPositionMS();
+      println("placedAt:" + playHeadNewPosition);
     }
   }
 
@@ -405,19 +402,25 @@ void keyPressed(){
       sequencer.resetView();
       startMillis = 0;
       delay = 0;
+      playHeadPaused = 0;
+      playHeadNewPosition = 0;
     }else if(sequencer.getPlaying()){
       pausedAt = System.currentTimeMillis();
+      playHeadPaused = seq.getTrackerPositionMS();
+      playHeadNewPosition = playHeadPaused;
       sequencer.setPlaying(false);
     }else{
       sequencer.setPlaying(true);
       if(startMillis == 0){
         startMillis = System.currentTimeMillis();
       }else{
-        delay += System.currentTimeMillis() - pausedAt;
+        // Set the delay to the current time, minus the time that was paused, plus the difference in playhead position
+        delay += System.currentTimeMillis() - pausedAt + (playHeadPaused - playHeadNewPosition); 
       }
     }
   }
   
+  // Ignore escape key
   if(key == ESC){
     key = 0;
   }

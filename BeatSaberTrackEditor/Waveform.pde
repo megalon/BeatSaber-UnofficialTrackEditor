@@ -254,7 +254,6 @@ class Waveform extends GUIElement {
   }
   
   public void setStretchSpectrogram(boolean stretch){
-    println("Waveform stretched?: " + stretch);
     if(stretch){
       this.spectraWidthScale = spectraWidthScaleStretched;
     }else{

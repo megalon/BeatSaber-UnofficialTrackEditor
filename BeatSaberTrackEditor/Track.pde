@@ -20,7 +20,6 @@ class Track extends GUIElement{
   
   Track(GUIElement parent, int gridWidth, int gridHeight, int beatsPerBar, int trackType){
     this.setParent(parent);
-    println("track gridWidth: " + gridWidth);
     
     gridBlocks = new HashMap<Float, GridBlock>();
     gridBlocksCopy = new HashMap<Float, GridBlock>();

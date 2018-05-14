@@ -280,6 +280,10 @@ class TrackSequencer extends GUIElement{
     waveform.setTrackerPositionPixels((this.getY()) - pos); 
   }
   
+  public int getTrackerPositionMS(){
+    return waveform.getSongPosition(); 
+  }
+  
   public boolean getSnapToggle(){
     return snapToggle;
   }

@@ -1,3 +1,7 @@
+While attempting to use Vorbis I created this note sheet.
+I could not get the .jar to work with processing, but here are the steps that I followed when creating the .jar
+
+Download VorbisJava project (A Java Vorbis implementation)
 https://github.com/Gagravarr/VorbisJava
 
 Create a new project in eclipse.
