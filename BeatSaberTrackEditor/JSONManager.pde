@@ -1,7 +1,10 @@
+import java.util.Collections;
+import java.util.Comparator;
+
 class JSONManager{
   TrackSequencer seq;
-  String outputFile, inputFile;
-  JSONObject json;
+  String outputTrackFile, inputTrackFile, inputInfoFile, outputInfoFile;
+  JSONObject jsonTrack, jsonInfo;
   JSONArray events, notes, obstacles;
   GLabel consoleOutLabel;
 
@@ -14,6 +17,31 @@ class JSONManager{
     this.consoleOutLabel = consoleOutLabel;
   }
 
+  public void loadInfo(String filename){
+    if(filename == null || filename.isEmpty()){
+      return;
+    }
+    
+    this.consoleOutLabel.setText("Opening info file: " + filename);
+    
+    
+    jsonInfo = loadJSONObject(filename);
+    
+    bpmTextField.setPromptText("" + jsonInfo.getFloat("beatsPerMinute"));
+    songNameField.setPromptText("" + jsonInfo.getString("songName"));
+    songSubNameField.setPromptText("" + jsonInfo.getString("songSubName"));
+    authorNameField.setPromptText("" + jsonInfo.getString("authorName"));
+    previewStartTimeField.setPromptText("" + jsonInfo.getInt("previewStartTime"));
+    previewDurationField.setPromptText("" + jsonInfo.getInt("previewDuration"));
+    coverImagePathField.setPromptText("" + jsonInfo.getString("coverImagePath"));
+    
+    JSONObject difficultyLevels = jsonInfo.getJSONObject("difficultyLevels");
+    
+    difficultyRankField.setPromptText("" + difficultyLevels.getString("difficultyRank"));
+    
+    
+  }
+  
   // Load a track from disk
   public void loadTrack(String filename){
     if(filename == null || filename.isEmpty()){
@@ -21,18 +49,16 @@ class JSONManager{
     }
 
     this.consoleOutLabel.setText("Opening track file: " + filename);
-
-    json = loadJSONObject(filename);
-
+    
+    jsonTrack = loadJSONObject(filename);
+    
     seq.clearSeq();
-
-    float bpmIn = json.getFloat("_beatsPerMinute");
-    notes = json.getJSONArray("_notes");
-    events = json.getJSONArray("_events");
-    obstacles = json.getJSONArray("_obstacles");
-
-    //offset = json.getFloat("_offset");
-
+    
+    float bpmIn = jsonTrack.getFloat("_beatsPerMinute");
+    notes = jsonTrack.getJSONArray("_notes");
+    events = jsonTrack.getJSONArray("_events");
+    obstacles = jsonTrack.getJSONArray("_obstacles");
+    
     //If events was empty, create some temp events
     if(events == null){
       createPlaceholderEvents();
@@ -188,36 +214,36 @@ class JSONManager{
     this.consoleOutLabel.setText("Saving track file: " + filename);
     println("Saving track to file: " + filename);
 
-    this.outputFile = filename;
+    this.outputTrackFile = filename;
+    
+    jsonTrack = new JSONObject();
 
-    json = new JSONObject();
     notes = new JSONArray();
-
-    // Currently skipping over events and obstacles!
     events = new JSONArray();
     obstacles = new JSONArray();
+    
+    jsonTrack.setString("_version", versionString);
+    jsonTrack.setFloat("_beatsPerMinute", seq.getBPM());
+    jsonTrack.setInt("_beatsPerBar", beatsPerBar);
+    jsonTrack.setFloat("_noteJumpSpeed", 10.0);
+    jsonTrack.setFloat("_shuffle", 0.0);
+    jsonTrack.setFloat("_shufflePeriod", 0.25);
 
     setEventsArray();
     setNotesArray();
     setObstaclesArray();
-
-    json.setString("_version", versionString);
-    json.setFloat("_beatsPerMinute", seq.getBPM());
-    json.setInt("_beatsPerBar", beatsPerBar);
-    json.setFloat("_noteJumpSpeed", 10.0);
-    json.setFloat("_shuffle", 0.0);
-    json.setFloat("_shufflePeriod", 0.25);
-    json.setJSONArray("_events", events);
-    json.setJSONArray("_notes", notes);
-    json.setJSONArray("_obstacles", obstacles);
-
-
-    int outFileLen = outputFile.length();
-    if(outFileLen < 5 || !this.outputFile.substring(outFileLen - 5, outFileLen).equals(".json")){
-      this.outputFile = this.outputFile + ".json";
+    
+    jsonTrack.setJSONArray("_events", events);
+    jsonTrack.setJSONArray("_notes", notes);
+    jsonTrack.setJSONArray("_obstacles", obstacles);
+    
+    
+    int outFileLen = outputTrackFile.length();
+    if(outFileLen < 5 || !this.outputTrackFile.substring(outFileLen - 5, outFileLen).equals(".json")){
+      this.outputTrackFile = this.outputTrackFile + ".json";
     }
-
-    saveJSONObject(json, filename);
+    
+    saveJSONObject(jsonTrack, filename);
 
     this.consoleOutLabel.setText("++++ Track file saved! ++++ " + hour() + ":" + minute() + ":" + second() + "\n" + filename);
   }
@@ -256,6 +282,8 @@ class JSONManager{
       }
       ++multiCount;
     }
+    
+    sortByTime(notes);
   }
 
   // Create the notes JSON array
@@ -286,6 +314,8 @@ class JSONManager{
       }
       ++trackCount;
     }
+    
+    sortByTime(obstacles);
   }
 
   private void setEventsArray(){
@@ -295,6 +325,7 @@ class JSONManager{
     int eventCount = 0;
     MultiTrack m = seq.multiTracks.get(0);
     trackCount = 0;
+    
     for(Track t : m.tracks){
       // Iterate through all gridblocks in hashmap
       for (Float f: t.gridBlocks.keySet()) {
@@ -320,7 +351,53 @@ class JSONManager{
         //println("Changing trackcount to: " + trackCount);
       }
     }
+    
+    //
+    // Sort the events array. If it is not sorted, events can be skipped
+    //
+    sortByTime(events);
 
+  }
+  
+  // Sort the JSONArray by the _time float value
+  private void sortByTime(JSONArray array){
+    
+    // Copy the jsonArray into an arraylist
+    ArrayList<JSONObject> jsonValues = new ArrayList<JSONObject>();
+    for (int i = 0; i < array.size(); ++i) {
+        jsonValues.add(array.getJSONObject(i));
+    }
+    
+    // Sort the arraylist 
+    Collections.sort( jsonValues, new Comparator<JSONObject>() {
+        //You can change "Name" with "ID" if you want to sort by ID
+        private static final String KEY_NAME = "_time";
+
+        @Override
+        public int compare(JSONObject a, JSONObject b) {
+            Float valA = 0.0;
+            Float valB = 0.0;
+
+            try {
+                valA = (float) a.getFloat(KEY_NAME);
+                valB = (float) b.getFloat(KEY_NAME);
+            } 
+            catch (Exception e) {
+                println("Error: Exception in sorting JSON array!");
+            }
+
+            if(valA < valB)
+              return -1;
+            else if(valA > valB)
+              return 1;
+            return 0;
+        }
+    });
+
+    // Copy the sorted ArrayList into the JSONArray
+    for (int i = 0; i < array.size(); ++i) {
+        array.setJSONObject(i, jsonValues.get(i));
+    }
   }
 
   private void createPlaceholderEvents(){

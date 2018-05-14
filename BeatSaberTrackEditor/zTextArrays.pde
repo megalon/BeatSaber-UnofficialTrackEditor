@@ -17,8 +17,13 @@ static final class TextArrays{
     "  DOWN ARROW : Scroll down sequencer",
     "",
     "  SQUARE BRACKETS [ and ] : Adjust grid size",
+    "  TAB : Stretch spectrogram width to grid",
     "",
     "  CTRL + S : Quick save",
+    "",
+    "  B : EXPERIMENTAL! Toggle selection mode",
+    "      LEFT CLICK : Select",
+    "      RIGHT CLICK : Paste at mouse cursor",
     "",
     "  Currently the program autosaves every 30 sec into the directory \n .\\data\\tmp\\",
   };

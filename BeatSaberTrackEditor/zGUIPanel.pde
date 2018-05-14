@@ -1,3 +1,4 @@
+
 //
 // G4P GUI objects
 //
@@ -19,11 +20,53 @@ GDropList difficulty;
 GTextField audioPathTextField;
 GTextField jsonPathTextField;
 
+//Labels
+GLabel audioOffsetTextLabel;
+GLabel songNameLabel;
+GLabel songSubNameLabel;
+GLabel authorNameLabel;
+GLabel previewStartTimeLabel;
+GLabel previewDurationLabel;
+GLabel coverImagePathLabel;
+GLabel difficultyRankLabel;
+
+GLabel environmentNameLabel;
+GLabel difficultyLabel;
+
+GLabel audioPathTextLabel;
+GLabel jsonPathTextLabel;
+
+// Settings tab
+GLabel settingsTitle;
+GCheckbox noteClickToggle;
+GCheckbox keyboardRecordToggle;
+GLabel noteClickToggleLabel;
+GLabel keyboardRecordToggleLabel;
+
+PImage gridLayoutImage;
+String gridLayoutImagePath = "gridlayouthelp.png";
+
+// Underneath waveform
+GTextField playbackSpeedField;
+
+
 ArrayList<GAbstractControl> infoFields;
+ArrayList<GAbstractControl> infoLabels;
+ArrayList<GAbstractControl> settingsFields;
+ArrayList<GAbstractControl> settingsLabels;
 float infoPanelX;
 float xInfoFieldOffset = 150;
+float xInfoLabelOffset = 25;
+int fieldHeight = 25;
 
-public void createFileSystemGUI(int x, int y, int w, int h, int border) {
+int yOffset = 150;
+int ySpacing = 30;
+
+TrackSequencer seq;
+
+public void createFileSystemGUI(int x, int y, int w, int h, int border, TrackSequencer seq) {
+  
+  this.seq = seq;
   // Set inner frame position
   x += border;
   y += border;
@@ -53,6 +96,8 @@ public void createFileSystemGUI(int x, int y, int w, int h, int border) {
   lblConsole.setText("Loaded default audio file: " + soundfilePath);
 }
 
+
+// This function sets up the info GUI. I did not implement this GUI
 public void createInfoGUI(int x, int y, int w, int h, int border){
     // Set inner frame position
   x += border;
@@ -60,8 +105,6 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   w -= 2*border;
   h -= 2*border;
   
-  int yOffset = 150;
-  int ySpacing = 30;
   infoPanelX = x;
   
   infoTitle = new GLabel(this, x, y + yOffset, w, 20);
@@ -75,9 +118,10 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   int bs = bgap + bw;
   
   int xInfoFieldWidth = (int)(w - xInfoFieldOffset) - border;
-  int fieldHeight = 25;
+  int xInfoLabelWidth = xInfoFieldWidth / 2;
   
   infoFields = new ArrayList<GAbstractControl>();
+  infoLabels = new ArrayList<GAbstractControl>();
   
   songNameField          = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
   songSubNameField       = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
@@ -89,8 +133,8 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   jsonPathTextField      = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
   difficultyRankField    = new GTextField(this, x, y, xInfoFieldWidth, fieldHeight);
   
-  environmentName        = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight);
-  difficulty             = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight);
+  environmentName        = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight*5);
+  difficulty             = new GDropList(this, x, y, xInfoFieldWidth, fieldHeight*5);
   
   infoFields.add(songNameField);
   infoFields.add(songSubNameField);
@@ -104,8 +148,41 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   infoFields.add(environmentName);
   infoFields.add(difficulty);
   
+  songNameLabel          = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  songSubNameLabel       = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  authorNameLabel        = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  previewStartTimeLabel  = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  previewDurationLabel   = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  coverImagePathLabel    = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  audioPathTextLabel     = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  jsonPathTextLabel      = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  difficultyRankLabel    = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  
+  environmentNameLabel   = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  difficultyLabel        = new GLabel(this, x, y, xInfoLabelWidth, fieldHeight);
+  
+  infoLabels.add(songNameLabel);
+  infoLabels.add(songSubNameLabel);
+  infoLabels.add(authorNameLabel);
+  infoLabels.add(previewStartTimeLabel);
+  infoLabels.add(previewDurationLabel);
+  infoLabels.add(coverImagePathLabel);
+  infoLabels.add(audioPathTextLabel);
+  infoLabels.add(jsonPathTextLabel);
+  infoLabels.add(difficultyRankLabel);
+  infoLabels.add(environmentNameLabel);
+  infoLabels.add(difficultyLabel);
+  
+ 
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(x + xInfoFieldOffset, y + ySpacing * (i + 1) + yOffset);
+  }
+  
+  Font labelFont = new Font("Arial", Font.PLAIN, 25);
+  for(int i = 0; i < infoLabels.size(); ++i){
+    infoLabels.get(i).moveTo(xInfoLabelOffset, y + ySpacing * (i + 1) + yOffset);
+    infoLabels.get(i).setOpaque(false);
+    infoLabels.get(i).setLocalColorScheme(14);
   }
   
   Font font = new Font("Arial", Font.PLAIN, 18);
@@ -156,6 +233,91 @@ public void createInfoGUI(int x, int y, int w, int h, int border){
   difficultyRankField.setPromptText("4");
   difficultyRankField.setFont(font);
   
+  songNameLabel.setText("Song name", GAlign.RIGHT, GAlign.MIDDLE);
+  songSubNameLabel.setText("Subname", GAlign.RIGHT, GAlign.MIDDLE);
+  authorNameLabel.setText("Artist", GAlign.RIGHT, GAlign.MIDDLE);
+  previewStartTimeLabel.setText("Preview start time", GAlign.RIGHT, GAlign.MIDDLE);
+  previewDurationLabel.setText("Preview duration", GAlign.RIGHT, GAlign.MIDDLE);
+  coverImagePathLabel.setText("Cover image", GAlign.RIGHT, GAlign.MIDDLE);
+  audioPathTextLabel.setText("Audio file", GAlign.RIGHT, GAlign.MIDDLE);
+  jsonPathTextLabel.setText("JSON output file", GAlign.RIGHT, GAlign.MIDDLE);
+  environmentNameLabel.setText("Environment name", GAlign.RIGHT, GAlign.MIDDLE);
+  difficultyLabel.setText("Difficulty", GAlign.RIGHT, GAlign.MIDDLE);
+  difficultyRankLabel.setText("Difficulty rank", GAlign.RIGHT, GAlign.MIDDLE);
+
+}
+
+public void createSettingsGUI(int x, int y, int w, int border){
+  
+  settingsTitle = new GLabel(this, x, y + yOffset, w, 20);
+  settingsTitle.setText("Settings", GAlign.LEFT, GAlign.MIDDLE);
+  settingsTitle.setOpaque(true);
+  settingsTitle.setTextBold();
+  
+  noteClickToggle      = new GCheckbox(this, x, y + yOffset, fieldHeight, fieldHeight);
+  keyboardRecordToggle = new GCheckbox(this, x, y + yOffset, fieldHeight, fieldHeight);
+  
+  noteClickToggleLabel      = new GLabel(this, x, y + yOffset, 100, fieldHeight);
+  keyboardRecordToggleLabel = new GLabel(this, x, y + yOffset, 100, fieldHeight);
+  
+  // Set default value
+  noteClickToggle.setSelected(seq.getPlayHitSound());
+  keyboardRecordToggle.setSelected(seq.getKeyboardRecordMode());
+  
+  // Set text
+  noteClickToggleLabel.setText("Note Click Sound", GAlign.RIGHT, GAlign.MIDDLE);
+  keyboardRecordToggleLabel.setText("Keyboard grid note record", GAlign.RIGHT, GAlign.MIDDLE);
+  
+  
+  settingsFields = new ArrayList<GAbstractControl>();
+  settingsLabels = new ArrayList<GAbstractControl>();
+  
+  
+  settingsFields.add(noteClickToggle);
+  settingsFields.add(keyboardRecordToggle);
+  
+  settingsLabels.add(noteClickToggleLabel);
+  settingsLabels.add(keyboardRecordToggleLabel);
+  
+  // Move the buttons / fields 
+  for(int i = 0; i < settingsFields.size(); ++i){
+    settingsFields.get(i).moveTo(x + xInfoFieldOffset, y + ySpacing * (i + 1) + yOffset);
+  }
+  
+  // Move the labels and set their color
+  for(int i = 0; i < settingsLabels.size(); ++i){
+    settingsLabels.get(i).moveTo(xInfoLabelOffset, y + ySpacing * (i + 1) + yOffset);
+    settingsLabels.get(i).setOpaque(false);
+    settingsLabels.get(i).setLocalColorScheme(14);
+  }
+  
+  gridLayoutImage = loadImage(gridLayoutImagePath);
+}
+
+public void createWaveSettingsGUI(int x, int y){
+  playbackSpeedField = new GTextField(this, x, y, 100, 25);
+}
+
+public void showSettingsPanel(){
+  settingsTitle.moveTo(infoPanelX, infoTitle.getY());
+  for(int i = 0; i < settingsFields.size(); ++i){
+    settingsFields.get(i).moveTo(infoPanelX + xInfoFieldOffset, settingsFields.get(i).getY());
+  }
+  for(int i = 0; i < settingsLabels.size(); ++i){
+    settingsLabels.get(i).moveTo(infoPanelX + xInfoLabelOffset, settingsLabels.get(i).getY());
+  }
+  
+  image(gridLayoutImage, infoPanelX + xInfoLabelOffset, settingsLabels.get(settingsLabels.size() - 1).getY() + 100);
+}
+
+public void hideSettingsPanel(){
+  settingsTitle.moveTo(width, infoTitle.getY());
+  for(int i = 0; i < settingsFields.size(); ++i){
+    settingsFields.get(i).moveTo(width, settingsFields.get(i).getY());
+  }
+  for(int i = 0; i < settingsLabels.size(); ++i){
+    settingsLabels.get(i).moveTo(width, settingsLabels.get(i).getY());
+  }
 }
 
 public void showInfoPanel(){
@@ -163,12 +325,36 @@ public void showInfoPanel(){
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(infoPanelX + xInfoFieldOffset, infoFields.get(i).getY());
   }
+  for(int i = 0; i < infoLabels.size(); ++i){
+    infoLabels.get(i).moveTo(infoPanelX + xInfoLabelOffset, infoLabels.get(i).getY());
+  }
 }
 
 public void hideInfoPanel(){
   infoTitle.moveTo(width, infoTitle.getY());
   for(int i = 0; i < infoFields.size(); ++i){
     infoFields.get(i).moveTo(width, infoFields.get(i).getY());
+  }
+  for(int i = 0; i < infoLabels.size(); ++i){
+    infoLabels.get(i).moveTo(width, infoLabels.get(i).getY());
+  }
+}
+
+
+
+public void handleToggleControlEvents(GToggleControl option, GEvent event) {
+  if (option == noteClickToggle) {
+    if(seq.getPlayHitSound()){
+      seq.setPlayHitSound(false);
+    }else{
+      seq.setPlayHitSound(true);
+    }
+  }else if(option == keyboardRecordToggle){
+    if(seq.getKeyboardRecordMode()){
+      seq.setKeyboardRecordMode(false);
+    }else{
+      seq.setKeyboardRecordMode(true);
+    }
   }
 }
 
@@ -231,6 +417,12 @@ public void handleFileDialog(GButton button) {
   String fname;
   // File input selection
   if (button == btnOpenSong) {
+    
+    /*
+    String infopath = G4P.selectInput("Select info.json", "json", "Info files");
+    jsonManager.loadInfo(infopath);
+    */
+    
     // Use file filter if possible
     soundfilePath = G4P.selectInput("Input Dialog", "wav,mp3,aiff", "Sound files");
     switch(validSoundFile(soundfilePath)){
@@ -240,7 +432,8 @@ public void handleFileDialog(GButton button) {
         lblConsole.setText("++++ Audio file opened! ++++\n" + soundfilePath);
         break;
       case(TrackSequencer.SOUND_FILE_OGG):
-        lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported!");
+        lblConsole.setText("---- ERROR! ----\n.ogg filetype not supported by this editor!\nProcessing doesn't have a way to load .ogg files!");
+
         showErrorMessage(".ogg files not supported!\nTry a stereo WAV file");
         break;
       default:

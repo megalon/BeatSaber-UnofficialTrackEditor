@@ -7,9 +7,10 @@ class MultiTrack extends GUIElement{
   public ArrayList<Track> tracks;
   
   boolean highlighted = false;
+  boolean translucent = false;
   
   int highLightedColor = color(#444444);
-  int notHighLightedColor =  color(#333333);
+  int notHighLightedColor =  color(0x33333333);
   
   MultiTrack(GUIElement parent, int numTracks, int gridWidth, int gridHeight, int beatsPerBar, String name){
     this.setParent(parent);
@@ -179,12 +180,13 @@ class MultiTrack extends GUIElement{
   public void checkTrackClickedObstacle(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
    for (Track t : tracks){
      
-     println("(-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset: " + ((-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset));
+     //println("(-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset: " + ((-selectionHeight - t.getGridHeight()) - t.getY() + seqYOffset));
       
-     println("TrackPosition: " + t.getX() + " " + t.getY());
+     //println("TrackPosition: " + t.getX() + " " + t.getY());
       if(t.checkClicked(mx, my)){
+        
         float duration = t.mouseCordToTime((-selectionHeight - t.getGridHeight()) + t.getHeight());
-        println("Duration: " + duration);
+        //println("Duration: " + duration);
         
         int w = (selectionWidth / t.getWidth()) + 1;
         
@@ -196,6 +198,149 @@ class MultiTrack extends GUIElement{
         }
       }
     } 
+  }
+  
+  // This can be used to click and drag on a notes track
+  public void checkTrackClickedNotes(int mx, int my, int seqYOffset, int selectionWidth, int selectionHeight, int type){
+   for (Track t : tracks){
+     
+      if(t.checkClicked(mx, my) || t.checkClicked(mx + selectionWidth, my) ){
+
+        // Get start and end position of selection
+        float startTime = t.mouseCordToTime(my - t.getY());
+        float endTime = t.mouseCordToTime(my - t.getY() - selectionHeight);
+        
+        println("startime, endtime : " + startTime + ", " + endTime);
+        //println("Duration: " + duration);
+        
+        int w = (selectionWidth / t.getWidth()) + 1;
+        
+        
+        for (Float f: t.gridBlocks.keySet()) {
+          GridBlock block = t.gridBlocks.get(f);
+          if(block.getTime() >= startTime && block.getTime() <= endTime){
+            println("Found block : " + block + " at time " + block.getTime());  
+          }
+        }
+        
+        /*
+        if(type == -1){
+          println("Attempting to remove obstacle a: " + mx + ", " + my);
+          t.removeGridBlockMouseClick(mx, my);
+        }else{
+          t.addGridBlockMouseClick(mx, my, type, w, duration);
+        }
+        */
+      }
+    } 
+  }
+  
+  // trackCopy
+  public void selectCopy(int my, int selectionHeight){
+   for (Track t : tracks){
+     
+     // Clear copy buffer
+     t.gridBlocksCopy.clear();
+     println("Track t:" + t);
+   
+    // Get start and end position of selection
+    float startTime = t.mouseCordToTime(my - t.getY());
+    float endTime = t.mouseCordToTime(my - t.getY() - selectionHeight);
+
+    for (Float f: t.gridBlocks.keySet()) {
+        
+      if(this.getElementName().equals("Events")){
+        Event block = (Event)t.gridBlocks.get(f);
+        if(block.getTime() >= startTime && block.getTime() <= endTime){
+          Event event = new Event(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getValue(), block.getTime() - startTime);
+          t.gridBlocksCopy.put(event.getTime(), event);
+        }
+      }else if(this.getElementName().equals("Obstacles")){
+        Obstacle block = (Obstacle)t.gridBlocks.get(f);
+        if(block.getTime() >= startTime && block.getTime() <= endTime){
+          Obstacle obstacle = new Obstacle(block.getParent(), block.getY(), block.getWidth() / block.getWallWidth(), (int)(block.getHeight() / block.getDuration() / 8), block.getType(), block.getWallWidth(), block.getTime() - startTime, block.getDuration());
+          t.gridBlocksCopy.put(obstacle.getTime(), obstacle);
+        }
+      }else{
+        Note block = (Note)t.gridBlocks.get(f);
+        if(block.getTime() >= startTime && block.getTime() <= endTime){
+          Note note = new Note(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getCutDirection(), block.getTime() - startTime);
+          t.gridBlocksCopy.put(note.getTime(), note);
+        }
+      }
+    }
+   }
+  }
+  
+  public void updateCopyDrawing(int mx, int my, int oldX, int oldY){
+    for(Track t : tracks){
+      if(t.gridBlocksCopy.size() > 0){
+        println("t.gridBlocksCopy " + t + " size: " + t.gridBlocksCopy.size());
+      }
+      
+      /*
+      for (Float f: t.gridBlocksCopy.keySet()) {
+        GridBlock block = t.gridBlocksCopy.get(f);
+        float pasteTime = t.mouseCordToTime(my - t.getY());
+        
+        n.setTime(n.getTime() + pasteTime);
+        n.setY(t.calculateGridYPos(n.getTime()));
+        
+        t.gridBlocks.put(n.getTime(), n);
+      }
+      */
+      /*
+      float pasteTime = t.mouseCordToTime(my - t.getY());
+      // Put the copied blocks back in the normal hashmap
+      for (Float f: t.gridBlocksCopy.keySet()) {
+        GridBlock block = t.gridBlocksCopy.get(f);
+      
+        float newTime = t.mouseCordToTime(t.calculateGridYPos(block.getTime()) + my - oldY);
+        
+        block.setY(t.calculateGridYPos(block.getTime()) + my - oldY - t.getY() + t.yStartingPosition);
+        
+      }*/
+    }
+  }
+  
+  public void selectPaste(int my){
+    println();
+    for(Track t : tracks){
+
+      if(t.gridBlocksCopy.size() > 0){
+        println("t.gridBlocksCopy " + t + " size: " + t.gridBlocksCopy.size());
+      }
+      
+      float pasteTime = t.mouseCordToTime(my - t.getY());
+      
+      GridBlock b = null;
+      
+      // Put the copied blocks back in the normal hashmap
+      // Each different object type needs to be cast to the matching object
+      // The object is then cast back to a generic griblock to be put back into the hashmap
+      for (Float f: t.gridBlocksCopy.keySet()) {
+        if(t.getTrackType() == Track.TRACK_TYPE_NOTES){
+          Note block = (Note)t.gridBlocksCopy.get(f);
+          Note n = new Note(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getCutDirection(), block.getTime());
+          b = (GridBlock)n;
+        }else if(t.getTrackType() == Track.TRACK_TYPE_EVENTS){
+          Event block = (Event)t.gridBlocksCopy.get(f);
+          Event e = new Event(block.getParent(), block.getY(), block.getWidth(), block.getHeight(), block.getType(), block.getValue(), block.getTime());
+          b = (GridBlock)e;
+        }else if(t.getTrackType() == Track.TRACK_TYPE_OBSTACLES){
+          Obstacle block = (Obstacle)t.gridBlocksCopy.get(f);
+          Obstacle o = new Obstacle(block.getParent(), block.getY(), block.getWidth() / block.getWallWidth(), (int)(block.getHeight() / block.getDuration() / 8), block.getType(), block.getWallWidth(), block.getTime(), block.getDuration());
+          b = (GridBlock)o;
+        }
+        
+        // Add gridblock back into the hashmap
+        if(b != null){
+          b.setTime(b.getTime() + pasteTime);
+          b.setY(t.calculateGridYPos(b.getTime()));
+          t.gridBlocks.put(b.getTime(), b);
+        }
+      }
+    }
   }
   
   public void setBeatsPerBar(int beats){
@@ -216,17 +361,29 @@ class MultiTrack extends GUIElement{
     }
   }
   
+  public void setTranslucent(boolean t){
+    this.translucent = t;
+  }
+  
   public void display(){
     super.display();
     Track t;
+    /*fill(this.getFillColor());
+    stroke(#333333);
+    rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    */
     
     for (int i = 0; i < tracks.size(); ++i){
       t = tracks.get(i);
-      if(i > 0){
-        stroke(color(#555555));
-        line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
+      
+      if(!translucent){
+        if(i > 0){
+          stroke(color(#333333));
+          line(t.getX(), t.getY(), t.getX(), t.getY() + t.getHeight());
+        }
       }
       t.display();
     }
+    
   }
 }

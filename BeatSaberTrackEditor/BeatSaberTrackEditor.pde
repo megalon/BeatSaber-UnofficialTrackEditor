@@ -6,7 +6,8 @@ import g4p_controls.*;
 import ddf.minim.*;
 import java.awt.*;
 
-String versionText = "Megalon v0.0.18-3";
+
+String versionText = "Megalon v0.1.0";
 
 boolean debug = false;
 
@@ -27,6 +28,8 @@ boolean right = false;
 boolean shiftPressed, controlPressed, altPressed, snapToggle;
 boolean showHelpText;
 
+boolean keyboardRecordMode = false;
+
 boolean playing = false;
 
 PImage eventLabels;
@@ -45,11 +48,25 @@ int type = 0;
 
 int helpboxX, helpboxY, helpboxSize;
 
+// Keyboard keys to notes
+long startMillis = 0;          // Time that the seq started playing from beginning
+long delay = 0;                // Delay time in ms between pause and playing again
+long pausedAt = 0;             // Time in ms where the system clock was when the seq was paused
+long playHeadPaused = 0;       // Time in ms where the playhead stops when paused
+long playHeadNewPosition = 0;  // Time in ms where the playhead moves to when moved with mouse
+int nextTypedNoteIndex = 0;
+int nextTypedNoteLayer = 0;
 
 String[] currentHelpText = TextArrays.defaultControlsText;
 
-//GTextField bpmTextField;
-//GTextField audioOffsetTextField;
+ArrayList<Tab> tabs;
+int currentTab = Tab.TAB_HELP;
+int previousTab = -1;
+
+Tab tabInfo;
+Tab tabDifficulty;
+Tab tabHelp;
+Tab tabSettings;
 
 // Controls used for file dialog GUI
 GButton btnOpenSong, btnInput, btnOutput;
@@ -66,7 +83,7 @@ void setup(){
   shiftPressed = false;
   controlPressed = false;
   altPressed = false;
-  showHelpText = true;
+  showHelpText = false;
 
   // Minim must be declared in the main class!
   minim = new Minim(this);
@@ -87,14 +104,43 @@ void setup(){
   
   helpboxSize = 400;
   helpboxX = width - helpboxSize;
-  helpboxY = 120;
+  helpboxY = 150;
+  
+  int helpBoxBorder = 6;
+  int tabSpacing = helpBoxBorder;
 
   // To set the global colour scheme use 
   G4P.setGlobalColorScheme(6);
-
-  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, 6);
+  
+  
+  // Create tabs
+  tabs = new ArrayList<Tab>();
+  
+  tabHelp       = new Tab(null, width - helpboxSize + helpBoxBorder, helpboxY - helpBoxBorder*3, 50, 25, "HELP");
+  tabSettings   = new Tab(null, width - helpboxSize + helpBoxBorder + tabHelp.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Settings");
+  tabInfo       = new Tab(null, width - helpboxSize + helpBoxBorder,                                   helpboxY - helpBoxBorder*3, 70, 25, "Song Info");
+  tabDifficulty = new Tab(null, width - helpboxSize + helpBoxBorder + tabInfo.getWidth() + tabSpacing, helpboxY - helpBoxBorder*3, 70, 25, "Difficulty");
+  
+  //tabs.add(tabInfo);
+  //tabs.add(tabDifficulty);
+  tabs.add(tabHelp);
+  tabs.add(tabSettings);
+  
+  //Tab tabInfo = new Tab(null, );
+  
+  createFileSystemGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder, sequencer);
+  createInfoGUI(width - helpboxSize, 0, helpboxSize, 130, helpBoxBorder);
+  //createWaveSettingsGUI(20, height + sequencerYOffset + 10);
+  createSettingsGUI(width - helpboxSize, 0, 130, helpBoxBorder);
   jsonManager = new JSONManager(sequencer, lblConsole);
 
+
+  // Create thread to check if the click sound should be played
+  thread("checkPlaySoundWrapper");
+}
+
+public void checkPlaySoundWrapper(){
+  sequencer.checkPlaySoundWrapper();
 }
 
 void resetKeys(){
@@ -115,29 +161,6 @@ void draw(){
     resetKeys();
   }
   
-  // Check if any of the multitracks are hovered over
-  currentHelpText = TextArrays.defaultControlsText;
-  for(int i = 0; i < sequencer.multiTracks.size(); ++i){
-    if(sequencer.multiTracks.get(i).checkClicked(mouseX, mouseY)){
-      sequencer.multiTracks.get(i).setHighlighted(true);
-      switch(i){
-        case(0):
-          currentHelpText = TextArrays.eventControlsText;
-          break;
-        case(1):
-        case(2):
-        case(3):
-          currentHelpText = TextArrays.noteControlsText;
-          break;
-        case(4):
-          currentHelpText = TextArrays.obstacleControlsText;
-          break;
-      }
-    }else{
-      sequencer.multiTracks.get(i).setHighlighted(false);
-    }
-  }
-  
   timeCounter++;
   // Autosave
   // Save every 30 seconds at 60fps
@@ -149,14 +172,26 @@ void draw(){
       tempTrackIndex++;
   }
   
-  
   // Redraw background
   background(#111111);
-
-  sequencer.setCutDirection(getNewCutDirection());
-
+  
   sequencer.display();
   drawGrid();
+  
+  // Change cursor type if in selection mode
+  if(sequencer.getTool() == TrackSequencer.TOOL_SELECT){
+    cursor(CROSS);
+  }else{
+    cursor(ARROW);
+  }
+  
+  if(sequencer.getKeyboardRecordMode()){
+    
+    fill(255);
+    text("M  <  >  ?", sequencer.multiTracks.get(1).getX() + 5, height+sequencerYOffset - 10);
+    text("J   K   L  :", sequencer.multiTracks.get(2).getX() + 5, height+sequencerYOffset - 10);
+    text("U   I   O  P",   sequencer.multiTracks.get(3).getX() + 5, height+sequencerYOffset - 10);
+  }
 
 
   fill(0);
@@ -178,14 +213,12 @@ void draw(){
   textSize(12);
   image(eventLabels, sequencer.multiTracks.get(0).getX() - 65, height + sequencerYOffset);
   
-  text("FPS: " + (int)frameRate,0, height);
-  
-  // Draw help text
-  if(showHelpText){
 
     fill(#000000);
     rect(helpboxX, 0, helpboxSize, height);
 
+  // Draw help text
+  if(showHelpText){
     fill(BeatSaberTrackEditor.THEME_COLOR_0);
     textSize(18);
     text("INSTRUCTIONS", helpboxX + 10, helpboxY + 28);
@@ -210,8 +243,39 @@ void draw(){
     if(debug){
       text("mouseX: " + mouseX, 0, 10);
       text("mouseY: " + mouseY, 0, 20);
+      text("Current tool : " + sequencer.getTool(), 0, 30);
     }
   }
+  
+  
+  
+  
+  if(currentTab != previousTab){
+    hideInfoPanel();
+    hideSettingsPanel();
+    showHelpText = false;
+    switch(currentTab){
+      case(Tab.TAB_SETTINGS):
+        showSettingsPanel();
+        break;
+      case(Tab.TAB_INFO):
+        showInfoPanel();
+        break;
+      case(Tab.TAB_DIFFICULTY):
+        break;
+      case(Tab.TAB_HELP):
+        drawHelpText();
+        showHelpText = true;
+        break;
+      default:
+        showInfoPanel();
+    }
+  }
+  
+  for(Tab t : tabs){
+    t.display();
+  }
+  
   textSize(12);
   fill(BeatSaberTrackEditor.THEME_COLOR_0);
   text(versionText, width - 115 , 148);
@@ -222,6 +286,19 @@ void draw(){
 
 void mousePressed(){
   checkClick();
+  
+  if(tabHelp.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_HELP;
+  }else if(tabSettings.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_SETTINGS;
+  }
+  /*
+  if(tabInfo.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_INFO;
+  }else if(tabDifficulty.checkClicked(mouseX, mouseY)){
+    currentTab = Tab.TAB_DIFFICULTY;
+  }else
+  */
 }
 
 void mouseDragged(){
@@ -232,8 +309,19 @@ void mouseDragged(){
   }
 }
 
+void mouseMoved() {
+  sequencer.updateSelection(mouseX, mouseY);
+}
+
 void mouseReleased(){
   sequencer.stopCreateSelection(mouseX, mouseY, getType());
+  if(mouseX < helpboxX && mouseButton == RIGHT){
+    if(sequencer.getTool() == TrackSequencer.TOOL_SELECT){
+      // Paste
+      println("Pasting at: " + mouseY);
+      sequencer.pasteAll(mouseY);
+    }
+  }
 }
 
 int getType(){
@@ -258,15 +346,21 @@ int getType(){
 }
 
 void checkClick(){
-  sequencer.checkClickedTrack(mouseX, mouseY, getType());
+  
+  if(mouseX < helpboxX){
+    
+    sequencer.checkClickedTrack(mouseX, mouseY, getType());
+
+    if(!sequencer.getPlaying()){
+      sequencer.setTrackerPositionPixels(mouseY);
+      playHeadNewPosition = sequencer.getTrackerPositionMS();
+      println("placedAt:" + playHeadNewPosition);
+    }
+  }
 
   // Processing doesn't store what button was released,
   // so I have to do this
   previousMouseButton = mouseButton;
-
-  if(!sequencer.getPlaying()){
-    sequencer.setTrackerPositionPixels(mouseY);
-  }
 }
 
 void mouseWheel(MouseEvent event) {
@@ -284,6 +378,7 @@ void mouseWheel(MouseEvent event) {
 }
 
 void keyPressed(){
+  
   if (key == CODED) {
     if (keyCode == SHIFT) {
       shiftPressed = true;
@@ -315,19 +410,32 @@ void keyPressed(){
       }
     }
   }
-
-  if(key == ' '){
+  
+  if (key == ' '){
     if(shiftPressed){
       sequencer.stop();
       sequencer.resetView();
+      startMillis = 0;
+      delay = 0;
+      playHeadPaused = 0;
+      playHeadNewPosition = 0;
+    }else if(sequencer.getPlaying()){
+      pausedAt = System.currentTimeMillis();
+      playHeadPaused = seq.getTrackerPositionMS();
+      playHeadNewPosition = playHeadPaused;
+      sequencer.setPlaying(false);
     }else{
-      if(sequencer.getPlaying())
-        sequencer.setPlaying(false);
-      else
-        sequencer.setPlaying(true);
+      sequencer.setPlaying(true);
+      if(startMillis == 0){
+        startMillis = System.currentTimeMillis();
+      }else{
+        // Set the delay to the current time, minus the time that was paused, plus the difference in playhead position
+        delay += System.currentTimeMillis() - pausedAt + (playHeadPaused - playHeadNewPosition); 
+      }
     }
   }
   
+  // Ignore escape key
   if(key == ESC){
     key = 0;
   }
@@ -356,8 +464,7 @@ void keyPressed(){
         }
       }
     }
-}
-
+  }
 
   if(key == 'w'){
     up = true;
@@ -368,9 +475,37 @@ void keyPressed(){
   }if(key == 'd'){
     right = true;
   }
-}
 
+  sequencer.setCutDirection(getNewCutDirection());
+  
+  if(sequencer.getKeyboardRecordMode() && sequencer.getPlaying()){
+    if(key == 'm'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,0);}
+    if(key == ','){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,0);}
+    if(key == '.'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,0);}
+    if(key == '/'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,0);}
+    if(key == 'j'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,1);}
+    if(key == 'k'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,1);}
+    if(key == 'l'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,1);}
+    if(key == ';'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,1);}
+    if(key == 'u'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 0,2);}
+    if(key == 'i'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 1,2);}
+    if(key == 'o'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 2,2);}
+    if(key == 'p'){sequencer.addNote(startMillis, System.currentTimeMillis(), delay, 3,2);}
+  }
+}
 void keyReleased(){
+  
+  if(key == TAB){
+    sequencer.setStretchSpectrogram(!sequencer.getStretchSpectrogram());
+  }
+  
+  // Select mode
+  if(key == 'b'){
+    if(sequencer.getTool() != TrackSequencer.TOOL_SELECT)
+      sequencer.setTool(TrackSequencer.TOOL_SELECT);
+    else
+      sequencer.setTool(TrackSequencer.TOOL_DRAW);
+  }
 
   if(key == '[' && sequencer.getGridResolution() < TrackSequencer.MIN_GRID_RESOLUTION){
     sequencer.setGridResolution(sequencer.getGridResolution() * 2);
@@ -410,18 +545,6 @@ void keyReleased(){
       altPressed = false;
     }
   }
-  /*
-  switch(key){
-    case TAB:
-      if(showHelpText)
-        showHelpText = false;
-      else
-        showHelpText = true;
-      break;
-    default:
-      break;
-  }
-  */
 }
 
 public int getNewCutDirection(){
@@ -477,5 +600,30 @@ public void drawGrid(){
     else
       strokeWeight(1);
     line(0, gridYPos, width, gridYPos);
+  }
+}
+
+public void drawHelpText(){
+  // Check if any of the multitracks are hovered over
+  currentHelpText = TextArrays.defaultControlsText;
+  for(int i = 0; i < sequencer.multiTracks.size(); ++i){
+    if(sequencer.multiTracks.get(i).checkClicked(mouseX, mouseY)){
+      sequencer.multiTracks.get(i).setHighlighted(true);
+      switch(i){
+        case(0):
+          currentHelpText = TextArrays.eventControlsText;
+          break;
+        case(1):
+        case(2):
+        case(3):
+          currentHelpText = TextArrays.noteControlsText;
+          break;
+        case(4):
+          currentHelpText = TextArrays.obstacleControlsText;
+          break;
+      }
+    }else{
+      sequencer.multiTracks.get(i).setHighlighted(false);
+    }
   }
 }

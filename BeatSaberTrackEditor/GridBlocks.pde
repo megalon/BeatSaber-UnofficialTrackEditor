@@ -83,6 +83,8 @@ class Obstacle extends GridBlock {
     println("This.getY(): " + this.getY());
     println("wallWidth: " + wallWidth);
     println();
+    
+    // Note the magic number 8 is due to the grid size being 1/8th of a beat
     this.setHeight((int)(this.getHeight() * -duration * 8));
     
     this.setDuration(duration);
@@ -361,6 +363,15 @@ class Note extends GridBlock {
   
   public int getCutDirection(){
     return cutDirection;
+  }
+  
+  public void printString(){
+    println("note " + this + " .getX():" + this.getX());
+    println("note " + this + " .getY():" + this.getY());
+    println("note " + this + " .getWidth():" + this.getWidth());
+    println("note " + this + " .getHeight():" + this.getHeight());
+    println("note " + this + " .getCutDirection():" + this.getCutDirection());
+    println("note " + this + " .getTime():" + this.getTime());
   }
   
   public void display(){

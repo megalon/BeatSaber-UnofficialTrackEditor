@@ -18,8 +18,12 @@ class Waveform extends GUIElement {
   // Resolution of the display
   private float sizeOfAvg = 0.0;
   private int heightScale = 1;
-  private float spectraWidthScale = 1.75;
+  private int spectraWidthScaleDefault   = 2;
+  private int spectraWidthScaleStretched = 10;
+  private int spectraWidthScale = spectraWidthScaleDefault;
   private int seqOffset;
+  
+  private int blackRectColor = 0x44000000;
 
   private float maxSize = 0;
 
@@ -29,6 +33,7 @@ class Waveform extends GUIElement {
   // width adjustment for audio display
   private int widthScale = 50;
 
+  
   String soundfilePath = "data\\90BPM_Stereo_ClickTrack.wav";
 
   Waveform(GUIElement parent, int x, int y, int gridSize, Minim minim, int yOffset){
@@ -42,7 +47,6 @@ class Waveform extends GUIElement {
   }
 
   // analyzes the spectrum and puts it in spectra and spectraBitmap
-
   // this function shamelessly stolen from tutorial on web
   private void spectraAnalyze(AudioSample sample){
     println("ANALYZING");
@@ -91,13 +95,27 @@ class Waveform extends GUIElement {
         spectra[chunkIdx][i] = fft.getBand(i);
       }
     }
-
+  
+   
+    int c;
+    int a, r, g, b;
     // filling colors so i don't have to calculate it every time i draw
     int spectraItemLength = spectra[1].length;
     for (int i =0; i<spectra.length; i++){
       for (int j = 0; j<spectraItemLength;j++){
-        spectraBitmap[i][j]=Color.HSBtoRGB(spectra[i][j]/20,1,1);
-      }
+        c = Color.HSBtoRGB(spectra[i][j]/20,1,1);
+        
+        /*
+        bitshifting to add alpha
+        r  = (c >> 16) & 0xFF;
+        g  = (c >> 8)  & 0xFF;
+        b  =  c        & 0xFF;
+        
+        c = (alphaAmount << 24) | (r << 16) | (g << 8) | b;
+        */
+        
+        spectraBitmap[i][j] = c;
+      } 
     }
   }
 
@@ -206,11 +224,6 @@ class Waveform extends GUIElement {
     return soundbis.isPlaying();
   }
 
-  public void setPosition(int gridPos){
-    //float ypos = (soundbis.position() * sound.sampleRate() / 1000) / sizeOfAvg * beatsPerBar;
-    //soundbis.skip();
-  }
-
   public int soundPosition2Pixels(int p){
     return (int)((p / 1000.0 * sampleRate) / sizeOfAvg * beatsPerBar);
   }
@@ -238,6 +251,18 @@ class Waveform extends GUIElement {
   // Returns position of the tracker bar in pixels
   public int getTrackerPosition(){
     return soundPosition2Pixels(soundbis.position());
+  }
+  
+  public void setStretchSpectrogram(boolean stretch){
+    if(stretch){
+      this.spectraWidthScale = spectraWidthScaleStretched;
+    }else{
+      this.spectraWidthScale = spectraWidthScaleDefault;
+    }
+  }
+  
+  public boolean getStretchSpectrogram(){
+    return (this.spectraWidthScale == spectraWidthScaleStretched);
   }
 
   public boolean indexOutOfSpecta(int index){
@@ -274,6 +299,7 @@ class Waveform extends GUIElement {
           int maxPix = soundPosition2Pixels(getLength());
           int borderScaled = border *2; // Optimization
           ///
+          
           for (int i = seqOffset; i > 0; --i){
             int scaleIndex = round(float(yPos - i) * (float(spectraBitmap.length) / float(maxPix))); // magic scaling factor
 /*            print("Scale Index:"+scaleIndex);
@@ -287,7 +313,7 @@ class Waveform extends GUIElement {
             if (!indexOutOfSpecta(scaleIndex))
             for (int j = 0; j < spectra[scaleIndex].length; ++j){
               stroke(spectraBitmap[scaleIndex][j]);
-              line(j + borderScaled, i, round(j * spectraWidthScale) + 1 + borderScaled, i); // Optimized draw from two point calls
+              line(j * spectraWidthScale + spectraWidthScale + border, i, j * spectraWidthScale + spectraWidthScale + borderScaled, i); // Optimized draw from two point calls
             }
           }
           //return color to normal
@@ -300,12 +326,24 @@ class Waveform extends GUIElement {
 
           strokeWeight(1);
           //strokeWeight(beatsPerBar);
-          // Draw the waveform display
+          
+          // Draw the waveform display and the time. Time is currently showing each second
+          /*
           float prevTime = -1;
           for ( int i=0; i < sampleAverage.size(); i++) {
             // Draw the sound file
             line(border*2, -(i * beatsPerBar) + this.getY()+8, border*2 + ((sampleAverage.get(i) * 8) / maxSize), -(i * beatsPerBar) + this.getY()+8);
           }
+
+          strokeWeight(1);
+          line(border*2, this.getY(), border*2, -(sampleAverage.size() * beatsPerBar) + this.getY());
+          */
+        }
+        
+        if(this.spectraWidthScale == spectraWidthScaleStretched){
+          // Draw transparent rect
+          fill(blackRectColor);
+          rect(0, 0, width, height);
         }
         fill(190);
         stroke(#ffffff);
@@ -313,6 +351,8 @@ class Waveform extends GUIElement {
         //strokeWeight(beatsPerBar);
         // Draw the time in seconds
         float prevTime = -1;
+        
+        // Draw the the time. Time is currently showing each second
         for ( int i = 0; i < sampleAverage.size(); i++) {
           // Draw the text (time in seconds)
           float time = floor((i * sizeOfAvg) / sampleRate);
@@ -322,9 +362,7 @@ class Waveform extends GUIElement {
             text(round(time), 4, this.getY() - (i * beatsPerBar) - border);
           }
         }
-
-        strokeWeight(1);
-        line(border*2, this.getY(), border*2, -(sampleAverage.size() * beatsPerBar) + this.getY());
+        
         // Draw the play head (red line moving across)
         strokeWeight(2);
         stroke(#990000);

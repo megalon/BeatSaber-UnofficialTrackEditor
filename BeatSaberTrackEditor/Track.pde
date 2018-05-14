@@ -5,6 +5,7 @@ class Track extends GUIElement{
   private static final int TRACK_TYPE_OBSTACLES = 3;
   
   HashMap<Float, GridBlock> gridBlocks;
+  HashMap<Float, GridBlock> gridBlocksCopy; // Used for copy buffer
   private int gridWidth = 0;
   private int gridHeight = 0;
   private int defaultGridHeight = 0;
@@ -19,9 +20,9 @@ class Track extends GUIElement{
   
   Track(GUIElement parent, int gridWidth, int gridHeight, int beatsPerBar, int trackType){
     this.setParent(parent);
-    println("track gridWidth: " + gridWidth);
     
     gridBlocks = new HashMap<Float, GridBlock>();
+    gridBlocksCopy = new HashMap<Float, GridBlock>();
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
     this.defaultGridHeight = gridHeight;
@@ -67,6 +68,7 @@ class Track extends GUIElement{
     return val;
   }
   
+  // Time to coord
   public int calculateGridYPos(float time){
     return timeToCord(time);
   }
@@ -188,13 +190,36 @@ class Track extends GUIElement{
     return gridHeight;
   }
   
+  public int getTrackType(){
+    return trackType;
+  }
+  
+  // Check if a gridblock is within a time period
+  public boolean checkBlockInTimePeriod(float prevTime, float currentTime){
+    float time = 0;
+    
+    try{
+      for (Float f: gridBlocks.keySet()) {
+        GridBlock block = gridBlocks.get(f);
+        time = block.getTime();
+        
+        if(time > prevTime && time <= currentTime){
+          
+          return true;
+        }
+      }
+    }catch(Exception e){
+      println(e.toString());
+    }
+    return false; 
+  }
+  
   public void display(){
     
     // Don't call super because it would cause the tracks to draw on top of boxes with width greater than 1
     //super.display();
     
     for (Float f: gridBlocks.keySet()) {
-      
       switch(trackType){
         case(GridBlock.GB_TYPE_NOTE):
           Note note = (Note)gridBlocks.get(f);
@@ -206,6 +231,26 @@ class Track extends GUIElement{
           break;
         case(GridBlock.GB_TYPE_OBSTACLE):
           Obstacle obstacle = (Obstacle)gridBlocks.get(f);
+          obstacle.display();
+          break;
+        default:
+          println("gridBlockType in Track display function: " + trackType);
+          println("Error: Invalid grid block type!");
+      }
+    }
+    
+    for (Float f: gridBlocksCopy.keySet()) {
+      switch(trackType){
+        case(GridBlock.GB_TYPE_NOTE):
+          Note note = (Note)gridBlocksCopy.get(f);
+          note.display();
+          break;
+        case(GridBlock.GB_TYPE_EVENT):
+          Event event = (Event)gridBlocksCopy.get(f);
+          event.display();
+          break;
+        case(GridBlock.GB_TYPE_OBSTACLE):
+          Obstacle obstacle = (Obstacle)gridBlocksCopy.get(f);
           obstacle.display();
           break;
         default:

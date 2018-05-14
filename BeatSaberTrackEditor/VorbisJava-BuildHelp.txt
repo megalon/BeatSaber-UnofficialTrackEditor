@@ -1,0 +1,21 @@
+While attempting to use Vorbis I created this note sheet.
+I could not get the .jar to work with processing, but here are the steps that I followed when creating the .jar
+
+Download VorbisJava project (A Java Vorbis implementation)
+https://github.com/Gagravarr/VorbisJava
+
+Create a new project in eclipse.
+In the "src" directory of this new eclipse project, copy the folder "org" from 
+VorbisJava-master\tools\src\main\java\
+
+Project might have warnings, but there should be no errors 
+
+Export as jar
+Put jar file in 
+C:\Users\username\Documents\Processing\libraries\VorbisJava\library\VorbisJava.jar
+The folder name in \libraries\ must match the name of the jar file
+
+import into Processing using
+
+import org.gagravarr.ogg.tools.*;
+
