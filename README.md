@@ -1,6 +1,12 @@
-# Beat Saber Unofficial Track Editor
+## IMPORTANT!
 
-## This project is EXPERIMENTAL but currently semi-functional!
+## This project is no longer being worked on. For a more complete, 3D editor for Beat Saber tracks, check out Ikeiwa's project Edit Saber
+
+https://github.com/Ikeiwa/EditSaber
+
+# Beat Saber Unofficial 2D Track Editor
+
+## This project is currently functional, but the features are limited.
 
 Currently supports:
 
@@ -12,7 +18,10 @@ Currently supports:
 
 + Locking the grid to 8th / 16th / 32nd notes, or placing at arbitrary positions
 
++ Placing notes while the track is playing by pressing keys on the keyboard.
+
 ![Example image](https://i.imgur.com/XZVS8Bc.png)
+
 
 To run:
 
@@ -52,10 +61,18 @@ Run the project by clicking the triangular play button. Press the square stop bu
 
 ## Currently working on:
 
-Adding .ogg support.
+This project is no longer being worked on.
 
-GUI updates.
+If someone can somehow get .ogg support working, I may pick this project back up.
 
 ## Next steps:
+
+Roadmap if the project was picked up again:
+
+.ogg support!
+
+Cut, undo, redo.
+
+Offset track data to align with song
 
 Support triplets, zooming
